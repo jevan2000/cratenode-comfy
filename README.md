@@ -50,9 +50,38 @@ parts by their size so you never compute coordinates.
 | Output | **Render Scene** | IMAGE + alpha MASK at any scale |
 | | **Export Image** | PNG, JPEG or WebP from a scene or any IMAGE batch: transparency kept (PNG/WebP) or flattened onto a matte, scale, DPI tag, sRGB profile, workflow embedded, and a `max_kb` budget that lowers quality until the file fits |
 | | **Save PDF** | Vector PDF, fonts embedded |
+| Data | **Load Template** | A saved design (JSON) as a scene, from your templates folder or the bundled ones |
+| | **Fill Template** | Replace slot text, `name.color` colours, `{placeholders}` and image slots from a data row or a values box; layouts reflow |
+| | **Save as Template** | Write a design to a template JSON (images embedded) |
+| | **Data Rows** | Rows from a CSV/JSON file or pasted text; everything after it runs once per row |
+| | **Row Value** | One column of a row as text, for any text input |
 
 Masks: our `MASK` outputs are coverage (1 = opaque). ComfyUI's **Load Image** mask
 is the opposite (1 = transparent), so image inputs have a `mask_meaning` switch.
+
+## Templates and data batches
+
+Give an item a **slot** name (Text Box, Shape and Add Image have a `slot` input)
+or type `{placeholders}` in any text, then **Save as Template**. **Fill Template**
+changes a template by name:
+
+```
+title: When the waiting is the work      <- a text slot
+title.color: #ffcc00                     <- a text or shape slot's colour
+series: Still                            <- fills {series} in any text
+```
+
+Image slots take an IMAGE (`image_1` + `slot_1`). Stack, Place and Grid lay
+out when the design is drawn, so a longer title still pushes the rest down.
+
+**Data Rows** reads a CSV (header line) or JSON list and outputs one row at a
+time: ComfyUI runs the nodes after it once per row. Wire the row into Fill
+Template (or Row Value → any text input) and into Export Image / Save PDF,
+whose `filename_prefix` takes `{column}` names plus `{date}`, `{time}` and
+`{index}`, e.g. `batch/{index}_{title}`.
+
+Templates are read from `templates/` in your data folder (`data_dir` in the
+config) and from this package's `templates/`.
 
 If a render comes out black, check that the chain starts from a **Canvas**: a part
 on its own has a transparent background, and Save Image drops transparency.
@@ -67,6 +96,9 @@ python tools/run_workflow.py examples/thumbnail.api.json --server http://127.0.0
 
 - **thumbnail**: background image, headline with shadow and subtitle in a Stack, logo placed bottom-right.
 - **export**: the thumbnail saved four ways: a YouTube JPEG under 2 MB, a half-size WebP for the web, the title alone as a transparent PNG overlay, and a 2x JPEG tagged 300 dpi made from a rendered IMAGE.
+- **template_save**: the thumbnail with slots (`background`, `title`, `subtitle`, `logo`) saved as a template; it is bundled as `templates/thumbnail.json`.
+- **batch_template**: three CSV rows → Load Template → Fill Template → one JPEG per row, named from the row.
+- **batch_workflow**: the same batch with the graph as the template (Row Value feeds the Text Box).
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 
 ## Configuration

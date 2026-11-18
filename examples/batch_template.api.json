@@ -1,0 +1,67 @@
+{
+  "1": {
+    "class_type": "CNDataRows",
+    "_meta": {
+      "title": "Data Rows (one design per row)"
+    },
+    "inputs": {
+      "file": "",
+      "text": "title,series,week\nFind your *peace* in a loud world,Still,1\nWhen the waiting is the work,Still,2\nRest,Still,3\n",
+      "format": "auto",
+      "start": 0,
+      "limit": 0
+    }
+  },
+  "2": {
+    "class_type": "CNLoadTemplate",
+    "inputs": {
+      "template": "thumbnail",
+      "path": ""
+    }
+  },
+  "3": {
+    "class_type": "CNFillTemplate",
+    "inputs": {
+      "scene": [
+        "2",
+        0
+      ],
+      "row": [
+        "1",
+        0
+      ],
+      "values": "",
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "slot_1": "",
+      "slot_2": "",
+      "slot_3": ""
+    }
+  },
+  "4": {
+    "class_type": "CNExport",
+    "inputs": {
+      "scene": [
+        "3",
+        0
+      ],
+      "row": [
+        "1",
+        0
+      ],
+      "mask_meaning": "alpha (1 = opaque)",
+      "format": "jpeg",
+      "quality": 92,
+      "webp_lossless": false,
+      "transparent": true,
+      "matte": "#ffffff",
+      "scale": 0.5,
+      "dpi": 0.0,
+      "max_kb": 0,
+      "embed_workflow": true,
+      "filename_prefix": "cratenode/batch/{series}_{index}_{title}"
+    },
+    "_meta": {
+      "title": "Export: one file per row"
+    }
+  }
+}

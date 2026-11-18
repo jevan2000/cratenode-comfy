@@ -59,11 +59,9 @@ class CNStack(IO.ComfyNode):
     def execute(cls, direction, gap, align, valign, area, x, y, box_width, box_height, scene=None, **parts):
         ps = [parts.get(f"part_{i}") for i in range(1, N_STACK + 1)]
         base = _base(scene, ps)
-        groups = lay.stack([p for p in ps if p is not None], _box(base, area, x, y, box_width, box_height),
-                           direction, gap, align, valign)
-        for g in groups:
-            base = base.add(g)
-        return IO.NodeOutput(base)
+        item = lay.stack_item([p for p in ps if p is not None], _box(base, area, x, y, box_width, box_height),
+                              direction, gap, align, valign)
+        return IO.NodeOutput(base.add(item) if item.parts else base)
 
 
 class CNPlace(IO.ComfyNode):
@@ -81,9 +79,8 @@ class CNPlace(IO.ComfyNode):
     @classmethod
     def execute(cls, part, align, valign, area, x, y, box_width, box_height, scene=None):
         base = _base(scene, [part])
-        for g in lay.place(part, _box(base, area, x, y, box_width, box_height), align, valign):
-            base = base.add(g)
-        return IO.NodeOutput(base)
+        item = lay.stack_item([part], _box(base, area, x, y, box_width, box_height), "vertical", 0.0, align, valign)
+        return IO.NodeOutput(base.add(item) if item.parts else base)
 
 
 class CNGrid(IO.ComfyNode):
@@ -108,10 +105,9 @@ class CNGrid(IO.ComfyNode):
     def execute(cls, columns, gap_x, gap_y, align, valign, area, x, y, box_width, box_height, scene=None, **parts):
         ps = [parts.get(f"part_{i}") for i in range(1, N_GRID + 1)]
         base = _base(scene, ps)
-        for g in lay.grid([p for p in ps if p is not None], _box(base, area, x, y, box_width, box_height),
-                          columns, gap_x, gap_y, align, valign):
-            base = base.add(g)
-        return IO.NodeOutput(base)
+        item = lay.grid_item([p for p in ps if p is not None], _box(base, area, x, y, box_width, box_height),
+                             columns, gap_x, gap_y, align, valign)
+        return IO.NodeOutput(base.add(item) if item.parts else base)
 
 
 class CNLayers(IO.ComfyNode):

@@ -250,7 +250,36 @@ class GroupItem:
     name: str = ""
 
 
-Item = TextItem | ImageItem | ShapeItem | GroupItem
+@dataclass(frozen=True)
+class LayoutItem:
+    """Parts arranged when the scene is drawn, so changed text (a filled template)
+    still reflows. ``kind`` is "stack" or "grid"; Place is a one-part stack.
+    ``parts`` is a tuple of item tuples; ``box`` is (x, y, w, h) in canvas pixels."""
+
+    kind: str = "stack"
+    parts: tuple = ()
+    box: tuple = (0.0, 0.0, 0.0, 0.0)
+    direction: str = "vertical"
+    gap: float = 24.0
+    gap_y: float = 24.0
+    columns: int = 3
+    align: str = "center"
+    valign: str = "middle"
+    style: Style = Style()
+    flow: Flow = Flow()
+    name: str = ""
+
+
+Item = TextItem | ImageItem | ShapeItem | GroupItem | LayoutItem
+
+
+def children(it, reg: FontRegistry) -> tuple[tuple, float, float]:
+    """(items, dx, dy) inside a group or a layout (a layout is arranged now)."""
+    if isinstance(it, LayoutItem):
+        from .layout import arrange
+
+        return arrange(it, reg), 0.0, 0.0
+    return it.items, it.dx, it.dy
 
 
 @dataclass(frozen=True)
@@ -297,7 +326,7 @@ class Placed:
 def _item_top(it) -> float:
     if isinstance(it, TextItem):
         return it.spec.y
-    if isinstance(it, GroupItem):
+    if isinstance(it, (GroupItem, LayoutItem)):
         return 0.0
     return it.y
 
@@ -320,8 +349,9 @@ def place_items(items: tuple, reg: FontRegistry, ox: float = 0.0, oy: float = 0.
     for it in items:
         dy = 0.0
         if it.flow.below_previous and prev_bottom is not None:
-            if isinstance(it, GroupItem):
-                inner = _union([p.bounds for p in place_items(it.items, reg, ox + it.dx, oy + it.dy)])
+            if isinstance(it, (GroupItem, LayoutItem)):
+                kids, kdx, kdy = children(it, reg)
+                inner = _union([p.bounds for p in place_items(kids, reg, ox + kdx, oy + kdy)])
                 top = inner[1] if inner else oy
             else:
                 top = _item_top(it) + oy
@@ -337,7 +367,8 @@ def place_items(items: tuple, reg: FontRegistry, ox: float = 0.0, oy: float = 0.
             x0, y0, x1, y1 = _shape_bounds(it, dy)
             p = Placed(it, (x0 + ox, y0 + oy, x1 + ox, y1 + oy))
         else:
-            kids = place_items(it.items, reg, ox + it.dx, oy + it.dy + dy)
+            items, kdx, kdy = children(it, reg)
+            kids = place_items(items, reg, ox + kdx, oy + kdy + dy)
             p = Placed(it, _union([k.bounds for k in kids]) or (ox, oy, ox, oy), children=kids)
         out.append(p)
         prev_bottom = p.bounds[3]

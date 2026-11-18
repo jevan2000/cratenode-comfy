@@ -9,7 +9,7 @@ from comfy_api.latest import IO
 from . import render
 from . import scene as sc
 from .nodes_common import (CANVAS_PRESETS, MASK_MEANINGS, ROOT, FillT, SceneT, color, flow, flow_inputs,
-                           mask_to_alpha, new_part)
+                           mask_to_alpha, new_part, slot)
 
 
 class CNCanvas(IO.ComfyNode):
@@ -139,7 +139,7 @@ class CNAddImage(IO.ComfyNode):
         rgba = render.comfy_to_rgba(image, mask_to_alpha(mask, mask_meaning), index=i)
         w = box_width or (scene.width - x)
         h = box_height or (scene.height - y)
-        return IO.NodeOutput(scene.add(sc.ImageItem(rgba, x, y, w, h, mode, flow=flow(kw))))
+        return IO.NodeOutput(scene.add(sc.ImageItem(rgba, x, y, w, h, mode, flow=flow(kw), name=slot(kw))))
 
 
 class CNImageToScene(IO.ComfyNode):

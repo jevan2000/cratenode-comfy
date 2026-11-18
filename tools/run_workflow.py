@@ -17,6 +17,7 @@ import argparse
 import json
 import mimetypes
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
@@ -28,8 +29,11 @@ ASSETS = ROOT / "examples" / "assets"
 
 def http(method: str, url: str, data: bytes | None = None, headers: dict | None = None, timeout=60):
     req = urllib.request.Request(url, data=data, method=method, headers=headers or {})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read()
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return r.read()
+    except urllib.error.HTTPError as e:  # ComfyUI explains a rejected workflow in the body
+        raise SystemExit(f"{method} {url} -> HTTP {e.code}\n{e.read().decode('utf-8', 'replace')[:4000]}")
 
 
 def upload(server: str, path: Path) -> None:

@@ -5,7 +5,7 @@ from __future__ import annotations
 from comfy_api.latest import IO
 
 from . import scene as sc
-from .nodes_common import ROOT, FillT, SceneT, flow, flow_inputs, new_part, text_inputs, text_spec
+from .nodes_common import ROOT, FillT, SceneT, flow, flow_inputs, new_part, slot, text_inputs, text_spec
 
 
 class CNTextBox(IO.ComfyNode):
@@ -23,8 +23,8 @@ class CNTextBox(IO.ComfyNode):
     @classmethod
     def execute(cls, scene=None, fill=None, **kw):
         scene = new_part(scene)
-        fl = flow(kw)
-        item = sc.TextItem(text_spec(kw), fill=fill if isinstance(fill, sc.Gradient) else None, flow=fl)
+        fl, name = flow(kw), slot(kw)
+        item = sc.TextItem(text_spec(kw), fill=fill if isinstance(fill, sc.Gradient) else None, flow=fl, name=name)
         out = scene.add(item)
         sc.resolve(out)  # fail here (e.g. missing font) rather than at render
         return IO.NodeOutput(out)

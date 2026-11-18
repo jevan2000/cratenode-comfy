@@ -5,7 +5,7 @@ from __future__ import annotations
 from comfy_api.latest import IO
 
 from . import scene as sc
-from .nodes_common import ROOT, FillT, SceneT, flow, flow_inputs, new_part
+from .nodes_common import ROOT, FillT, SceneT, flow, flow_inputs, new_part, slot
 from .nodes_common import color as to_color
 
 
@@ -45,7 +45,7 @@ class CNShape(IO.ComfyNode):
             stroke = f if isinstance(f, tuple) else (1.0, 1.0, 1.0, 1.0)
             stroke_width = stroke_width or 4.0
         item = sc.ShapeItem(shape, x, y, width, height, f, stroke, stroke_width, corner_radius, sides,
-                            inner_ratio, rotation, flow=flow(kw))
+                            inner_ratio, rotation, flow=flow(kw), name=slot(kw))
         return IO.NodeOutput(scene.add(item))
 
 

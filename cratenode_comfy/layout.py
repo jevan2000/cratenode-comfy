@@ -8,7 +8,7 @@ becomes one GroupItem, moved into position.
 from __future__ import annotations
 
 from .fonts import FontRegistry, registry
-from .scene import GroupItem, Scene, content_bounds
+from .scene import GroupItem, LayoutItem, Scene, content_bounds
 
 AREAS = ["safe area", "canvas", "custom"]
 H_POS = ["left", "center", "right"]
@@ -69,6 +69,26 @@ def stack(parts: list[Scene], box, direction="vertical", gap=24.0, align="center
             cursor += w + gap
         out.append(GroupItem(items=items, dx=tx - b[0], dy=ty - b[1]))
     return out
+
+
+def stack_item(parts: list[Scene], box, direction="vertical", gap=24.0, align="center", valign="top") -> LayoutItem:
+    """A stack that is arranged at draw time (reflows when a part's text changes)."""
+    return LayoutItem("stack", tuple(p.items for p in parts if p.items), tuple(box), direction, gap,
+                      align=align, valign=valign)
+
+
+def grid_item(parts: list[Scene], box, columns=3, gap_x=24.0, gap_y=24.0, align="center",
+              valign="middle") -> LayoutItem:
+    return LayoutItem("grid", tuple(p.items for p in parts if p.items), tuple(box), gap=gap_x, gap_y=gap_y,
+                      columns=columns, align=align, valign=valign)
+
+
+def arrange(it: LayoutItem, reg: FontRegistry | None = None) -> tuple:
+    """The GroupItems a LayoutItem resolves to right now."""
+    parts = [Scene(1, 1, items=p) for p in it.parts]
+    if it.kind == "grid":
+        return tuple(grid(parts, it.box, it.columns, it.gap, it.gap_y, it.align, it.valign, reg))
+    return tuple(stack(parts, it.box, it.direction, it.gap, it.align, it.valign, reg))
 
 
 def place(part: Scene, box, align="center", valign="middle", reg: FontRegistry | None = None) -> list[GroupItem]:

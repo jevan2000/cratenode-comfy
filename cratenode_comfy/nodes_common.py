@@ -12,6 +12,7 @@ from .fonts import registry
 
 SceneT = IO.Custom("CN_SCENE")
 FillT = IO.Custom("CN_FILL")
+RowT = IO.Custom("CN_ROW")  # one data row: {column: text}
 
 ROOT = "CrateNode-Comfy"
 MASK_MEANINGS = ["LoadImage (1 = transparent)", "alpha (1 = opaque)"]
@@ -64,11 +65,17 @@ def flow_inputs() -> list:
         IO.Boolean.Input("below_previous", default=False,
                          tooltip="Sit under the previous item (its bottom + gap) instead of at y"),
         IO.Float.Input("gap", default=24.0, min=-2000, max=2000, step=1.0),
+        IO.String.Input("slot", default="", optional=True, tooltip="A name for this item in a template "
+                        "(Fill Template replaces its text, image or colour by this name)"),
     ]
 
 
 def flow(kw) -> sc.Flow:
     return sc.Flow(kw.pop("below_previous", False), kw.pop("gap", 24.0))
+
+
+def slot(kw) -> str:
+    return (kw.pop("slot", "") or "").strip()
 
 
 def text_inputs() -> list:

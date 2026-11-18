@@ -28,6 +28,7 @@ from pathlib import Path
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 BUNDLED_FONTS = PACKAGE_ROOT / "fonts"
 LOCAL_CONFIG = PACKAGE_ROOT / "config.local.json"
+BUNDLED_TEMPLATES = PACKAGE_ROOT / "templates"  # public example templates
 
 
 @dataclass
@@ -49,6 +50,18 @@ class Config:
             data_dir=Path(data_dir) if data_dir else None,
             source=source,
         )
+
+    def template_folders(self) -> list[Path]:
+        """Private templates (data_dir/templates) first, then the bundled examples."""
+        own = [self.data_dir / "templates"] if self.data_dir else []
+        return own + [BUNDLED_TEMPLATES]
+
+    def resolve_data_path(self, p: str) -> Path:
+        """A path as given, or relative to data_dir when it is relative and data_dir is set."""
+        path = Path(p.strip().strip('"'))
+        if not path.is_absolute() and self.data_dir and (self.data_dir / path).exists():
+            return self.data_dir / path
+        return path
 
 
 def load() -> Config:

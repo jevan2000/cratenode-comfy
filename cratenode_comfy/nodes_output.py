@@ -7,10 +7,13 @@ import os
 from comfy_api.latest import IO, UI
 
 from . import export, render
+from . import template as tpl
 from . import scene as sc
-from .nodes_common import MASK_MEANINGS, ROOT, SceneT, mask_to_alpha
+from .nodes_common import MASK_MEANINGS, ROOT, RowT, SceneT, mask_to_alpha
 
 CAT = f"{ROOT}/Output"
+NAME_TIP = ("{column} takes a value from the data row; also {date}, {time}, {index} (row number), "
+            "and ComfyUI's %date:yyyy-MM-dd%, %width%, %height%. a/b makes a subfolder")
 
 
 class CNRender(IO.ComfyNode):
@@ -37,15 +40,18 @@ class CNSavePDF(IO.ComfyNode):
             node_id="CNSavePDF", display_name="Save PDF", category=CAT,
             description="Vector RGB PDF (text stays text, fonts embedded) in the output folder.",
             is_output_node=True,
-            inputs=[SceneT.Input("scene"), IO.String.Input("filename_prefix", default="design"),
+            inputs=[SceneT.Input("scene"), IO.String.Input("filename_prefix", default="design",
+                                                           tooltip=NAME_TIP),
+                    RowT.Input("row", optional=True, tooltip="A data row for {column} names"),
                     IO.Float.Input("dpi", default=300.0, min=10.0, max=2400.0, tooltip="Canvas pixels per inch")],
             outputs=[IO.String.Output(display_name="path")],
         )
 
     @classmethod
-    def execute(cls, scene, filename_prefix, dpi):
+    def execute(cls, scene, filename_prefix, dpi, row=None):
         import folder_paths
 
+        filename_prefix = tpl.format_name(filename_prefix, row)
         out_dir, base, counter, _, _ = folder_paths.get_save_image_path(
             filename_prefix, folder_paths.get_output_directory(), scene.width, scene.height)
         path = os.path.join(out_dir, f"{base}_{counter:05}_.pdf")
@@ -79,7 +85,8 @@ class CNExport(IO.ComfyNode):
                 IO.Float.Input("dpi", default=0.0, min=0.0, max=2400.0, tooltip="Written to PNG/JPEG; 0 = none"),
                 IO.Int.Input("max_kb", default=0, min=0, max=1_000_000, tooltip="File size limit; 0 = none"),
                 IO.Boolean.Input("embed_workflow", default=True, tooltip="PNG / WebP carry the workflow, like Save Image"),
-                IO.String.Input("filename_prefix", default="design"),
+                IO.String.Input("filename_prefix", default="design", tooltip=NAME_TIP),
+                RowT.Input("row", optional=True, tooltip="A data row for {column} names"),
             ],
             outputs=[IO.String.Output(display_name="paths"), IO.String.Output(display_name="report")],
             hidden=[IO.Hidden.prompt, IO.Hidden.extra_pnginfo],
@@ -87,9 +94,10 @@ class CNExport(IO.ComfyNode):
 
     @classmethod
     def execute(cls, format, quality, webp_lossless, transparent, matte, scale, dpi, max_kb, embed_workflow,
-                filename_prefix, scene=None, image=None, alpha=None, mask_meaning=MASK_MEANINGS[1]):
+                filename_prefix, scene=None, image=None, alpha=None, mask_meaning=MASK_MEANINGS[1], row=None):
         import folder_paths
 
+        filename_prefix = tpl.format_name(filename_prefix, row)
         if scene is not None:
             frames = [sc.render(scene, scale)]
         elif image is not None:
