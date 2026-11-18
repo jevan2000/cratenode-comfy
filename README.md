@@ -33,7 +33,7 @@ nodes fail with "SkIcuLoader datafile missing", copy `icudtl.dat` from
 ## Quick start
 
 Open **Templates** in ComfyUI (Workflow → Browse Templates) and pick
-**cratenode-comfy**: the fifteen example workflows below open ready to run, and
+**cratenode-comfy**: the sixteen example workflows below open ready to run, and
 together use every node. Their
 Load Image / Load Video nodes use the placeholder files in `api_examples/assets/`;
 copy those into ComfyUI's `input` folder (the install script does) or pick your own.
@@ -75,7 +75,7 @@ Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 | Type | **Text Box** | Fonts from your folders, wrapping, align, vertical anchor (bottom grows upward), auto-fit, `*bold*` words, case, letter spacing, gradient text |
 | Shapes | **Shape** | Rectangle (rounded), ellipse, line, polygon, star; fill or gradient, stroke, rotation |
 | Image | **Add Image** | Fit, fill (crop) or stretch an image into a box |
-| | **Image to Scene** | Start a design from an image |
+| | **Image to Scene** | Bring an image (an AI generation, a photo) into a design: a new canvas its size, or under / on top of / in place of an existing design, fitted to its canvas; a batch gives one design per image |
 | Layout | **Stack** | Up to 6 parts in a column or row with a gap, placed in the safe area / canvas / a custom box |
 | | **Place** | One part at an alignment (e.g. a logo bottom-right of the safe area) |
 | | **Grid** | Up to 9 parts in equal cells |
@@ -236,6 +236,7 @@ python tools/run_workflow.py api_examples/thumbnail.api.json --server http://127
 - **layers_blend**: a typed-in palette, wider safe-area margins, circles in multiply, a blurred star, and a type layer put on top with Layers.
 - **keyframes**: keyframe animation (a video sliding in picture-in-picture, a spinning and pulsing star, a wiped-in title), rendered as a frame batch and saved as MP4 from that batch.
 - **scene_to_image**: the thumbnail converted for other pipelines: flattened, 1024 wide and rounded to 64 (SDXL-ready) into Save Image, and the type alone with its transparency as IMAGE + MASK.
+- **image_round_trip**: a batch of (stand-in) generations each put under the same type design (one export per image), and a round trip: the design out through Scene to Image to a pipeline (a blur stands in for img2img / ControlNet / an upscaler) and back under the original, still-sharp type with Image to Scene.
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 
 ## Configuration

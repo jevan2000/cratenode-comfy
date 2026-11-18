@@ -6,10 +6,13 @@ from dataclasses import replace
 
 from comfy_api.latest import IO
 
-from . import render
+from . import convert, render
 from . import scene as sc
 from .nodes_common import (CANVAS_PRESETS, MASK_MEANINGS, ROOT, FillT, SceneT, color, flow, flow_inputs,
                            mask_to_alpha, new_part, slot)
+
+
+BATCH_MODES = ["one image (batch_index)", "every image (one design each)"]
 
 
 class CNCanvas(IO.ComfyNode):
@@ -147,19 +150,38 @@ class CNImageToScene(IO.ComfyNode):
     def define_schema(cls):
         return IO.Schema(
             node_id="CNImageToScene", display_name="Image to Scene", category=f"{ROOT}/Image",
-            description="Start a design from an image: the canvas takes the image's size and the image fills it.",
+            search_aliases=["image to scene", "convert image", "embed image", "AI image into design"],
+            description="Bring an image (an AI generation, a photo, any IMAGE) into a design. Without a scene: a new "
+                        "canvas the image's size. With a scene: the image goes under the design (an AI background "
+                        "behind sharp type), on top of it, or replaces it while keeping the canvas, fitted to the "
+                        "canvas (fill crops, fit letterboxes). A batch can give one design per image (a list: "
+                        "the rest of the graph runs once per image).",
             inputs=[IO.Image.Input("image"), IO.Mask.Input("mask", optional=True),
                     IO.Combo.Input("mask_meaning", options=MASK_MEANINGS, default=MASK_MEANINGS[0]),
-                    IO.Float.Input("safe_margin", default=5.0, min=0.0, max=45.0, step=0.5)],
-            outputs=[SceneT.Output(display_name="scene")],
+                    IO.Float.Input("safe_margin", default=5.0, min=0.0, max=45.0, step=0.5,
+                                   tooltip="For a new canvas"),
+                    SceneT.Input("scene", optional=True, tooltip="Put the image into this design"),
+                    IO.Combo.Input("place", options=convert.PLACES, default=convert.PLACES[0], optional=True,
+                                   tooltip="Where the image goes when a scene is connected"),
+                    IO.Combo.Input("fit", options=convert.FITS, default="fill", optional=True,
+                                   tooltip="How the image covers the canvas: fill crops, fit letterboxes"),
+                    IO.Combo.Input("batch", options=BATCH_MODES, default=BATCH_MODES[0], optional=True),
+                    IO.Int.Input("batch_index", default=0, min=0, max=4096, optional=True,
+                                 tooltip="Which image of a batch, for 'one image'"),
+                    IO.String.Input("slot", default="", optional=True,
+                                    tooltip="A name for the image item (an image slot in a template)")],
+            outputs=[SceneT.Output(display_name="scene", is_output_list=True)],
         )
 
     @classmethod
-    def execute(cls, image, safe_margin, mask=None, mask_meaning=MASK_MEANINGS[0]):
-        rgba = render.comfy_to_rgba(image, mask_to_alpha(mask, mask_meaning))
-        h, w = rgba.shape[:2]
-        m = min(w, h) * safe_margin / 100.0
-        return IO.NodeOutput(sc.Scene(w, h, margin=(m, m, m, m)).add(sc.ImageItem(rgba, 0, 0, w, h, "stretch")))
+    def execute(cls, image, safe_margin, mask=None, mask_meaning=MASK_MEANINGS[0], scene=None,
+                place=convert.PLACES[0], fit="fill", batch=BATCH_MODES[0], batch_index=0, slot=""):
+        alpha = mask_to_alpha(mask, mask_meaning)
+        n = image.shape[0]
+        indices = range(n) if batch == BATCH_MODES[1] else [min(batch_index, n - 1)]
+        scenes = [convert.image_into_scene(render.comfy_to_rgba(image, alpha, index=i), scene, place, fit,
+                                           safe_margin, (slot or "").strip()) for i in indices]
+        return IO.NodeOutput(scenes)
 
 
 NODES = [CNCanvas, CNSafeArea, CNLinearGradient, CNRadialGradient, CNAddImage, CNImageToScene]

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Image to Scene** brings generations back into designs: with a scene connected,
+  the image goes under the design, on top of it, or replaces it while keeping the
+  canvas (size, safe area, frame rate), fitted by fill / fit / stretch; a batch can
+  give one design per image (a list output). New inputs are optional, so earlier
+  workflows load unchanged. New example **image_round_trip**.
 - **Scene to Image** node: converts a design into IMAGE + MASK for other pipelines,
   sized by scale, fit width / height / inside, or an exact (stretched) size, rounded
   to a multiple of 8–64 for diffusion latents, with transparency kept or flattened

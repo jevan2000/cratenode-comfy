@@ -74,5 +74,42 @@ class Convert(unittest.TestCase):
         self.assertEqual(float(convert.scene_to_rgba(s, reg=REG)[50, 50, 3]), 1.0)
 
 
+class ImageIn(unittest.TestCase):
+    def photo(self, w=200, h=100, c=(0.0, 0.0, 1.0)):
+        a = np.zeros((h, w, 4), np.float32)
+        a[...] = c + (1.0,)
+        return a
+
+    def design(self):
+        s = sc.Scene(400, 400, (0.5, 0.5, 0.5, 1.0), margin=(20, 20, 20, 20), fps=24)
+        return s.add(sc.ShapeItem("rectangle", 150, 150, 100, 100, (1.0, 0.0, 0.0, 1.0)))
+
+    def test_new_canvas(self):
+        s = convert.image_into_scene(self.photo(), safe_margin=10)
+        self.assertEqual((s.width, s.height, s.margin), (200, 100, (10, 10, 10, 10)))
+        np.testing.assert_allclose(sc.render(s, reg=REG)[50, 100], (0, 0, 1, 1))
+
+    def test_under_the_design(self):
+        s = convert.image_into_scene(self.photo(), self.design(), convert.PLACES[1], "fill", name="ai")
+        self.assertEqual((s.width, s.height, s.fps, s.margin), (400, 400, 24, (20, 20, 20, 20)))
+        img = sc.render(s, reg=REG)
+        np.testing.assert_allclose(img[10, 10], (0, 0, 1, 1), err_msg="fill covers the canvas")
+        np.testing.assert_allclose(img[200, 200], (1, 0, 0, 1), err_msg="the design stays on top")
+        self.assertEqual(s.items[0].name, "ai")
+
+    def test_on_top_and_fit(self):
+        s = convert.image_into_scene(self.photo(), self.design(), convert.PLACES[2], "fit")
+        img = sc.render(s, reg=REG)
+        np.testing.assert_allclose(img[200, 200], (0, 0, 1, 1), err_msg="the image covers the shape")
+        np.testing.assert_allclose(img[10, 200], (0.5, 0.5, 0.5, 1), atol=1 / 255,
+                                   err_msg="fit letterboxes: the canvas shows above")
+
+    def test_replace_keeps_canvas(self):
+        s = convert.image_into_scene(self.photo(), self.design(), convert.PLACES[3], "stretch")
+        self.assertEqual(len(s.items), 1)
+        self.assertEqual((s.width, s.fps, s.margin), (400, 24, (20, 20, 20, 20)))
+        np.testing.assert_allclose(sc.render(s, reg=REG)[200, 200], (0, 0, 1, 1))
+
+
 if __name__ == "__main__":
     unittest.main()

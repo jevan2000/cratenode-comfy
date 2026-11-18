@@ -1,8 +1,13 @@
-"""Scene → image for other pipelines: pick an output size (scale, fit, exact), round it
-to a multiple (8 / 64 for diffusion latents), and optionally flatten transparency onto
-a colour. No ComfyUI imports."""
+"""Scene ↔ image for other pipelines.
+
+Scene → image: pick an output size (scale, fit, exact), round it to a multiple (8 / 64
+for diffusion latents), and optionally flatten transparency onto a colour.
+Image → scene: start a design from an image, or put an image (an AI generation) under,
+over or in place of an existing design, fitted to its canvas. No ComfyUI imports."""
 
 from __future__ import annotations
+
+from dataclasses import replace as _replace
 
 import numpy as np
 from PIL import Image
@@ -61,6 +66,34 @@ def flatten(rgba: np.ndarray, matte: str = "#ffffff") -> np.ndarray:
     a = rgba[:, :, 3:4]
     rgb = rgba[:, :, :3] * a + m * (1 - a)
     return np.concatenate([rgb, np.ones_like(a)], axis=2).astype(np.float32)
+
+
+PLACES = ["new canvas (image size)", "under the design", "on top of the design", "replace the design (keep canvas)"]
+FITS = ["fill", "fit", "stretch"]
+
+
+def image_into_scene(rgba: np.ndarray, scene: sc.Scene | None = None, place: str = PLACES[0], mode: str = "fill",
+                     safe_margin: float = 5.0, name: str = "") -> sc.Scene:
+    """An image as a design.
+
+    - new canvas: the canvas takes the image's size and the image fills it;
+    - under / on top of the design: added to ``scene`` as a full-canvas layer (fill crops,
+      fit letterboxes, stretch distorts), below or above everything already there;
+    - replace the design: the scene keeps its canvas (size, safe area, frame rate) but its
+      items and background give way to the image, ready for new type on top.
+    """
+    if scene is None or place == PLACES[0]:
+        h, w = rgba.shape[:2]
+        m = min(w, h) * safe_margin / 100.0
+        return sc.Scene(w, h, margin=(m, m, m, m)).add(sc.ImageItem(rgba, 0, 0, w, h, "stretch", name=name))
+    item = sc.ImageItem(rgba, 0, 0, scene.width, scene.height, mode, name=name)
+    if place == PLACES[1]:
+        return _replace(scene, items=(item,) + scene.items)
+    if place == PLACES[2]:
+        return scene.add(item)
+    if place == PLACES[3]:
+        return _replace(scene, background=(0.0, 0.0, 0.0, 0.0), items=(item,))
+    raise ValueError(f"place must be one of {PLACES}")
 
 
 def scene_to_rgba(scene: sc.Scene, mode: str = "scale", scale: float = 1.0, width: int = 1024, height: int = 1024,

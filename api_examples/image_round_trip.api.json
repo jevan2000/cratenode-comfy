@@ -1,0 +1,330 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "placeholder-background.jpg"
+    },
+    "_meta": {
+      "title": "Stand-in generation 1"
+    }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "placeholder-busy.jpg"
+    },
+    "_meta": {
+      "title": "Stand-in generation 2"
+    }
+  },
+  "3": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "image": [
+        "2",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 1920,
+      "height": 1080,
+      "crop": "center"
+    }
+  },
+  "4": {
+    "class_type": "ImageBatch",
+    "inputs": {
+      "image1": [
+        "1",
+        0
+      ],
+      "image2": [
+        "3",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "A batch of generations"
+    }
+  },
+  "5": {
+    "class_type": "CNCanvas",
+    "inputs": {
+      "preset": "YouTube thumbnail / HD 1920x1080",
+      "landscape_flip": false,
+      "width": 1920,
+      "height": 1080,
+      "background": "#00000000",
+      "safe_margin": 5.0
+    }
+  },
+  "6": {
+    "class_type": "CNDropShadow",
+    "inputs": {
+      "scene": [
+        "7",
+        0
+      ],
+      "target": "last item",
+      "dx": 0.0,
+      "dy": 10.0,
+      "blur": 30.0,
+      "color": "#000000",
+      "opacity": 0.7
+    }
+  },
+  "7": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "BUILT ON *AI* IMAGES",
+      "font": "Montserrat",
+      "font_override": "",
+      "weight": 700,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 120.0,
+      "color": "#ffffff",
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 1600.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "8": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "Type stays sharp and editable",
+      "font": "Inter",
+      "font_override": "",
+      "weight": 400,
+      "bold_weight": 700,
+      "italic": false,
+      "size": 44.0,
+      "color": "#d0d4dc",
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 1600.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.2,
+      "letter_spacing": 1.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "9": {
+    "class_type": "CNStack",
+    "inputs": {
+      "scene": [
+        "5",
+        0
+      ],
+      "part_1": [
+        "6",
+        0
+      ],
+      "part_2": [
+        "8",
+        0
+      ],
+      "direction": "vertical",
+      "gap": 28.0,
+      "align": "center",
+      "valign": "middle",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0
+    },
+    "_meta": {
+      "title": "The type design (clear canvas)"
+    }
+  },
+  "10": {
+    "class_type": "CNImageToScene",
+    "inputs": {
+      "image": [
+        "4",
+        0
+      ],
+      "scene": [
+        "9",
+        0
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "safe_margin": 5.0,
+      "place": "under the design",
+      "fit": "fill",
+      "batch": "every image (one design each)",
+      "batch_index": 0,
+      "slot": ""
+    },
+    "_meta": {
+      "title": "Image to Scene: every image under the design"
+    }
+  },
+  "11": {
+    "class_type": "CNExport",
+    "inputs": {
+      "scene": [
+        "10",
+        0
+      ],
+      "filename_prefix": "cratenode/round_trip/variant",
+      "mask_meaning": "alpha (1 = opaque)",
+      "format": "jpeg",
+      "quality": 90,
+      "webp_lossless": false,
+      "transparent": false,
+      "matte": "#ffffff",
+      "scale": 0.5,
+      "dpi": 0.0,
+      "max_kb": 0,
+      "embed_workflow": true
+    },
+    "_meta": {
+      "title": "Export: one file per generation"
+    }
+  },
+  "12": {
+    "class_type": "CNImageToScene",
+    "inputs": {
+      "image": [
+        "1",
+        0
+      ],
+      "scene": [
+        "9",
+        0
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "safe_margin": 5.0,
+      "place": "under the design",
+      "fit": "fill",
+      "batch": "one image (batch_index)",
+      "batch_index": 0,
+      "slot": ""
+    },
+    "_meta": {
+      "title": "Image to Scene: photo under the design"
+    }
+  },
+  "13": {
+    "class_type": "CNSceneToImage",
+    "inputs": {
+      "scene": [
+        "12",
+        0
+      ],
+      "size": "fit width",
+      "scale": 1.0,
+      "width": 1024,
+      "height": 1024,
+      "round_to": "64",
+      "transparency": "flatten onto colour",
+      "matte": "#000000",
+      "time": -1.0
+    },
+    "_meta": {
+      "title": "Scene to Image: out to a pipeline"
+    }
+  },
+  "14": {
+    "class_type": "ImageBlur",
+    "inputs": {
+      "image": [
+        "13",
+        0
+      ],
+      "blur_radius": 12,
+      "sigma": 4.0
+    },
+    "_meta": {
+      "title": "Stand-in for img2img / ControlNet / upscaler"
+    }
+  },
+  "15": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "14",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "What came back from the pipeline"
+    }
+  },
+  "16": {
+    "class_type": "CNImageToScene",
+    "inputs": {
+      "image": [
+        "14",
+        0
+      ],
+      "scene": [
+        "9",
+        0
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "safe_margin": 5.0,
+      "place": "under the design",
+      "fit": "fill",
+      "batch": "one image (batch_index)",
+      "batch_index": 0,
+      "slot": ""
+    },
+    "_meta": {
+      "title": "Image to Scene: back under the sharp type"
+    }
+  },
+  "17": {
+    "class_type": "CNPreviewScene",
+    "inputs": {
+      "scene": [
+        "16",
+        0
+      ],
+      "scale": 0.5,
+      "guides": "none",
+      "background": "checkerboard",
+      "time": -1.0
+    }
+  },
+  "18": {
+    "class_type": "CNExport",
+    "inputs": {
+      "scene": [
+        "17",
+        0
+      ],
+      "filename_prefix": "cratenode/round_trip/final",
+      "mask_meaning": "alpha (1 = opaque)",
+      "format": "jpeg",
+      "quality": 90,
+      "webp_lossless": false,
+      "transparent": false,
+      "matte": "#ffffff",
+      "scale": 0.5,
+      "dpi": 0.0,
+      "max_kb": 0,
+      "embed_workflow": true
+    },
+    "_meta": {
+      "title": "Export the round trip"
+    }
+  }
+}

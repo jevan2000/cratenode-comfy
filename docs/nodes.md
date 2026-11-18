@@ -352,16 +352,22 @@ Outputs: `scene` (scene)
 
 ### Image to Scene
 
-`CNImageToScene`. Start a design from an image: the canvas takes the image's size and the image fills it.
+`CNImageToScene`. Bring an image (an AI generation, a photo, any IMAGE) into a design. Without a scene: a new canvas the image's size. With a scene: the image goes under the design (an AI background behind sharp type), on top of it, or replaces it while keeping the canvas, fitted to the canvas (fill crops, fit letterboxes). A batch can give one design per image (a list: the rest of the graph runs once per image).
 
 | Input | Type | Default | Notes |
 |---|---|---|---|
 | `image` | image |  |  |
 | `mask_meaning` | choice | `LoadImage (1 = transparent)` |  |
-| `safe_margin` | float | `5.0` |  |
+| `safe_margin` | float | `5.0` | For a new canvas |
 | `mask` | mask (optional) |  |  |
+| `scene` | scene (optional) |  | Put the image into this design |
+| `place` | choice (optional) | `new canvas (image size)` | Where the image goes when a scene is connected |
+| `fit` | choice (optional) | `fill` | How the image covers the canvas: fill crops, fit letterboxes |
+| `batch` | choice (optional) | `one image (batch_index)` |  |
+| `batch_index` | int (optional) | `0` | Which image of a batch, for 'one image' |
+| `slot` | string (optional) | `""` | A name for the image item (an image slot in a template) |
 
-Outputs: `scene` (scene)
+Outputs: `scene` (scene, list)
 
 ## Layout
 
