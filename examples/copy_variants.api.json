@@ -1,0 +1,102 @@
+{
+  "1": {
+    "class_type": "CNCopyWriter",
+    "inputs": {
+      "task": "headlines",
+      "text": "A Sunday series about finding rest and quiet in a busy, noisy life.",
+      "instructions": "Warm and simple. No questions.",
+      "model": "",
+      "host": "http://127.0.0.1:11434",
+      "count": 3,
+      "max_chars": 36,
+      "temperature": 0.7,
+      "seed": 1
+    },
+    "_meta": {
+      "title": "Copy Writer: set 'model' first"
+    }
+  },
+  "2": {
+    "class_type": "CNCanvas",
+    "inputs": {
+      "preset": "YouTube thumbnail / HD 1920x1080",
+      "landscape_flip": false,
+      "width": 1920,
+      "height": 1080,
+      "background": "#000000",
+      "safe_margin": 5.0
+    }
+  },
+  "3": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": [
+        "1",
+        1
+      ],
+      "font": "Montserrat",
+      "font_override": "",
+      "weight": 700,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 110.0,
+      "color": "#ffffff",
+      "align": "center",
+      "valign": "middle",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 1500.0,
+      "box_height": 520.0,
+      "auto_fit": true,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    },
+    "_meta": {
+      "title": "Text Box: one design per variant"
+    }
+  },
+  "4": {
+    "class_type": "CNPlace",
+    "inputs": {
+      "scene": [
+        "2",
+        0
+      ],
+      "part": [
+        "3",
+        0
+      ],
+      "align": "center",
+      "valign": "middle",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0
+    }
+  },
+  "5": {
+    "class_type": "CNExport",
+    "inputs": {
+      "scene": [
+        "4",
+        0
+      ],
+      "mask_meaning": "alpha (1 = opaque)",
+      "format": "jpeg",
+      "quality": 90,
+      "webp_lossless": false,
+      "transparent": false,
+      "matte": "#ffffff",
+      "scale": 0.5,
+      "dpi": 0.0,
+      "max_kb": 0,
+      "embed_workflow": true,
+      "filename_prefix": "cratenode/smart/copy_variant"
+    }
+  }
+}

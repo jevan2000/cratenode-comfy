@@ -38,6 +38,7 @@ class Config:
     font_catalogs: list[Path] = field(default_factory=list)
     system_fonts: bool = True
     data_dir: Path | None = None
+    gpu_gate: str = ""  # optional URL answering {"ok": true|false}; see devices.py
     source: str = "defaults"
 
     @staticmethod
@@ -49,6 +50,7 @@ class Config:
             font_catalogs=paths("font_catalogs"),
             system_fonts=bool(d.get("system_fonts", True)),
             data_dir=Path(data_dir) if data_dir else None,
+            gpu_gate=str(d.get("gpu_gate", "") or ""),
             source=source,
         )
 

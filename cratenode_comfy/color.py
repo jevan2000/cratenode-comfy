@@ -127,7 +127,7 @@ def srgb_to_lab(rgb: np.ndarray) -> np.ndarray:
     return np.stack([116 * f[:, 1] - 16, 500 * (f[:, 0] - f[:, 1]), 200 * (f[:, 1] - f[:, 2])], axis=1)
 
 
-def _kmeans(x: np.ndarray, k: int, rng, iters: int = 25) -> tuple[np.ndarray, np.ndarray]:
+def _kmeans(x: np.ndarray, k: int, rng, iters: int = 25, device=None) -> tuple[np.ndarray, np.ndarray]:
     # k-means++ seeding
     centers = [x[rng.integers(len(x))]]
     for _ in range(1, k):
@@ -136,6 +136,8 @@ def _kmeans(x: np.ndarray, k: int, rng, iters: int = 25) -> tuple[np.ndarray, np
             break
         centers.append(x[rng.choice(len(x), p=d / d.sum())])
     c = np.array(centers)
+    if device is not None and str(device) != "cpu":
+        return _kmeans_torch(x, c, iters, device)
     for _ in range(iters):
         lab = np.argmin(((x[:, None, :] - c[None]) ** 2).sum(-1), axis=1)
         new = np.array([x[lab == j].mean(0) if np.any(lab == j) else c[j] for j in range(len(c))])
@@ -147,11 +149,28 @@ def _kmeans(x: np.ndarray, k: int, rng, iters: int = 25) -> tuple[np.ndarray, np
     return c, lab
 
 
+def _kmeans_torch(x: np.ndarray, c: np.ndarray, iters: int, device) -> tuple[np.ndarray, np.ndarray]:
+    """The Lloyd iterations of _kmeans on a torch device (same seeding, same result up to float error)."""
+    import torch
+
+    xt = torch.from_numpy(x).to(device, torch.float64)
+    ct = torch.from_numpy(c).to(device, torch.float64)
+    for _ in range(iters):
+        lab = torch.cdist(xt, ct).argmin(1)
+        new = torch.stack([xt[lab == j].mean(0) if bool((lab == j).any()) else ct[j] for j in range(len(ct))])
+        done = bool(torch.allclose(new, ct, atol=1e-3))
+        ct = new
+        if done:
+            break
+    lab = torch.cdist(xt, ct).argmin(1)
+    return ct.cpu().numpy(), lab.cpu().numpy()
+
+
 SORTS = ["by share", "light to dark", "dark to light", "by hue"]
 
 
 def palette_from_image(rgba: np.ndarray, count: int = 5, sort: str = "by share", min_distance: float = 8.0,
-                       sample: int = 20000, seed: int = 0) -> tuple[Palette, list[float]]:
+                       sample: int = 20000, seed: int = 0, device=None) -> tuple[Palette, list[float]]:
     """The image's main colours: k-means in Lab on up to ``sample`` opaque pixels.
     Clusters closer than ``min_distance`` (ΔE76) merge. Returns the palette and each
     colour's share of the pixels. Colours are the mean sRGB of each cluster."""
@@ -167,7 +186,7 @@ def palette_from_image(rgba: np.ndarray, count: int = 5, sort: str = "by share",
     lab = srgb_to_lab(rgb)
     k = max(1, min(int(count), len(np.unique(np.round(rgb * 255), axis=0))))
     # over-cluster, then merge near-duplicates down to ``count``
-    centers, labels = _kmeans(lab, min(k + 3, len(lab)), rng)
+    centers, labels = _kmeans(lab, min(k + 3, len(lab)), rng, device=device)
     groups = [[j] for j in range(len(centers))]
     sizes = [np.sum(labels == j) for j in range(len(centers))]
 

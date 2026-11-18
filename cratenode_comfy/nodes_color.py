@@ -9,7 +9,7 @@ import numpy as np
 from comfy_api.latest import IO, UI
 
 from . import color as col
-from . import render
+from . import devices, render
 from . import scene as sc
 from .fonts import registry
 from .nodes_common import MASK_MEANINGS, ROOT, PaletteT, SceneT, mask_to_alpha
@@ -60,16 +60,21 @@ class CNPaletteFromImage(IO.ComfyNode):
                     IO.Combo.Input("sort", options=col.SORTS, default=col.SORTS[0]),
                     IO.Float.Input("min_distance", default=8.0, min=0.0, max=100.0, step=0.5,
                                    tooltip="Merge colours closer than this (ΔE; ~2 is barely visible)"),
-                    IO.Int.Input("seed", default=0, min=0, max=2**31 - 1, advanced=True)],
+                    IO.Int.Input("seed", default=0, min=0, max=2**31 - 1, advanced=True),
+                    IO.Combo.Input("device", options=devices.MODES, default="cpu", optional=True,
+                                   tooltip="gpu when free: asks the GPU gate first, else runs on the CPU")],
             outputs=[PaletteT.Output(display_name="palette"), IO.Image.Output(display_name="swatches"),
                      IO.String.Output(display_name="report")],
         )
 
     @classmethod
-    def execute(cls, image, count, sort, min_distance, seed, mask=None, mask_meaning=MASK_MEANINGS[0]):
+    def execute(cls, image, count, sort, min_distance, seed, mask=None, mask_meaning=MASK_MEANINGS[0],
+                device="cpu"):
         rgba = render.comfy_to_rgba(image, mask_to_alpha(mask, mask_meaning))
-        pal, shares = col.palette_from_image(rgba, count, sort, min_distance, seed=seed)
+        dev, note = devices.pick(device, registry().config)
+        pal, shares = col.palette_from_image(rgba, count, sort, min_distance, seed=seed, device=dev)
         report = "\n".join(f"{n}: {col.to_hex(c)}  {s * 100:.1f}%" for (n, c), s in zip(pal.colors, shares))
+        report += f"\n(ran on {note})"
         return IO.NodeOutput(pal, _swatches(pal, shares), report)
 
 

@@ -68,6 +68,11 @@ parts by their size so you never compute coordinates.
 | | **Render Frame** | One moment as IMAGE + alpha |
 | | **Render Animation** | All frames as an IMAGE + MASK batch (for VideoHelperSuite or any image node) |
 | | **Save Video** | MP4 (H.264), MOV (ProRes 4444 with alpha), WebM (VP9 with alpha) or GIF, with audio; streamed through ffmpeg |
+| Smart | **Auto Place** | Put a part where the design (or a given image) is calmest, inside the safe area; optionally switch its text to white or near-black |
+| | **Find Quiet Area** | The calmest box of a size in any image: x, y, size, a readable text colour and a heat map |
+| | **Readability Check** | WCAG contrast of each text against the pixels behind its letters; report and a pass/fail overlay |
+| | **Smart Scrim** | A gradient band, box or soft glow under the last item, only as strong as needed to reach a contrast |
+| | **Copy Writer (Ollama)** | Headlines, shorter text, subtitles, taglines or calls to action from a local Ollama model; variants come out as a list (one design each) |
 
 Masks: our `MASK` outputs are coverage (1 = opaque). ComfyUI's **Load Image** mask
 is the opposite (1 = transparent), so image inputs have a `mask_meaning` switch.
@@ -131,6 +136,19 @@ Speed tip: an item with effects (shadow, glow, outline) is drawn once and then
 moved per frame, unless something inside it is animated. For a shadowed title
 that animates in parts, put the shadow on each part, not on the Stack.
 
+## Smart helpers
+
+The helpers use image statistics, not models: busyness is edges plus local
+contrast; readability is the WCAG contrast of each text against the pixels behind
+its letters (the worst 10 %). They run on the CPU. Nodes with a `device` input can
+run on the GPU instead (`gpu when free`): set `gpu_gate` in the config (or the
+`CRATENODE_GPU_GATE` environment variable) to a URL answering `{"ok": true|false}`
+and the GPU is used only when it says yes, otherwise the CPU (the report says why).
+
+**Copy Writer** talks to a local [Ollama](https://ollama.com) server with the
+model you name; nothing is downloaded for you. Its `variants` output is a list, so
+a Text Box fed by it makes one design per variant.
+
 If a render comes out black, check that the chain starts from a **Canvas**: a part
 on its own has a transparent background, and Save Image drops transparency.
 
@@ -150,6 +168,8 @@ python tools/run_workflow.py examples/thumbnail.api.json --server http://127.0.0
 - **colour**: a square card built from the example brand kit (colours, fonts, logo; title colour picked for contrast), a recoloured variant (`primary -> accent`), a contrast check, and a palette taken from the background photo.
 - **motion**: an animated title card (staggered rise-and-blur, logo pop, fade out) saved as MP4 and GIF, plus a transparent WebM overlay version.
 - **video_overlay**: a lower third sliding in over a clip (core Load Video), saved as MP4 with the clip's audio.
+- **smart**: a title auto-placed in the calm side of a busy picture, readability checked before and after a smart scrim, and Find Quiet Area's heat map.
+- **copy_variants**: three headline variants from Copy Writer, one design each (set `model` to an installed Ollama model first).
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 
 ## Configuration

@@ -5,6 +5,8 @@
 - examples/assets/placeholder-background.jpg: a 1920x1080 "photo" (soft gradient,
   light blobs and grain), standing in for an AI-generated background.
 - examples/assets/placeholder-logo.png: a 600x600 transparent logo mark.
+- examples/assets/placeholder-busy.jpg: a bright 1920x1080 picture, busy on the left
+  and calm on the right, for the smart helpers.
 
 Both are made here, so they are free to publish with the pack.
 """
@@ -61,11 +63,52 @@ def logo(size=600) -> np.ndarray:
     return out
 
 
+def busy(w=1920, h=1080, seed=11) -> np.ndarray:
+    """A bright scene that is busy on the left (shapes, lines) and calm on the right,
+    for the smart helpers: auto-placement and scrims."""
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    sky = np.array([0.80, 0.86, 0.93]) * (1 - yy[..., None] / h * 0.25) + np.array([0.98, 0.9, 0.78]) * (yy[..., None] / h * 0.25)
+    img = sky.astype(np.float32).copy()
+    surf = skia.Surface.MakeRaster(skia.ImageInfo.Make(w, h, skia.kRGBA_8888_ColorType, skia.kPremul_AlphaType))
+    c = surf.getCanvas()
+    c.clear(skia.ColorTRANSPARENT)
+    for _ in range(260):
+        x, y = rng.uniform(-50, w * 0.55), rng.uniform(-50, h + 50)
+        col = skia.Color(*[int(v) for v in rng.uniform(40, 255, 3)])
+        p = skia.Paint(Color=col, AntiAlias=True, Alphaf=float(rng.uniform(0.5, 1.0)))
+        kind = rng.integers(3)
+        if kind == 0:
+            c.drawCircle(x, y, float(rng.uniform(8, 70)), p)
+        elif kind == 1:
+            c.drawRect(skia.Rect.MakeXYWH(x, y, float(rng.uniform(10, 140)), float(rng.uniform(10, 140))), p)
+        else:
+            p.setStyle(skia.Paint.kStroke_Style)
+            p.setStrokeWidth(float(rng.uniform(2, 10)))
+            c.drawLine(x, y, x + float(rng.uniform(-200, 200)), y + float(rng.uniform(-200, 200)), p)
+    shapes = surf.makeImageSnapshot().toarray(colorType=skia.kRGBA_8888_ColorType,
+                                              alphaType=skia.kUnpremul_AlphaType).astype(np.float32) / 255
+    a = shapes[..., 3:4]
+    img = shapes[..., :3] * a + img * (1 - a)
+    img += rng.normal(0, 0.01, img.shape)
+    return np.clip(img, 0, 1)
+
+
+ASSETS = {
+    "placeholder-background.jpg": lambda p: Image.fromarray((background() * 255 + 0.5).astype(np.uint8)).save(p, quality=88),
+    "placeholder-logo.png": lambda p: Image.fromarray((logo() * 255 + 0.5).astype(np.uint8), "RGBA").save(p),
+    "placeholder-busy.jpg": lambda p: Image.fromarray((busy() * 255 + 0.5).astype(np.uint8)).save(p, quality=86),
+}
+
+
 def main() -> None:
+    """Writes the assets that are missing (--force rewrites all)."""
     OUT.mkdir(parents=True, exist_ok=True)
-    Image.fromarray((background() * 255 + 0.5).astype(np.uint8)).save(OUT / "placeholder-background.jpg", quality=88)
-    Image.fromarray((logo() * 255 + 0.5).astype(np.uint8), "RGBA").save(OUT / "placeholder-logo.png")
-    print("wrote", OUT)
+    force = "--force" in sys.argv
+    for name, make in ASSETS.items():
+        if force or not (OUT / name).exists():
+            make(OUT / name)
+            print("wrote", OUT / name)
 
 
 if __name__ == "__main__":

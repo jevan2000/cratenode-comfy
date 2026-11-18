@@ -1,0 +1,246 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "placeholder-busy.jpg"
+    }
+  },
+  "2": {
+    "class_type": "CNImageToScene",
+    "inputs": {
+      "image": [
+        "1",
+        0
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "safe_margin": 5.0
+    }
+  },
+  "3": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "AUTO-PLACED *TITLE*",
+      "font": "Montserrat",
+      "font_override": "",
+      "weight": 800,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 104.0,
+      "color": "#ffffff",
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 900.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "4": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "Lands where the picture is calm",
+      "font": "Inter",
+      "font_override": "",
+      "weight": 400,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 40.0,
+      "color": "#ffffff",
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 900.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "5": {
+    "class_type": "CNStack",
+    "inputs": {
+      "direction": "vertical",
+      "gap": 20.0,
+      "align": "center",
+      "valign": "middle",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0,
+      "part_1": [
+        "3",
+        0
+      ],
+      "part_2": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Stack (a part: no scene)"
+    }
+  },
+  "6": {
+    "class_type": "CNAutoPlace",
+    "inputs": {
+      "scene": [
+        "2",
+        0
+      ],
+      "part": [
+        "5",
+        0
+      ],
+      "area": "safe area",
+      "candidates": "anywhere",
+      "padding": 40.0,
+      "text_color": "keep",
+      "device": "cpu"
+    },
+    "_meta": {
+      "title": "Auto Place: calmest spot in the safe area"
+    }
+  },
+  "7": {
+    "class_type": "CNReadability",
+    "inputs": {
+      "scene": [
+        "6",
+        0
+      ],
+      "level": "AA"
+    },
+    "_meta": {
+      "title": "Readability before"
+    }
+  },
+  "8": {
+    "class_type": "CNSmartScrim",
+    "inputs": {
+      "scene": [
+        "6",
+        0
+      ],
+      "style": "soft glow",
+      "color": "auto",
+      "target_contrast": 4.5,
+      "max_opacity": 0.85,
+      "padding": 60.0,
+      "corner_radius": 16.0
+    },
+    "_meta": {
+      "title": "Smart Scrim: just enough"
+    }
+  },
+  "9": {
+    "class_type": "CNReadability",
+    "inputs": {
+      "scene": [
+        "8",
+        0
+      ],
+      "level": "AA"
+    },
+    "_meta": {
+      "title": "Readability after"
+    }
+  },
+  "10": {
+    "class_type": "CNExport",
+    "inputs": {
+      "scene": [
+        "8",
+        0
+      ],
+      "mask_meaning": "alpha (1 = opaque)",
+      "format": "jpeg",
+      "quality": 90,
+      "webp_lossless": false,
+      "transparent": false,
+      "matte": "#ffffff",
+      "scale": 0.5,
+      "dpi": 0.0,
+      "max_kb": 0,
+      "embed_workflow": true,
+      "filename_prefix": "cratenode/smart/auto_placed"
+    }
+  },
+  "11": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "6",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "Auto Place heat map"
+    }
+  },
+  "12": {
+    "class_type": "CNQuietArea",
+    "inputs": {
+      "image": [
+        "1",
+        0
+      ],
+      "box_width": 800.0,
+      "box_height": 300.0,
+      "candidates": "9 positions",
+      "margin": 5.0,
+      "device": "gpu when free"
+    },
+    "_meta": {
+      "title": "Find Quiet Area (any image)"
+    }
+  },
+  "13": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "12",
+        5
+      ]
+    },
+    "_meta": {
+      "title": "Quiet Area heat map"
+    }
+  },
+  "14": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "7",
+        3
+      ]
+    },
+    "_meta": {
+      "title": "Readability overlay (before)"
+    }
+  },
+  "15": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "9",
+        3
+      ]
+    },
+    "_meta": {
+      "title": "Readability overlay (after)"
+    }
+  }
+}
