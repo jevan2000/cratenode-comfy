@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+# Local renders and run output
+out/
+spike/out/
+*.log
+# Never commit licensed material or private config
+*.icc
+*.icm
+config.local.json

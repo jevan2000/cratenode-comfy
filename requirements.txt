@@ -1,0 +1,2 @@
+skia-python>=144
+numpy

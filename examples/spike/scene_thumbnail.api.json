@@ -1,0 +1,189 @@
+{
+ "1": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "placeholder-background.jpg"
+  }
+ },
+ "2": {
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "placeholder-logo.png"
+  }
+ },
+ "3": {
+  "class_type": "CNSceneCanvas",
+  "inputs": {
+   "width": 1920,
+   "height": 1080,
+   "background": "#000000ff"
+  }
+ },
+ "4": {
+  "class_type": "CNSceneImage",
+  "inputs": {
+   "scene": [
+    "3",
+    0
+   ],
+   "image": [
+    "1",
+    0
+   ],
+   "mask_meaning": "LoadImage (1 = transparent)",
+   "mode": "fill",
+   "x": 0.0,
+   "y": 0.0,
+   "box_width": 0.0,
+   "box_height": 0.0,
+   "below_previous": false,
+   "gap": 0.0
+  }
+ },
+ "5": {
+  "class_type": "CNSceneText",
+  "inputs": {
+   "scene": [
+    "4",
+    0
+   ],
+   "below_previous": false,
+   "gap": 0.0,
+   "text": "FIND YOUR *PEACE* IN A LOUD WORLD",
+   "font_family": "Montserrat",
+   "weight": 700,
+   "bold_weight": 900,
+   "size": 120.0,
+   "color": "#ffffff",
+   "align": "center",
+   "valign": "top",
+   "case": "as typed",
+   "x": 96.0,
+   "y": 240.0,
+   "box_width": 1728.0,
+   "box_height": 0.0,
+   "auto_fit": false,
+   "min_size": 12.0,
+   "line_height": 1.05,
+   "letter_spacing": 0.0
+  }
+ },
+ "6": {
+  "class_type": "CNSceneShadow",
+  "inputs": {
+   "scene": [
+    "5",
+    0
+   ],
+   "dx": 0.0,
+   "dy": 10.0,
+   "blur": 30.0,
+   "shadow_color": "#000000",
+   "opacity": 0.7
+  }
+ },
+ "7": {
+  "class_type": "CNSceneText",
+  "inputs": {
+   "scene": [
+    "6",
+    0
+   ],
+   "below_previous": true,
+   "gap": 28.0,
+   "text": "Week 3  •  Series Name  •  01.11.2027",
+   "font_family": "Inter",
+   "weight": 400,
+   "bold_weight": 700,
+   "size": 44.0,
+   "color": "#d0d4dc",
+   "align": "center",
+   "valign": "top",
+   "case": "as typed",
+   "x": 96.0,
+   "y": 0.0,
+   "box_width": 1728.0,
+   "box_height": 0.0,
+   "auto_fit": false,
+   "min_size": 12.0,
+   "line_height": 1.2,
+   "letter_spacing": 1.0
+  }
+ },
+ "8": {
+  "class_type": "CNSceneImage",
+  "inputs": {
+   "scene": [
+    "7",
+    0
+   ],
+   "image": [
+    "2",
+    0
+   ],
+   "mask": [
+    "2",
+    1
+   ],
+   "mask_meaning": "LoadImage (1 = transparent)",
+   "mode": "fit",
+   "x": 1680.0,
+   "y": 840.0,
+   "box_width": 160.0,
+   "box_height": 160.0,
+   "below_previous": false,
+   "gap": 0.0
+  }
+ },
+ "9": {
+  "class_type": "CNSceneRender",
+  "inputs": {
+   "scene": [
+    "8",
+    0
+   ],
+   "scale": 1.0
+  }
+ },
+ "10": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "9",
+    0
+   ],
+   "filename_prefix": "cratenode-spike/scene"
+  }
+ },
+ "11": {
+  "class_type": "CNSceneSavePDF",
+  "inputs": {
+   "scene": [
+    "8",
+    0
+   ],
+   "filename_prefix": "cratenode-spike/scene",
+   "dpi": 300.0
+  }
+ },
+ "12": {
+  "class_type": "CNSceneRender",
+  "inputs": {
+   "scene": [
+    "8",
+    0
+   ],
+   "scale": 2.0
+  }
+ },
+ "13": {
+  "class_type": "SaveImage",
+  "inputs": {
+   "images": [
+    "12",
+    0
+   ],
+   "filename_prefix": "cratenode-spike/scene_2x"
+  }
+ }
+}
