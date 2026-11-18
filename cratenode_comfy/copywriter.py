@@ -55,10 +55,28 @@ def parse_variants(reply: str, max_chars: int = 0) -> tuple[list[str], list[str]
     return out, long_
 
 
+LOOPBACK = {"127.0.0.1", "localhost", "::1", "[::1]"}
+
+
+def check_host(host: str, allowed: list | None = None) -> None:
+    """Only this machine, unless the config lists other hosts (allowed_hosts), so a workflow
+    shared by someone else can't send text to a server of their choosing."""
+    from urllib.parse import urlparse
+
+    u = urlparse(host.strip())
+    if u.scheme not in ("http", "https") or not u.hostname:
+        raise ValueError(f"host must be an http(s) URL like http://127.0.0.1:11434, not {host!r}")
+    name = u.hostname.lower()
+    if name not in LOOPBACK and name not in {h.lower() for h in (allowed or [])}:
+        raise PermissionError(f"Copy Writer only talks to this machine by default; add {name!r} to "
+                              f"allowed_hosts in the CrateNode-Comfy config to use that server")
+
+
 def generate(host: str, model: str, prompt: str, system: str = SYSTEM, temperature: float = 0.7, seed: int = 0,
-             timeout: float = 120.0) -> str:
+             timeout: float = 120.0, allowed_hosts: list | None = None) -> str:
     if not model.strip():
         raise ValueError("choose an Ollama model (the name shown by 'ollama list')")
+    check_host(host, allowed_hosts)
     body = json.dumps({"model": model.strip(), "prompt": prompt, "system": system, "stream": False,
                        "options": {"temperature": temperature, "seed": int(seed)}}).encode()
     req = urllib.request.Request(host.rstrip("/") + "/api/generate", data=body, method="POST",
@@ -76,11 +94,12 @@ def generate(host: str, model: str, prompt: str, system: str = SYSTEM, temperatu
 
 
 def write(task: str, text: str, model: str, host: str = "http://127.0.0.1:11434", instructions: str = "",
-          count: int = 3, max_chars: int = 60, temperature: float = 0.7, seed: int = 0) -> tuple[list[str], str]:
+          count: int = 3, max_chars: int = 60, temperature: float = 0.7, seed: int = 0,
+          allowed_hosts: list | None = None) -> tuple[list[str], str]:
     """(variants, report). Variants longer than max_chars are dropped (reported); if none
     fit, the shortest ones are returned so the graph still runs."""
     reply = generate(host, model, build_prompt(task, text, instructions, count, max_chars),
-                     temperature=temperature, seed=seed)
+                     temperature=temperature, seed=seed, allowed_hosts=allowed_hosts)
     fit, long_ = parse_variants(reply, max_chars)
     variants = fit[:count] or sorted(long_, key=len)[:count]
     if not variants:

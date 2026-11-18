@@ -266,6 +266,11 @@ configure, so licensed material never has to live inside this package. Put a
 | `data_dir` | Your `templates/`, `brand/` and `color/` folders, and relative data-row files |
 | `cmyk_profile` | ICC output profile for print PDFs |
 | `gpu_gate` | URL answering `{"ok": true}` or `{"ok": false}` before GPU work (see Smart helpers) |
+| `data_roots` | Extra folders that Data Rows, Load Template and Brand Kit may read files from (always allowed: `data_dir`, ComfyUI's `input` folder, this package) |
+| `allowed_hosts` | Extra hosts Copy Writer may call (always allowed: this machine) |
+
+Workflows can be shared, so the pack only reads files from those folders and only
+sends text to this machine unless you allow more. See [SECURITY.md](SECURITY.md).
 
 ## Development
 

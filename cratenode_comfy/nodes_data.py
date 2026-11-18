@@ -13,7 +13,7 @@ from comfy_api.latest import IO, UI
 from . import render
 from . import template as tpl
 from .fonts import registry
-from .nodes_common import MASK_MEANINGS, ROOT, PaletteT, RowT, SceneT, mask_to_alpha
+from .nodes_common import MASK_MEANINGS, ROOT, PaletteT, RowT, SceneT, data_path, mask_to_alpha
 
 CAT = f"{ROOT}/Data"
 NONE = "(none)"
@@ -73,7 +73,7 @@ class CNLoadTemplate(IO.ComfyNode):
     @classmethod
     def _path(cls, template, path):
         if (path or "").strip():
-            return _config().resolve_data_path(path)
+            return data_path(path)
         if template == NONE:
             raise ValueError("pick a template or give a path")
         p = _templates().get(template)
@@ -85,7 +85,7 @@ class CNLoadTemplate(IO.ComfyNode):
     def fingerprint_inputs(cls, template, path):
         try:
             return _mtime(cls._path(template, path))
-        except ValueError:
+        except (ValueError, PermissionError):
             return None
 
     @classmethod
@@ -186,12 +186,15 @@ class CNDataRows(IO.ComfyNode):
 
     @classmethod
     def fingerprint_inputs(cls, file, text, format, start, limit):
-        return _mtime(_config().resolve_data_path(file)) if (file or "").strip() else None
+        try:
+            return _mtime(data_path(file)) if (file or "").strip() else None
+        except PermissionError:
+            return None
 
     @classmethod
     def execute(cls, file, text, format, start, limit):
         if (file or "").strip():
-            p = _config().resolve_data_path(file)
+            p = data_path(file)
             src = p.read_text(encoding="utf-8-sig")
             fmt = format if format != "auto" else ("json" if p.suffix.lower() == ".json" else "auto")
         else:

@@ -44,10 +44,10 @@ class Fonts(unittest.TestCase):
 
     def test_licence_warnings(self):
         face = REG.require("Inter")
-        scoped = replace(face, licence=fonts.Licence("scoped", ("LifePointe",)))
+        scoped = replace(face, licence=fonts.Licence("scoped", ("Client A",)))
         self.assertIsNone(REG.licence_warning(face, None))
-        self.assertIsNone(REG.licence_warning(scoped, "lifepointe"))
-        self.assertIn("LifePointe only", REG.licence_warning(scoped, "Cratefolio"))
+        self.assertIsNone(REG.licence_warning(scoped, "client a"))
+        self.assertIn("Client A only", REG.licence_warning(scoped, "Client B"))
 
 
 class Text(unittest.TestCase):

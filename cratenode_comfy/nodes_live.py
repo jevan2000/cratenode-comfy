@@ -55,11 +55,19 @@ def previewable() -> list[str]:
     return sorted(k for k in _KINDS if node_class(k) is not None)
 
 
+MAX_BODY = 64 * 1024  # bytes per preview request
+MAX_TEXT = 4000  # characters per text value
+
+
 def widget_kwargs(cls, widgets: dict) -> dict:
     """Only the node's own widget inputs, with simple values (no links, no unknown names)."""
     schema = cls.define_schema()
     names = {i.id for i in schema.inputs if isinstance(i, IO.WidgetInput)}
-    return {k: v for k, v in widgets.items() if k in names and isinstance(v, (str, int, float, bool))}
+    out = {k: v for k, v in widgets.items() if k in names and isinstance(v, (str, int, float, bool))}
+    for k, v in out.items():
+        if isinstance(v, str) and len(v) > MAX_TEXT:
+            raise ValueError(f"{k} is too long for a live preview ({len(v)} characters; up to {MAX_TEXT})")
+    return out
 
 
 def _sample() -> sc.Scene:
@@ -160,8 +168,12 @@ def add_routes() -> None:
     async def _preview(request):
         import asyncio
 
+        if (request.content_length or 0) > MAX_BODY:
+            return web.json_response({"error": "preview request too large"}, status=413)
         try:
-            data = await request.json()
+            data = json.loads((await request.content.read(MAX_BODY + 1))[:MAX_BODY + 1])
+            if not isinstance(data, dict):
+                raise ValueError("expected a JSON object")
             png, note = await asyncio.get_running_loop().run_in_executor(
                 None, render_cached, str(data.get("type", "")), dict(data.get("widgets") or {}))
         except Exception as e:  # a half-typed colour, a missing font, ...

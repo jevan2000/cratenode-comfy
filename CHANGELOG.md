@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Security hardening** (from a review of the whole repository and its history):
+  Data Rows, Load Template and Brand Kit read files only from the data folder,
+  ComfyUI's input folder, the package and `data_roots`; Copy Writer calls only this
+  machine unless `allowed_hosts` lists another; the live-preview endpoint limits
+  request size and text length; the CI job gets a read-only token. A client name in
+  a test is replaced with a made-up one. New `SECURITY.md`.
 - **Image to Scene** brings generations back into designs: with a scene connected,
   the image goes under the design, on top of it, or replaces it while keeping the
   canvas (size, safe area, frame rate), fitted by fill / fit / stretch; a batch can

@@ -12,7 +12,7 @@ from . import color as col
 from . import devices, render
 from . import scene as sc
 from .fonts import registry
-from .nodes_common import MASK_MEANINGS, ROOT, PaletteT, SceneT, mask_to_alpha
+from .nodes_common import MASK_MEANINGS, ROOT, PaletteT, SceneT, data_path, mask_to_alpha
 
 CAT = f"{ROOT}/Colour"
 NONE = "(none)"
@@ -100,7 +100,7 @@ class CNBrandKit(IO.ComfyNode):
     @classmethod
     def _path(cls, kit, path):
         if (path or "").strip():
-            return registry().config.resolve_data_path(path)
+            return data_path(path)
         if kit == NONE:
             raise ValueError("pick a brand kit or give a path")
         p = _brands().get(kit)

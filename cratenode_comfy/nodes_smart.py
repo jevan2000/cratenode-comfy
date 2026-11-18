@@ -199,7 +199,7 @@ class CNCopyWriter(IO.ComfyNode):
     @classmethod
     def execute(cls, task, text, instructions, model, host, count, max_chars, temperature, seed):
         variants, report = copywriter.write(task, text, model, host, instructions, count, max_chars, temperature,
-                                            seed)
+                                            seed, registry().config.allowed_hosts)
         return IO.NodeOutput(variants[0], variants, report)
 
 

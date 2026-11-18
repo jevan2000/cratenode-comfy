@@ -64,6 +64,18 @@ def color(s: str) -> tuple:
 QUIET = threading.local()  # live previews set QUIET.on: no warnings in the log for them
 
 
+def data_path(p: str):
+    """A file path from a workflow, checked to be inside the allowed folders (the data
+    folder, this package, ComfyUI's input folder, data_roots in the config)."""
+    try:
+        import folder_paths
+
+        extra = [folder_paths.get_input_directory()]
+    except Exception:
+        extra = []
+    return registry().config.resolve_data_path(p, extra)
+
+
 def font_warnings(items) -> list[str]:
     """Licence warnings for the fonts the text in ``items`` uses (never an error).
     Scoped licences are checked against ``licence_scope`` in the config."""

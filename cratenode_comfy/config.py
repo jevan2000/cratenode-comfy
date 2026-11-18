@@ -41,6 +41,8 @@ class Config:
     gpu_gate: str = ""  # optional URL answering {"ok": true|false}; see devices.py
     cmyk_profile: str = ""  # ICC output profile for print PDFs (never bundled)
     licence_scope: str = ""  # who the designs are for; scoped font licences are checked against it
+    data_roots: list[Path] = field(default_factory=list)  # extra folders Data Rows / Load Template may read
+    allowed_hosts: list[str] = field(default_factory=list)  # extra hosts Copy Writer may call (loopback always)
     source: str = "defaults"
 
     @staticmethod
@@ -55,6 +57,8 @@ class Config:
             gpu_gate=str(d.get("gpu_gate", "") or ""),
             cmyk_profile=str(d.get("cmyk_profile", "") or ""),
             licence_scope=str(d.get("licence_scope", "") or ""),
+            data_roots=paths("data_roots"),
+            allowed_hosts=[str(h).strip().lower() for h in d.get("allowed_hosts", []) if str(h).strip()],
             source=source,
         )
 
@@ -68,12 +72,33 @@ class Config:
         own = [self.data_dir / "brand"] if self.data_dir else []
         return own + [BUNDLED_BRANDS]
 
-    def resolve_data_path(self, p: str) -> Path:
-        """A path as given, or relative to data_dir when it is relative and data_dir is set."""
+    def resolve_data_path(self, p: str, extra_roots: list | None = None) -> Path:
+        """A file a workflow asked to read: as given, or relative to data_dir. Only files
+        inside the data folder, the package, ComfyUI's input folder (``extra_roots``) or
+        ``data_roots`` from the config are allowed, so a workflow shared by someone else
+        can't read files elsewhere on the machine."""
         path = Path(p.strip().strip('"'))
         if not path.is_absolute() and self.data_dir and (self.data_dir / path).exists():
-            return self.data_dir / path
+            path = self.data_dir / path
+        roots = self.read_roots(extra_roots)
+        real = Path(os.path.realpath(path))
+        if not any(_inside(real, r) for r in roots):
+            raise PermissionError(
+                f"{path} is outside the folders workflows may read ({', '.join(str(r) for r in roots)}). "
+                f"Move the file there, or add its folder to data_roots in the CrateNode-Comfy config.")
         return path
+
+    def read_roots(self, extra_roots: list | None = None) -> list[Path]:
+        roots = ([self.data_dir] if self.data_dir else []) + [PACKAGE_ROOT] + list(self.data_roots)
+        return [Path(os.path.realpath(r)) for r in roots + list(extra_roots or [])]
+
+
+def _inside(path: Path, root: Path) -> bool:
+    try:
+        path.relative_to(root)
+        return True
+    except ValueError:
+        return False
 
 
 def load() -> Config:
