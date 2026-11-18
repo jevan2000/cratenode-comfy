@@ -155,7 +155,7 @@ class _Converter:
         if res is None:
             return
         res = res.get_object()
-        for name, x in (res.get("/XObject") or {}).items():
+        for x in (res.get("/XObject") or {}).values():
             x = x.get_object()
             if not self._once(x):
                 continue
@@ -165,7 +165,7 @@ class _Converter:
                 self.content(x, pdf)
                 self.group(x)
                 self.resources(x.get("/Resources"), pdf)
-        for name, p in (res.get("/Pattern") or {}).items():
+        for p in (res.get("/Pattern") or {}).values():
             p = p.get_object()
             if not self._once(p):
                 continue
@@ -174,7 +174,7 @@ class _Converter:
             else:
                 self.content(p, pdf)
                 self.resources(p.get("/Resources"), pdf)
-        for name, s in (res.get("/Shading") or {}).items():
+        for s in (res.get("/Shading") or {}).values():
             self.shading(s)
         # Soft masks (/ExtGState /SMask /G) stay in RGB: they only carry transparency.
 

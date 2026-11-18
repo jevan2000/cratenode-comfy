@@ -1,0 +1,1385 @@
+{
+ "last_node_id": 24,
+ "last_link_id": 23,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "LoadImage",
+   "pos": [
+    0,
+    0.0
+   ],
+   "size": [
+    340,
+    398
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "IMAGE",
+     "type": "IMAGE",
+     "links": [
+      3
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "MASK",
+     "type": "MASK",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "LoadImage"
+   },
+   "widgets_values": [
+    "placeholder-background.jpg",
+    "image"
+   ]
+  },
+  {
+   "id": 2,
+   "type": "CNLinearGradient",
+   "pos": [
+    0,
+    438.0
+   ],
+   "size": [
+    340,
+    284
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "links": [
+      1
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNLinearGradient"
+   },
+   "widgets_values": [
+    35.0,
+    "#2a1650",
+    0.0,
+    "#5a1a44",
+    1.0,
+    "",
+    0.5,
+    "",
+    0.75
+   ]
+  },
+  {
+   "id": 3,
+   "type": "CNCanvas",
+   "pos": [
+    400,
+    0.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 9,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "background_fill",
+     "type": "CN_FILL",
+     "link": 1
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      2
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNCanvas"
+   },
+   "widgets_values": [
+    "YouTube thumbnail / HD 1920x1080",
+    false,
+    1920,
+    1080,
+    "#000000",
+    5.0
+   ]
+  },
+  {
+   "id": 4,
+   "type": "CNTextBox",
+   "pos": [
+    800,
+    0.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 10,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 2
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      4
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "CLIP",
+    "Montserrat",
+    "",
+    900,
+    900,
+    false,
+    300.0,
+    "#ffffff",
+    "left",
+    "top",
+    "as typed",
+    96.0,
+    80.0,
+    900.0,
+    0.0,
+    false,
+    12.0,
+    1.05,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 5,
+   "type": "CNAddImage",
+   "pos": [
+    1200,
+    0.0
+   ],
+   "size": [
+    340,
+    352
+   ],
+   "flags": {},
+   "order": 11,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": 3
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 4
+    },
+    {
+     "name": "mask",
+     "type": "MASK",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      5
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAddImage"
+   },
+   "widgets_values": [
+    "LoadImage (1 = transparent)",
+    "fill",
+    96.0,
+    80.0,
+    900.0,
+    360.0,
+    0,
+    false,
+    0.0,
+    ""
+   ]
+  },
+  {
+   "id": 6,
+   "type": "CNClipToPrevious",
+   "pos": [
+    1600,
+    0.0
+   ],
+   "size": [
+    340,
+    92
+   ],
+   "flags": {},
+   "order": 12,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 5
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      6
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNClipToPrevious"
+   },
+   "widgets_values": [
+    true
+   ]
+  },
+  {
+   "id": 7,
+   "type": "CNOutline",
+   "pos": [
+    2000,
+    0.0
+   ],
+   "size": [
+    340,
+    164
+   ],
+   "flags": {},
+   "order": 13,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 6
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      7
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNOutline"
+   },
+   "widgets_values": [
+    "whole scene",
+    6.0,
+    "#ffffff",
+    1.0
+   ]
+  },
+  {
+   "id": 8,
+   "type": "CNRadialGradient",
+   "pos": [
+    0,
+    762.0
+   ],
+   "size": [
+    340,
+    260
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "links": [
+      8
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNRadialGradient"
+   },
+   "widgets_values": [
+    "#fff6c2",
+    0.0,
+    "#ff9d2e",
+    1.0,
+    "",
+    0.5,
+    "",
+    0.75
+   ]
+  },
+  {
+   "id": 9,
+   "type": "CNShape",
+   "pos": [
+    2400,
+    0.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 14,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 7
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": 8
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      9
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "star",
+    1400.0,
+    90.0,
+    360.0,
+    360.0,
+    "#ffd34d",
+    "",
+    0.0,
+    0.0,
+    5,
+    0.45,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 10,
+   "type": "CNOuterGlow",
+   "pos": [
+    2800,
+    0.0
+   ],
+   "size": [
+    340,
+    188
+   ],
+   "flags": {},
+   "order": 15,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 9
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      10
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNOuterGlow"
+   },
+   "widgets_values": [
+    "last item",
+    60.0,
+    4.0,
+    "#ffb347",
+    0.9
+   ]
+  },
+  {
+   "id": 11,
+   "type": "CNLinearGradient",
+   "pos": [
+    0,
+    1062.0
+   ],
+   "size": [
+    340,
+    284
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "links": [
+      11
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNLinearGradient"
+   },
+   "widgets_values": [
+    0.0,
+    "#5ee7df",
+    0.0,
+    "#b490ca",
+    1.0,
+    "",
+    0.5,
+    "",
+    0.75
+   ]
+  },
+  {
+   "id": 12,
+   "type": "CNTextBox",
+   "pos": [
+    3200,
+    0.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 16,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 10
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": 11
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      12
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "Shapes, *effects* & type",
+    "Montserrat",
+    "",
+    700,
+    900,
+    false,
+    110.0,
+    "#ffffff",
+    "left",
+    "top",
+    "as typed",
+    96.0,
+    520.0,
+    1728.0,
+    0.0,
+    false,
+    12.0,
+    1.05,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 13,
+   "type": "CNOutline",
+   "pos": [
+    3600,
+    0.0
+   ],
+   "size": [
+    340,
+    164
+   ],
+   "flags": {},
+   "order": 17,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 12
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      13
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNOutline"
+   },
+   "widgets_values": [
+    "last item",
+    3.0,
+    "#14092a",
+    1.0
+   ]
+  },
+  {
+   "id": 14,
+   "type": "CNDropShadow",
+   "pos": [
+    4000,
+    0.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 18,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 13
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      14
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNDropShadow"
+   },
+   "widgets_values": [
+    "last item",
+    0.0,
+    12.0,
+    24.0,
+    "#000000",
+    0.6
+   ]
+  },
+  {
+   "id": 15,
+   "type": "CNShape",
+   "pos": [
+    0,
+    1386.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      15
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "ellipse",
+    0.0,
+    0.0,
+    140.0,
+    140.0,
+    "#ff6b6b",
+    "",
+    0.0,
+    0.0,
+    5,
+    0.5,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 16,
+   "type": "CNShape",
+   "pos": [
+    0,
+    1876.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      16
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "rectangle",
+    0.0,
+    0.0,
+    140.0,
+    140.0,
+    "#ffd93d",
+    "",
+    0.0,
+    28.0,
+    5,
+    0.5,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 17,
+   "type": "CNShape",
+   "pos": [
+    0,
+    2366.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 6,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      17
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "polygon",
+    0.0,
+    0.0,
+    150.0,
+    150.0,
+    "#6bcB77",
+    "",
+    0.0,
+    0.0,
+    6,
+    0.5,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 18,
+   "type": "CNShape",
+   "pos": [
+    0,
+    2856.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 7,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      18
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "star",
+    0.0,
+    0.0,
+    150.0,
+    150.0,
+    "#4d96ff",
+    "",
+    0.0,
+    0.0,
+    7,
+    0.55,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 19,
+   "type": "CNShape",
+   "pos": [
+    0,
+    3346.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 8,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      19
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "line",
+    0.0,
+    0.0,
+    160.0,
+    0.0,
+    "#ffffff",
+    "#ffffff",
+    10.0,
+    0.0,
+    5,
+    0.5,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 20,
+   "type": "CNGrid",
+   "pos": [
+    4400,
+    0.0
+   ],
+   "size": [
+    340,
+    506
+   ],
+   "flags": {},
+   "order": 19,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 14
+    },
+    {
+     "name": "part_1",
+     "type": "CN_SCENE",
+     "link": 15
+    },
+    {
+     "name": "part_2",
+     "type": "CN_SCENE",
+     "link": 16
+    },
+    {
+     "name": "part_3",
+     "type": "CN_SCENE",
+     "link": 17
+    },
+    {
+     "name": "part_4",
+     "type": "CN_SCENE",
+     "link": 18
+    },
+    {
+     "name": "part_5",
+     "type": "CN_SCENE",
+     "link": 19
+    },
+    {
+     "name": "part_6",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_7",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_8",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_9",
+     "type": "CN_SCENE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      20,
+      22
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNGrid"
+   },
+   "widgets_values": [
+    5,
+    24.0,
+    0.0,
+    "center",
+    "middle",
+    "custom",
+    96.0,
+    760.0,
+    1728.0,
+    220.0
+   ]
+  },
+  {
+   "id": 21,
+   "type": "CNRender",
+   "pos": [
+    4800,
+    0.0
+   ],
+   "size": [
+    340,
+    114
+   ],
+   "flags": {},
+   "order": 20,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 20
+    }
+   ],
+   "outputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "links": [
+      21
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNRender"
+   },
+   "widgets_values": [
+    1.0
+   ]
+  },
+  {
+   "id": 22,
+   "type": "SaveImage",
+   "pos": [
+    5200,
+    0.0
+   ],
+   "size": [
+    340,
+    352
+   ],
+   "flags": {},
+   "order": 22,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 21
+    }
+   ],
+   "outputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "SaveImage"
+   },
+   "widgets_values": [
+    "cratenode/showcase"
+   ]
+  },
+  {
+   "id": 23,
+   "type": "CNRender",
+   "pos": [
+    4800,
+    154.0
+   ],
+   "size": [
+    340,
+    114
+   ],
+   "flags": {},
+   "order": 21,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 22
+    }
+   ],
+   "outputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "links": [
+      23
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNRender"
+   },
+   "widgets_values": [
+    2.0
+   ]
+  },
+  {
+   "id": 24,
+   "type": "SaveImage",
+   "pos": [
+    5200,
+    392.0
+   ],
+   "size": [
+    340,
+    352
+   ],
+   "flags": {},
+   "order": 23,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 23
+    }
+   ],
+   "outputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "SaveImage"
+   },
+   "widgets_values": [
+    "cratenode/showcase_2x"
+   ]
+  }
+ ],
+ "links": [
+  [
+   1,
+   2,
+   0,
+   3,
+   0,
+   "CN_FILL"
+  ],
+  [
+   2,
+   3,
+   0,
+   4,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   3,
+   1,
+   0,
+   5,
+   0,
+   "IMAGE"
+  ],
+  [
+   4,
+   4,
+   0,
+   5,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   5,
+   5,
+   0,
+   6,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   6,
+   6,
+   0,
+   7,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   7,
+   7,
+   0,
+   9,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   8,
+   8,
+   0,
+   9,
+   1,
+   "CN_FILL"
+  ],
+  [
+   9,
+   9,
+   0,
+   10,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   10,
+   10,
+   0,
+   12,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   11,
+   11,
+   0,
+   12,
+   1,
+   "CN_FILL"
+  ],
+  [
+   12,
+   12,
+   0,
+   13,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   13,
+   13,
+   0,
+   14,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   14,
+   14,
+   0,
+   20,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   15,
+   15,
+   0,
+   20,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   16,
+   16,
+   0,
+   20,
+   2,
+   "CN_SCENE"
+  ],
+  [
+   17,
+   17,
+   0,
+   20,
+   3,
+   "CN_SCENE"
+  ],
+  [
+   18,
+   18,
+   0,
+   20,
+   4,
+   "CN_SCENE"
+  ],
+  [
+   19,
+   19,
+   0,
+   20,
+   5,
+   "CN_SCENE"
+  ],
+  [
+   20,
+   20,
+   0,
+   21,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   21,
+   21,
+   0,
+   22,
+   0,
+   "IMAGE"
+  ],
+  [
+   22,
+   20,
+   0,
+   23,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   23,
+   23,
+   0,
+   24,
+   0,
+   "IMAGE"
+  ]
+ ],
+ "groups": [],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.75,
+   "offset": [
+    40,
+    40
+   ]
+  }
+ },
+ "version": 0.4
+}

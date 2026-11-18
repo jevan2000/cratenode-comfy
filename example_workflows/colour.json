@@ -1,0 +1,1373 @@
+{
+ "last_node_id": 19,
+ "last_link_id": 29,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "LoadImage",
+   "pos": [
+    0,
+    0.0
+   ],
+   "size": [
+    340,
+    398
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "IMAGE",
+     "type": "IMAGE",
+     "links": [
+      1
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "MASK",
+     "type": "MASK",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "LoadImage"
+   },
+   "widgets_values": [
+    "placeholder-background.jpg",
+    "image"
+   ]
+  },
+  {
+   "id": 2,
+   "type": "CNPaletteFromImage",
+   "pos": [
+    400,
+    0.0
+   ],
+   "size": [
+    340,
+    256
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": 1
+    },
+    {
+     "name": "mask",
+     "type": "MASK",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "links": null
+    },
+    {
+     "name": "swatches",
+     "type": "IMAGE",
+     "links": [
+      2
+     ],
+     "slot_index": 1
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPaletteFromImage"
+   },
+   "widgets_values": [
+    "LoadImage (1 = transparent)",
+    5,
+    "by share",
+    8.0,
+    0,
+    "cpu"
+   ],
+   "title": "Palette from Image"
+  },
+  {
+   "id": 3,
+   "type": "PreviewImage",
+   "pos": [
+    800,
+    0.0
+   ],
+   "size": [
+    340,
+    328
+   ],
+   "flags": {},
+   "order": 7,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 2
+    }
+   ],
+   "outputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "PreviewImage"
+   },
+   "widgets_values": [],
+   "title": "Photo palette"
+  },
+  {
+   "id": 4,
+   "type": "CNBrandKit",
+   "pos": [
+    0,
+    438.0
+   ],
+   "size": [
+    340,
+    316
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "links": [
+      4,
+      5,
+      6,
+      26,
+      28
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "heading_font",
+     "type": "STRING",
+     "links": [
+      11
+     ],
+     "slot_index": 1
+    },
+    {
+     "name": "heading_weight",
+     "type": "INT",
+     "links": [
+      12
+     ],
+     "slot_index": 2
+    },
+    {
+     "name": "body_font",
+     "type": "STRING",
+     "links": [
+      14
+     ],
+     "slot_index": 3
+    },
+    {
+     "name": "body_weight",
+     "type": "INT",
+     "links": [
+      15
+     ],
+     "slot_index": 4
+    },
+    {
+     "name": "logo",
+     "type": "IMAGE",
+     "links": [
+      20
+     ],
+     "slot_index": 5
+    },
+    {
+     "name": "logo_alpha",
+     "type": "MASK",
+     "links": [
+      21
+     ],
+     "slot_index": 6
+    },
+    {
+     "name": "swatches",
+     "type": "IMAGE",
+     "links": [
+      3
+     ],
+     "slot_index": 7
+    },
+    {
+     "name": "notes",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNBrandKit"
+   },
+   "widgets_values": [
+    "example",
+    "",
+    "primary"
+   ],
+   "title": "Brand Kit"
+  },
+  {
+   "id": 5,
+   "type": "PreviewImage",
+   "pos": [
+    400,
+    296.0
+   ],
+   "size": [
+    340,
+    328
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 3
+    }
+   ],
+   "outputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "PreviewImage"
+   },
+   "widgets_values": [],
+   "title": "Brand swatches"
+  },
+  {
+   "id": 6,
+   "type": "CNPickColor",
+   "pos": [
+    400,
+    664.0
+   ],
+   "size": [
+    340,
+    162
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": 4
+    }
+   ],
+   "outputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "links": [
+      8
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPickColor"
+   },
+   "widgets_values": [
+    "by name or number",
+    "secondary",
+    "#000000"
+   ],
+   "title": "Pick Color: secondary"
+  },
+  {
+   "id": 7,
+   "type": "CNPickColor",
+   "pos": [
+    400,
+    866.0
+   ],
+   "size": [
+    340,
+    162
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": 5
+    }
+   ],
+   "outputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "links": [
+      7,
+      9
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPickColor"
+   },
+   "widgets_values": [
+    "by name or number",
+    "primary",
+    "#000000"
+   ],
+   "title": "Pick Color: primary"
+  },
+  {
+   "id": 8,
+   "type": "CNPickColor",
+   "pos": [
+    800,
+    368.0
+   ],
+   "size": [
+    340,
+    162
+   ],
+   "flags": {},
+   "order": 8,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": 6
+    },
+    {
+     "name": "against",
+     "type": "STRING",
+     "widget": {
+      "name": "against"
+     },
+     "link": 7
+    }
+   ],
+   "outputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "links": [
+      13,
+      16,
+      25
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPickColor"
+   },
+   "widgets_values": [
+    "best contrast against",
+    "",
+    "#000000"
+   ],
+   "title": "Pick Color: best contrast against"
+  },
+  {
+   "id": 9,
+   "type": "CNCanvas",
+   "pos": [
+    800,
+    570.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 9,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "background",
+     "type": "STRING",
+     "widget": {
+      "name": "background"
+     },
+     "link": 8
+    },
+    {
+     "name": "background_fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      10
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNCanvas"
+   },
+   "widgets_values": [
+    "Instagram square 1080x1080",
+    false,
+    1080,
+    1080,
+    "#000000",
+    6.0
+   ]
+  },
+  {
+   "id": 10,
+   "type": "CNShape",
+   "pos": [
+    1200,
+    0.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 10,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "widget": {
+      "name": "color"
+     },
+     "link": 9
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 10
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      17
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "rectangle",
+    0.0,
+    300.0,
+    1080.0,
+    480.0,
+    "#ffffff",
+    "",
+    0.0,
+    0.0,
+    5,
+    0.5,
+    0.0,
+    false,
+    0.0,
+    ""
+   ],
+   "title": "Primary band"
+  },
+  {
+   "id": 11,
+   "type": "CNTextBox",
+   "pos": [
+    1200,
+    490.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 11,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "font_override",
+     "type": "STRING",
+     "widget": {
+      "name": "font_override"
+     },
+     "link": 11
+    },
+    {
+     "name": "weight",
+     "type": "INT",
+     "widget": {
+      "name": "weight"
+     },
+     "link": 12
+    },
+    {
+     "name": "color",
+     "type": "STRING",
+     "widget": {
+      "name": "color"
+     },
+     "link": 13
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      18
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "BUILT FROM A *BRAND KIT*",
+    "Montserrat",
+    "",
+    700,
+    900,
+    false,
+    104.0,
+    "#ffffff",
+    "center",
+    "top",
+    "as typed",
+    0.0,
+    0.0,
+    900.0,
+    0.0,
+    false,
+    12.0,
+    1.05,
+    0.0,
+    false,
+    24.0,
+    "title"
+   ]
+  },
+  {
+   "id": 12,
+   "type": "CNTextBox",
+   "pos": [
+    1200,
+    1148.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 12,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "font_override",
+     "type": "STRING",
+     "widget": {
+      "name": "font_override"
+     },
+     "link": 14
+    },
+    {
+     "name": "weight",
+     "type": "INT",
+     "widget": {
+      "name": "weight"
+     },
+     "link": 15
+    },
+    {
+     "name": "color",
+     "type": "STRING",
+     "widget": {
+      "name": "color"
+     },
+     "link": 16
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      19
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "Palette, fonts and logo from one JSON file",
+    "Inter",
+    "",
+    700,
+    700,
+    false,
+    40.0,
+    "#ffffff",
+    "center",
+    "top",
+    "as typed",
+    0.0,
+    0.0,
+    900.0,
+    0.0,
+    false,
+    12.0,
+    1.2,
+    1.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 13,
+   "type": "CNStack",
+   "pos": [
+    1600,
+    0.0
+   ],
+   "size": [
+    340,
+    416
+   ],
+   "flags": {},
+   "order": 14,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 17
+    },
+    {
+     "name": "part_1",
+     "type": "CN_SCENE",
+     "link": 18
+    },
+    {
+     "name": "part_2",
+     "type": "CN_SCENE",
+     "link": 19
+    },
+    {
+     "name": "part_3",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_4",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_5",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_6",
+     "type": "CN_SCENE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      23
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNStack"
+   },
+   "widgets_values": [
+    "vertical",
+    28.0,
+    "center",
+    "middle",
+    "custom",
+    90.0,
+    300.0,
+    900.0,
+    480.0
+   ]
+  },
+  {
+   "id": 14,
+   "type": "CNAddImage",
+   "pos": [
+    400,
+    1068.0
+   ],
+   "size": [
+    340,
+    352
+   ],
+   "flags": {},
+   "order": 6,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": 20
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "mask",
+     "type": "MASK",
+     "link": 21
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      22
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAddImage"
+   },
+   "widgets_values": [
+    "alpha (1 = opaque)",
+    "fit",
+    0.0,
+    0.0,
+    140.0,
+    140.0,
+    0,
+    false,
+    0.0,
+    ""
+   ]
+  },
+  {
+   "id": 15,
+   "type": "CNPlace",
+   "pos": [
+    2000,
+    0.0
+   ],
+   "size": [
+    340,
+    258
+   ],
+   "flags": {},
+   "order": 15,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "part",
+     "type": "CN_SCENE",
+     "link": 22
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 23
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      24,
+      27
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPlace"
+   },
+   "widgets_values": [
+    "right",
+    "bottom",
+    "safe area",
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "id": 16,
+   "type": "CNExport",
+   "pos": [
+    2400,
+    0.0
+   ],
+   "size": [
+    340,
+    658
+   ],
+   "flags": {},
+   "order": 16,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 24
+    },
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": null
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "link": null
+    },
+    {
+     "name": "row",
+     "type": "CN_ROW",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "paths",
+     "type": "STRING",
+     "links": null
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNExport"
+   },
+   "widgets_values": [
+    "alpha (1 = opaque)",
+    "png",
+    92,
+    false,
+    true,
+    "#ffffff",
+    1.0,
+    0.0,
+    0,
+    true,
+    "cratenode/colour/brand_card"
+   ]
+  },
+  {
+   "id": 17,
+   "type": "CNContrast",
+   "pos": [
+    1200,
+    1806.0
+   ],
+   "size": [
+    340,
+    162
+   ],
+   "flags": {},
+   "order": 13,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "text_color",
+     "type": "STRING",
+     "widget": {
+      "name": "text_color"
+     },
+     "link": 25
+    },
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": 26
+    }
+   ],
+   "outputs": [
+    {
+     "name": "ratio",
+     "type": "FLOAT",
+     "links": null
+    },
+    {
+     "name": "grade",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNContrast"
+   },
+   "widgets_values": [
+    "#ffffff",
+    "primary",
+    true
+   ],
+   "title": "Title on primary: contrast"
+  },
+  {
+   "id": 18,
+   "type": "CNRecolor",
+   "pos": [
+    2400,
+    698.0
+   ],
+   "size": [
+    340,
+    138
+   ],
+   "flags": {},
+   "order": 17,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 27
+    },
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": 28
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      29
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNRecolor"
+   },
+   "widgets_values": [
+    "primary -> accent\nlight -> dark",
+    0.02
+   ],
+   "title": "Variant: primary becomes accent"
+  },
+  {
+   "id": 19,
+   "type": "CNExport",
+   "pos": [
+    2800,
+    0.0
+   ],
+   "size": [
+    340,
+    658
+   ],
+   "flags": {},
+   "order": 18,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 29
+    },
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": null
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "link": null
+    },
+    {
+     "name": "row",
+     "type": "CN_ROW",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "paths",
+     "type": "STRING",
+     "links": null
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNExport"
+   },
+   "widgets_values": [
+    "alpha (1 = opaque)",
+    "png",
+    92,
+    false,
+    true,
+    "#ffffff",
+    1.0,
+    0.0,
+    0,
+    true,
+    "cratenode/colour/brand_card_accent"
+   ]
+  }
+ ],
+ "links": [
+  [
+   1,
+   1,
+   0,
+   2,
+   0,
+   "IMAGE"
+  ],
+  [
+   2,
+   2,
+   1,
+   3,
+   0,
+   "IMAGE"
+  ],
+  [
+   3,
+   4,
+   7,
+   5,
+   0,
+   "IMAGE"
+  ],
+  [
+   4,
+   4,
+   0,
+   6,
+   0,
+   "CN_PALETTE"
+  ],
+  [
+   5,
+   4,
+   0,
+   7,
+   0,
+   "CN_PALETTE"
+  ],
+  [
+   6,
+   4,
+   0,
+   8,
+   0,
+   "CN_PALETTE"
+  ],
+  [
+   7,
+   7,
+   0,
+   8,
+   1,
+   "STRING"
+  ],
+  [
+   8,
+   6,
+   0,
+   9,
+   0,
+   "STRING"
+  ],
+  [
+   9,
+   7,
+   0,
+   10,
+   0,
+   "STRING"
+  ],
+  [
+   10,
+   9,
+   0,
+   10,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   11,
+   4,
+   1,
+   11,
+   0,
+   "STRING"
+  ],
+  [
+   12,
+   4,
+   2,
+   11,
+   1,
+   "INT"
+  ],
+  [
+   13,
+   8,
+   0,
+   11,
+   2,
+   "STRING"
+  ],
+  [
+   14,
+   4,
+   3,
+   12,
+   0,
+   "STRING"
+  ],
+  [
+   15,
+   4,
+   4,
+   12,
+   1,
+   "INT"
+  ],
+  [
+   16,
+   8,
+   0,
+   12,
+   2,
+   "STRING"
+  ],
+  [
+   17,
+   10,
+   0,
+   13,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   18,
+   11,
+   0,
+   13,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   19,
+   12,
+   0,
+   13,
+   2,
+   "CN_SCENE"
+  ],
+  [
+   20,
+   4,
+   5,
+   14,
+   0,
+   "IMAGE"
+  ],
+  [
+   21,
+   4,
+   6,
+   14,
+   2,
+   "MASK"
+  ],
+  [
+   22,
+   14,
+   0,
+   15,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   23,
+   13,
+   0,
+   15,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   24,
+   15,
+   0,
+   16,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   25,
+   8,
+   0,
+   17,
+   0,
+   "STRING"
+  ],
+  [
+   26,
+   4,
+   0,
+   17,
+   1,
+   "CN_PALETTE"
+  ],
+  [
+   27,
+   15,
+   0,
+   18,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   28,
+   4,
+   0,
+   18,
+   1,
+   "CN_PALETTE"
+  ],
+  [
+   29,
+   18,
+   0,
+   19,
+   0,
+   "CN_SCENE"
+  ]
+ ],
+ "groups": [],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.75,
+   "offset": [
+    40,
+    40
+   ]
+  }
+ },
+ "version": 0.4
+}

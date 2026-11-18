@@ -1,9 +1,9 @@
 """Run an API-format workflow on a ComfyUI server headless and download its outputs.
 
-    python tools/run_workflow.py examples/spike/scene_thumbnail.api.json
+    python tools/run_workflow.py api_examples/thumbnail.api.json
         [--server http://127.0.0.1:8195] [--out out/run] [--set 5.text="A longer title"]
 
-- Files named by LoadImage / LoadVideo nodes are uploaded from examples/assets first.
+- Files named by LoadImage / LoadVideo nodes are uploaded from api_examples/assets first.
 - ``--set NODE.INPUT=VALUE`` overrides an input (JSON values allowed: 120, true, "text").
 - Outputs (images, and text such as saved PDF paths) are saved under --out, with
   ``run.json`` describing the run (prompt id, seconds, files).
@@ -24,7 +24,7 @@ import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "examples" / "assets"
+ASSETS = ROOT / "api_examples" / "assets"
 
 
 def http(method: str, url: str, data: bytes | None = None, headers: dict | None = None, timeout=60):
@@ -33,7 +33,8 @@ def http(method: str, url: str, data: bytes | None = None, headers: dict | None 
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return r.read()
     except urllib.error.HTTPError as e:  # ComfyUI explains a rejected workflow in the body
-        raise SystemExit(f"{method} {url} -> HTTP {e.code}\n{e.read().decode('utf-8', 'replace')[:4000]}")
+        body = e.read().decode("utf-8", "replace")[:4000]
+        raise SystemExit(f"{method} {url} -> HTTP {e.code}\n{body}") from None
 
 
 def upload(server: str, path: Path) -> None:

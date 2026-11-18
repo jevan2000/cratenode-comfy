@@ -60,6 +60,36 @@ def color(s: str) -> tuple:
     return render.parse_color(s)
 
 
+def font_warnings(items) -> list[str]:
+    """Licence warnings for the fonts the text in ``items`` uses (never an error).
+    Scoped licences are checked against ``licence_scope`` in the config."""
+    import logging
+
+    from .template import walk
+
+    reg = registry()
+    scope = reg.config.licence_scope or None
+    out = []
+    for it in walk(tuple(items)):
+        if not isinstance(it, sc.TextItem):
+            continue
+        sp = it.spec
+        weights = {sp.weight} | ({sp.bold_weight} if "*" in sp.text else set())
+        for w in sorted(weights):
+            face = reg.resolve(sp.family, w, sp.italic)
+            msg = reg.licence_warning(face, scope) if face is not None else None
+            if msg and msg not in out:
+                out.append(msg)
+    for m in out:
+        logging.warning("CrateNode-Comfy font licence: %s", m)
+    return out
+
+
+def with_warnings(report: str, items) -> str:
+    w = font_warnings(items)
+    return report + "".join(f"\nFONT LICENCE: {m}" for m in w)
+
+
 def new_part(scene):
     """The scene to add to, or a fresh transparent part (for Stack, Place, Grid)."""
     return scene if scene is not None else sc.Scene(1920, 1080)

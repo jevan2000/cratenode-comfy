@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from comfy_api.latest import IO
+from comfy_api.latest import IO, UI
 
 from . import scene as sc
-from .nodes_common import ROOT, FillT, SceneT, flow, flow_inputs, new_part, slot, text_inputs, text_spec
+from .nodes_common import (ROOT, FillT, SceneT, flow, flow_inputs, font_warnings, new_part, slot, text_inputs,
+                           text_spec)
 
 
 class CNTextBox(IO.ComfyNode):
@@ -27,6 +28,9 @@ class CNTextBox(IO.ComfyNode):
         item = sc.TextItem(text_spec(kw), fill=fill if isinstance(fill, sc.Gradient) else None, flow=fl, name=name)
         out = scene.add(item)
         sc.resolve(out)  # fail here (e.g. missing font) rather than at render
+        warnings = font_warnings((item,))
+        if warnings:
+            return IO.NodeOutput(out, ui=UI.PreviewText("FONT LICENCE: " + "\nFONT LICENCE: ".join(warnings)))
         return IO.NodeOutput(out)
 
 

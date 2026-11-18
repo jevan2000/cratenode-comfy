@@ -1,21 +1,41 @@
 # CrateNode-Comfy
 
 A design suite for ComfyUI: typography, layout, shapes, effects, templates,
-data-driven batches, motion and print output, as custom nodes that sit next to
-your image-generation nodes.
+data-driven batches, colour and brand kits, motion and video, smart layout helpers
+and CMYK print output. 49 custom nodes that sit next to your image-generation
+nodes, so one graph can generate a background, set the type, and export a
+thumbnail, a video or a print-ready PDF.
 
-**Status: early development.** See [docs/plan.md](docs/plan.md).
+![Example workflows](docs/gallery.jpg)
 
-## Install (development)
+**Version 1.0.0.** Every node is listed in [docs/nodes.md](docs/nodes.md); changes
+are in [CHANGELOG.md](CHANGELOG.md).
 
-Copy this folder into `ComfyUI/custom_nodes/cratenode-comfy` and install the
-requirements into ComfyUI's Python:
+## Install
 
-```
-python -m pip install -r requirements.txt
-```
+1. Clone into ComfyUI's `custom_nodes` folder and install the requirements into
+   ComfyUI's Python:
 
-Restart ComfyUI. The nodes appear under **CrateNode-Comfy** in the node menu.
+   ```
+   cd ComfyUI/custom_nodes
+   git clone https://github.com/jevan2000/cratenode-comfy
+   python -m pip install -r cratenode-comfy/requirements.txt
+   ```
+
+2. For video, install [ffmpeg](https://ffmpeg.org) on PATH (or set `CRATENODE_FFMPEG`).
+3. Restart ComfyUI. The nodes are under **CrateNode-Comfy** in the node menu.
+
+On Windows, skia's text layout needs `icudtl.dat` next to the base `python.exe`;
+`tools/install_sandbox.ps1` copies it (and installs into a given ComfyUI). If text
+nodes fail with "SkIcuLoader datafile missing", copy `icudtl.dat` from
+`site-packages` there.
+
+## Quick start
+
+Open **Templates** in ComfyUI (Workflow → Browse Templates) and pick
+**cratenode-comfy**: the twelve example workflows below open ready to run. Their
+Load Image / Load Video nodes use the placeholder files in `api_examples/assets/`;
+copy those into ComfyUI's `input` folder (the install script does) or pick your own.
 
 ## How it works
 
@@ -30,6 +50,8 @@ add to it; left empty, they make a *part* for Stack, Place or Grid, which positi
 parts by their size so you never compute coordinates.
 
 ## Nodes
+
+Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 
 | Group | Node | What it does |
 |---|---|---|
@@ -176,10 +198,12 @@ on its own has a transparent background, and Save Image drops transparency.
 
 ## Examples
 
-`examples/*.api.json` can be dragged into ComfyUI, or run headless:
+Each example exists twice: in `example_workflows/` (UI format, with a thumbnail;
+ComfyUI lists them under Templates) and in `api_examples/` (API format, for
+scripts). Run one headless:
 
 ```
-python tools/run_workflow.py examples/thumbnail.api.json --server http://127.0.0.1:8188
+python tools/run_workflow.py api_examples/thumbnail.api.json --server http://127.0.0.1:8188
 ```
 
 - **thumbnail**: background image, headline with shadow and subtitle in a Stack, logo placed bottom-right.
@@ -197,9 +221,43 @@ python tools/run_workflow.py examples/thumbnail.api.json --server http://127.0.0
 
 ## Configuration
 
-Fonts, private templates and brand kits are read from folders you configure, so
-licensed material never has to live inside this package. See
-`cratenode_comfy/config.py`.
+Fonts, private templates, brand kits and colour profiles are read from places you
+configure, so licensed material never has to live inside this package. Put a
+`config.local.json` in the package folder (it is git-ignored), or point
+`CRATENODE_COMFY_CONFIG` at a JSON file:
+
+```json
+{
+  "font_folders": ["D:/fonts"],
+  "font_catalogs": ["D:/fonts/catalog.json"],
+  "system_fonts": true,
+  "data_dir": "D:/design-data",
+  "cmyk_profile": "D:/design-data/color/printer.icc",
+  "licence_scope": "Client Name",
+  "gpu_gate": ""
+}
+```
+
+| Key | What it does |
+|---|---|
+| `font_folders` | Fonts to offer first (then the bundled OFL fonts, then system fonts) |
+| `font_catalogs` | Licence data: `free`, `scoped` (licensed for named clients), `restricted`, `unknown`. Text Box and every save node warn (never fail) when a font is used outside its licence |
+| `licence_scope` | Who the designs are for; checked against scoped licences |
+| `data_dir` | Your `templates/`, `brand/` and `color/` folders, and relative data-row files |
+| `cmyk_profile` | ICC output profile for print PDFs |
+| `gpu_gate` | URL answering `{"ok": true}` or `{"ok": false}` before GPU work (see Smart helpers) |
+
+## Development
+
+```
+python -m pip install -r requirements.txt -r requirements-dev.txt
+python -m unittest discover -s tests -v
+```
+
+Tools: `run_workflow.py` (run an API workflow headless), `api_to_ui.py` (API →
+UI workflows), `make_thumbnails.py`, `gen_node_docs.py` (docs/nodes.md from a
+running ComfyUI), `make_placeholders.py` (the example assets),
+`install_sandbox.ps1`.
 
 ## Licence
 

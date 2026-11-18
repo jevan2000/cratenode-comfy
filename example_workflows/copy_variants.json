@@ -1,0 +1,335 @@
+{
+ "last_node_id": 5,
+ "last_link_id": 4,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "CNCopyWriter",
+   "pos": [
+    0,
+    0.0
+   ],
+   "size": [
+    340,
+    352
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "text",
+     "type": "STRING",
+     "links": null
+    },
+    {
+     "name": "variants",
+     "type": "STRING",
+     "links": [
+      1
+     ],
+     "shape": 6,
+     "slot_index": 1
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNCopyWriter"
+   },
+   "widgets_values": [
+    "headlines",
+    "A Sunday series about finding rest and quiet in a busy, noisy life.",
+    "Warm and simple. No questions.",
+    "",
+    "http://127.0.0.1:11434",
+    3,
+    36,
+    0.7,
+    1,
+    "fixed"
+   ],
+   "title": "Copy Writer: set 'model' first"
+  },
+  {
+   "id": 2,
+   "type": "CNCanvas",
+   "pos": [
+    0,
+    392.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "background_fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      3
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNCanvas"
+   },
+   "widgets_values": [
+    "YouTube thumbnail / HD 1920x1080",
+    false,
+    1920,
+    1080,
+    "#000000",
+    5.0
+   ]
+  },
+  {
+   "id": 3,
+   "type": "CNTextBox",
+   "pos": [
+    400,
+    0.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "text",
+     "type": "STRING",
+     "widget": {
+      "name": "text"
+     },
+     "link": 1
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      2
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "Your *headline* here",
+    "Montserrat",
+    "",
+    700,
+    900,
+    false,
+    110.0,
+    "#ffffff",
+    "center",
+    "middle",
+    "as typed",
+    0.0,
+    0.0,
+    1500.0,
+    520.0,
+    true,
+    12.0,
+    1.05,
+    0.0,
+    false,
+    24.0,
+    ""
+   ],
+   "title": "Text Box: one design per variant"
+  },
+  {
+   "id": 4,
+   "type": "CNPlace",
+   "pos": [
+    800,
+    0.0
+   ],
+   "size": [
+    340,
+    258
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "part",
+     "type": "CN_SCENE",
+     "link": 2
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 3
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      4
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPlace"
+   },
+   "widgets_values": [
+    "center",
+    "middle",
+    "safe area",
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "id": 5,
+   "type": "CNExport",
+   "pos": [
+    1200,
+    0.0
+   ],
+   "size": [
+    340,
+    658
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 4
+    },
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": null
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "link": null
+    },
+    {
+     "name": "row",
+     "type": "CN_ROW",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "paths",
+     "type": "STRING",
+     "links": null
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNExport"
+   },
+   "widgets_values": [
+    "alpha (1 = opaque)",
+    "jpeg",
+    90,
+    false,
+    false,
+    "#ffffff",
+    0.5,
+    0.0,
+    0,
+    true,
+    "cratenode/smart/copy_variant"
+   ]
+  }
+ ],
+ "links": [
+  [
+   1,
+   1,
+   1,
+   3,
+   0,
+   "STRING"
+  ],
+  [
+   2,
+   3,
+   0,
+   4,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   3,
+   2,
+   0,
+   4,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   4,
+   4,
+   0,
+   5,
+   0,
+   "CN_SCENE"
+  ]
+ ],
+ "groups": [],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.75,
+   "offset": [
+    40,
+    40
+   ]
+  }
+ },
+ "version": 0.4
+}

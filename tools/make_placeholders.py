@@ -2,10 +2,10 @@
 
     python tools/make_placeholders.py
 
-- examples/assets/placeholder-background.jpg: a 1920x1080 "photo" (soft gradient,
+- api_examples/assets/placeholder-background.jpg: a 1920x1080 "photo" (soft gradient,
   light blobs and grain), standing in for an AI-generated background.
-- examples/assets/placeholder-logo.png: a 600x600 transparent logo mark.
-- examples/assets/placeholder-busy.jpg: a bright 1920x1080 picture, busy on the left
+- api_examples/assets/placeholder-logo.png: a 600x600 transparent logo mark.
+- api_examples/assets/placeholder-busy.jpg: a bright 1920x1080 picture, busy on the left
   and calm on the right, for the smart helpers.
 
 Both are made here, so they are free to publish with the pack.
@@ -25,7 +25,7 @@ sys.path.insert(0, str(ROOT))
 
 from cratenode_comfy import fonts, scene, text  # noqa: E402
 
-OUT = ROOT / "examples" / "assets"
+OUT = ROOT / "api_examples" / "assets"
 
 
 def background(w=1920, h=1080, seed=7) -> np.ndarray:

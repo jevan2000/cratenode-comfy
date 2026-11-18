@@ -21,4 +21,12 @@ if (-not (Test-Path $icu)) {
   Copy-Item (Join-Path $site "icudtl.dat") $icu
   "copied icudtl.dat to $base"
 }
+# The example workflows' Load Image / Load Video nodes read these from ComfyUI's input folder.
+$inputDir = Join-Path $ComfyRoot "input"  # not $input: that name is reserved in PowerShell
+if (Test-Path $inputDir) {
+  Get-ChildItem (Join-Path $src "api_examples\assets") -File | ForEach-Object {
+    $t = Join-Path $inputDir $_.Name
+    if (-not (Test-Path $t)) { Copy-Item $_.FullName $t }
+  }
+}
 "installed to $dst"

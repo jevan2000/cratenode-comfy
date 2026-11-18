@@ -9,7 +9,7 @@ from comfy_api.latest import IO, UI
 from . import export, render
 from . import template as tpl
 from . import scene as sc
-from .nodes_common import MASK_MEANINGS, ROOT, RowT, SceneT, mask_to_alpha
+from .nodes_common import MASK_MEANINGS, ROOT, RowT, SceneT, mask_to_alpha, with_warnings
 
 CAT = f"{ROOT}/Output"
 NAME_TIP = ("{column} takes a value from the data row; also {date}, {time}, {index} (row number), "
@@ -56,7 +56,7 @@ class CNSavePDF(IO.ComfyNode):
             filename_prefix, folder_paths.get_output_directory(), scene.width, scene.height)
         path = os.path.join(out_dir, f"{base}_{counter:05}_.pdf")
         sc.to_pdf(scene, path, dpi)
-        return IO.NodeOutput(path, ui=UI.PreviewText(f"saved {os.path.basename(path)}"))
+        return IO.NodeOutput(path, ui=UI.PreviewText(with_warnings(f"saved {os.path.basename(path)}", scene.items)))
 
 
 class CNExport(IO.ComfyNode):
@@ -124,7 +124,10 @@ class CNExport(IO.ComfyNode):
             q = f", quality {enc.quality}" if enc.quality is not None else ""
             warn = "" if enc.fits else f" — over the {max_kb} KB limit"
             lines.append(f"{name}: {rgba.shape[1]}x{rgba.shape[0]}, {enc.kb:.0f} KB{q}{warn}")
-        return IO.NodeOutput("\n".join(paths), "\n".join(lines), ui=UI.SavedImages(results))
+        report = "\n".join(lines)
+        if scene is not None:
+            report = with_warnings(report, scene.items)
+        return IO.NodeOutput("\n".join(paths), report, ui=UI.SavedImages(results))
 
     @classmethod
     def _metadata(cls, fmt, probe):

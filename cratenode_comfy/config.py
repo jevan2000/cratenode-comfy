@@ -40,6 +40,7 @@ class Config:
     data_dir: Path | None = None
     gpu_gate: str = ""  # optional URL answering {"ok": true|false}; see devices.py
     cmyk_profile: str = ""  # ICC output profile for print PDFs (never bundled)
+    licence_scope: str = ""  # who the designs are for; scoped font licences are checked against it
     source: str = "defaults"
 
     @staticmethod
@@ -53,6 +54,7 @@ class Config:
             data_dir=Path(data_dir) if data_dir else None,
             gpu_gate=str(d.get("gpu_gate", "") or ""),
             cmyk_profile=str(d.get("cmyk_profile", "") or ""),
+            licence_scope=str(d.get("licence_scope", "") or ""),
             source=source,
         )
 

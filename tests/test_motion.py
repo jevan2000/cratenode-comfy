@@ -170,7 +170,7 @@ class Files(unittest.TestCase):
         s, frames = self.clip()
         want = {"mp4 (H.264)": ("h264", "yuv420p"), "mov (ProRes 4444, alpha)": ("prores", "yuva444p12le"),
                 "webm (VP9, alpha)": ("vp9", "yuv420p"), "gif": ("gif", "bgra")}
-        for fmt, (codec, pix) in want.items():
+        for fmt, (codec, _pix) in want.items():
             p = str(Path(self.dir) / f"clip{video.FORMATS[fmt]}")
             n = video.encode(p, iter(frames), 64, 48, 10, fmt)
             self.assertEqual(n, 10)

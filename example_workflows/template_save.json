@@ -1,0 +1,772 @@
+{
+ "last_node_id": 13,
+ "last_link_id": 13,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "LoadImage",
+   "pos": [
+    0,
+    0.0
+   ],
+   "size": [
+    340,
+    398
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "IMAGE",
+     "type": "IMAGE",
+     "links": [
+      1
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "MASK",
+     "type": "MASK",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "LoadImage"
+   },
+   "widgets_values": [
+    "placeholder-background.jpg",
+    "image"
+   ]
+  },
+  {
+   "id": 2,
+   "type": "LoadImage",
+   "pos": [
+    0,
+    438.0
+   ],
+   "size": [
+    340,
+    398
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "IMAGE",
+     "type": "IMAGE",
+     "links": [
+      7
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "MASK",
+     "type": "MASK",
+     "links": [
+      8
+     ],
+     "slot_index": 1
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "LoadImage"
+   },
+   "widgets_values": [
+    "placeholder-logo.png",
+    "image"
+   ]
+  },
+  {
+   "id": 3,
+   "type": "CNCanvas",
+   "pos": [
+    0,
+    876.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "background_fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      2
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNCanvas"
+   },
+   "widgets_values": [
+    "YouTube thumbnail / HD 1920x1080",
+    false,
+    1920,
+    1080,
+    "#000000",
+    5.0
+   ]
+  },
+  {
+   "id": 4,
+   "type": "CNAddImage",
+   "pos": [
+    400,
+    0.0
+   ],
+   "size": [
+    340,
+    352
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": 1
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 2
+    },
+    {
+     "name": "mask",
+     "type": "MASK",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      4
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAddImage"
+   },
+   "widgets_values": [
+    "LoadImage (1 = transparent)",
+    "fill",
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0,
+    false,
+    0.0,
+    "background"
+   ]
+  },
+  {
+   "id": 5,
+   "type": "CNTextBox",
+   "pos": [
+    0,
+    1128.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      3
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "FIND YOUR *PEACE* IN A LOUD WORLD",
+    "Montserrat",
+    "",
+    700,
+    900,
+    false,
+    120.0,
+    "#ffffff",
+    "center",
+    "top",
+    "as typed",
+    0.0,
+    0.0,
+    1600.0,
+    0.0,
+    false,
+    12.0,
+    1.05,
+    0.0,
+    false,
+    24.0,
+    "title"
+   ]
+  },
+  {
+   "id": 6,
+   "type": "CNDropShadow",
+   "pos": [
+    400,
+    392.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 6,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 3
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      5
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNDropShadow"
+   },
+   "widgets_values": [
+    "last item",
+    0.0,
+    10.0,
+    30.0,
+    "#000000",
+    0.7
+   ]
+  },
+  {
+   "id": 7,
+   "type": "CNTextBox",
+   "pos": [
+    0,
+    1786.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      6
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "{series}  •  Week {week}",
+    "Inter",
+    "",
+    400,
+    700,
+    false,
+    44.0,
+    "#d0d4dc",
+    "center",
+    "top",
+    "as typed",
+    0.0,
+    0.0,
+    1600.0,
+    0.0,
+    false,
+    12.0,
+    1.2,
+    1.0,
+    false,
+    24.0,
+    "subtitle"
+   ]
+  },
+  {
+   "id": 8,
+   "type": "CNStack",
+   "pos": [
+    800,
+    0.0
+   ],
+   "size": [
+    340,
+    416
+   ],
+   "flags": {},
+   "order": 8,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 4
+    },
+    {
+     "name": "part_1",
+     "type": "CN_SCENE",
+     "link": 5
+    },
+    {
+     "name": "part_2",
+     "type": "CN_SCENE",
+     "link": 6
+    },
+    {
+     "name": "part_3",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_4",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_5",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_6",
+     "type": "CN_SCENE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      10
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNStack"
+   },
+   "widgets_values": [
+    "vertical",
+    28.0,
+    "center",
+    "middle",
+    "safe area",
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "id": 9,
+   "type": "CNAddImage",
+   "pos": [
+    400,
+    644.0
+   ],
+   "size": [
+    340,
+    352
+   ],
+   "flags": {},
+   "order": 7,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": 7
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "mask",
+     "type": "MASK",
+     "link": 8
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      9
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAddImage"
+   },
+   "widgets_values": [
+    "LoadImage (1 = transparent)",
+    "fit",
+    0.0,
+    0.0,
+    160.0,
+    160.0,
+    0,
+    false,
+    0.0,
+    "logo"
+   ]
+  },
+  {
+   "id": 10,
+   "type": "CNPlace",
+   "pos": [
+    1200,
+    0.0
+   ],
+   "size": [
+    340,
+    258
+   ],
+   "flags": {},
+   "order": 9,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "part",
+     "type": "CN_SCENE",
+     "link": 9
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 10
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      11,
+      12
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPlace"
+   },
+   "widgets_values": [
+    "right",
+    "bottom",
+    "safe area",
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "id": 11,
+   "type": "CNSaveTemplate",
+   "pos": [
+    1600,
+    0.0
+   ],
+   "size": [
+    340,
+    164
+   ],
+   "flags": {},
+   "order": 10,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 11
+    }
+   ],
+   "outputs": [
+    {
+     "name": "path",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNSaveTemplate"
+   },
+   "widgets_values": [
+    "thumbnail",
+    "1920x1080 thumbnail: background, title (wraps and pushes the subtitle down), subtitle with {series} and {week}, logo bottom-right.",
+    "ComfyUI output",
+    true
+   ],
+   "title": "Save as Template"
+  },
+  {
+   "id": 12,
+   "type": "CNRender",
+   "pos": [
+    1600,
+    204.0
+   ],
+   "size": [
+    340,
+    114
+   ],
+   "flags": {},
+   "order": 11,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 12
+    }
+   ],
+   "outputs": [
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "links": [
+      13
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNRender"
+   },
+   "widgets_values": [
+    0.5
+   ]
+  },
+  {
+   "id": 13,
+   "type": "PreviewImage",
+   "pos": [
+    2000,
+    0.0
+   ],
+   "size": [
+    340,
+    328
+   ],
+   "flags": {},
+   "order": 12,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 13
+    }
+   ],
+   "outputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "PreviewImage"
+   },
+   "widgets_values": []
+  }
+ ],
+ "links": [
+  [
+   1,
+   1,
+   0,
+   4,
+   0,
+   "IMAGE"
+  ],
+  [
+   2,
+   3,
+   0,
+   4,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   3,
+   5,
+   0,
+   6,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   4,
+   4,
+   0,
+   8,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   5,
+   6,
+   0,
+   8,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   6,
+   7,
+   0,
+   8,
+   2,
+   "CN_SCENE"
+  ],
+  [
+   7,
+   2,
+   0,
+   9,
+   0,
+   "IMAGE"
+  ],
+  [
+   8,
+   2,
+   1,
+   9,
+   2,
+   "MASK"
+  ],
+  [
+   9,
+   9,
+   0,
+   10,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   10,
+   8,
+   0,
+   10,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   11,
+   10,
+   0,
+   11,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   12,
+   10,
+   0,
+   12,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   13,
+   12,
+   0,
+   13,
+   0,
+   "IMAGE"
+  ]
+ ],
+ "groups": [],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.75,
+   "offset": [
+    40,
+    40
+   ]
+  }
+ },
+ "version": 0.4
+}

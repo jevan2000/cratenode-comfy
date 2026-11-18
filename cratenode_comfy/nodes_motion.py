@@ -14,7 +14,7 @@ from . import motion, render, video
 from . import scene as sc
 from . import template as tpl
 from .nodes_common import (MASK_MEANINGS, ROOT, RowT, SceneT, apply_to_target, flow, flow_inputs, mask_to_alpha,
-                           new_part, slot, target_input)
+                           new_part, slot, target_input, with_warnings)
 
 CAT = f"{ROOT}/Motion"
 EASINGS = list(motion.EASINGS)
@@ -291,6 +291,8 @@ class CNSaveVideo(IO.ComfyNode):
         n = video.encode(path, frames, w, h, fps, format, quality, matte, aud)
         size = os.path.getsize(path) / 1e6
         report = f"{name}: {n} frames, {w}x{h} @ {fps:g} fps, {n / fps:.2f} s, {size:.1f} MB"
+        if scene is not None:
+            report = with_warnings(report, scene.items)
         logging.info("CrateNode-Comfy Save Video: %s", report)
         res = UI.SavedResult(name, subfolder, IO.FolderType.output)
         if format == "gif":

@@ -9,7 +9,7 @@ import numpy as np
 from comfy_api.latest import IO, UI
 
 from . import color as col
-from . import copywriter, devices, render, smart
+from . import copywriter, devices, smart
 from . import layout as lay
 from . import scene as sc
 from .fonts import registry

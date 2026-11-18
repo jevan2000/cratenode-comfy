@@ -1,0 +1,25 @@
+[project]
+name = "cratenode-comfy"
+description = "A design suite for ComfyUI: typography, layout, shapes, effects, templates and data batches, colour and brand kits, motion and video, smart layout helpers and CMYK print PDFs."
+version = "1.0.0"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = ["skia-python>=144", "numpy", "pypdf>=5"]
+
+[project.urls]
+Repository = "https://github.com/jevan2000/cratenode-comfy"
+Documentation = "https://github.com/jevan2000/cratenode-comfy/blob/main/docs/nodes.md"
+
+[tool.comfy]
+# Set PublisherId before publishing to the Comfy Registry (registry.comfy.org).
+PublisherId = ""
+DisplayName = "CrateNode-Comfy"
+Icon = ""
+includes = []
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B"]
+ignore = ["E501", "E741", "E731", "B905"]

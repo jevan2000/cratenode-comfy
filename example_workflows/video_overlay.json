@@ -1,0 +1,776 @@
+{
+ "last_node_id": 13,
+ "last_link_id": 13,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "LoadVideo",
+   "pos": [
+    0,
+    0.0
+   ],
+   "size": [
+    340,
+    116
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "VIDEO",
+     "type": "VIDEO",
+     "links": [
+      1
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "LoadVideo"
+   },
+   "widgets_values": [
+    "placeholder-clip.mp4",
+    "image"
+   ]
+  },
+  {
+   "id": 2,
+   "type": "GetVideoComponents",
+   "pos": [
+    400,
+    0.0
+   ],
+   "size": [
+    340,
+    156
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "video",
+     "type": "VIDEO",
+     "link": 1
+    }
+   ],
+   "outputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "links": [
+      2
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "audio",
+     "type": "AUDIO",
+     "links": [
+      11
+     ],
+     "slot_index": 1
+    },
+    {
+     "name": "fps",
+     "type": "FLOAT",
+     "links": [
+      3
+     ],
+     "slot_index": 2
+    },
+    {
+     "name": "bit_depth",
+     "type": "COMBO",
+     "links": null
+    },
+    {
+     "name": "color_space",
+     "type": "COMBO",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "GetVideoComponents"
+   },
+   "widgets_values": []
+  },
+  {
+   "id": 3,
+   "type": "CNVideoToScene",
+   "pos": [
+    800,
+    0.0
+   ],
+   "size": [
+    340,
+    138
+   ],
+   "flags": {},
+   "order": 7,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "frames",
+     "type": "IMAGE",
+     "link": 2
+    },
+    {
+     "name": "fps",
+     "type": "FLOAT",
+     "widget": {
+      "name": "fps"
+     },
+     "link": 3
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      4
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "seconds",
+     "type": "FLOAT",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNVideoToScene"
+   },
+   "widgets_values": [
+    30.0,
+    6.0
+   ]
+  },
+  {
+   "id": 4,
+   "type": "CNTextBox",
+   "pos": [
+    0,
+    156.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      12
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "Speaker Name",
+    "Montserrat",
+    "",
+    800,
+    900,
+    false,
+    60.0,
+    "#ffffff",
+    "left",
+    "top",
+    "as typed",
+    0.0,
+    0.0,
+    900.0,
+    0.0,
+    false,
+    12.0,
+    1.05,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 5,
+   "type": "CNShape",
+   "pos": [
+    0,
+    814.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      6
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "rectangle",
+    0.0,
+    0.0,
+    220.0,
+    8.0,
+    "#f2b134",
+    "",
+    0.0,
+    0.0,
+    5,
+    0.5,
+    0.0,
+    false,
+    0.0,
+    ""
+   ],
+   "title": "Accent bar"
+  },
+  {
+   "id": 6,
+   "type": "CNTextBox",
+   "pos": [
+    0,
+    1304.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      13
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "Title or topic goes here",
+    "Inter",
+    "",
+    400,
+    900,
+    false,
+    34.0,
+    "#e6ecf5",
+    "left",
+    "top",
+    "as typed",
+    0.0,
+    0.0,
+    900.0,
+    0.0,
+    false,
+    12.0,
+    1.05,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 7,
+   "type": "CNStack",
+   "pos": [
+    1200,
+    0.0
+   ],
+   "size": [
+    340,
+    416
+   ],
+   "flags": {},
+   "order": 8,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 4
+    },
+    {
+     "name": "part_1",
+     "type": "CN_SCENE",
+     "link": 5
+    },
+    {
+     "name": "part_2",
+     "type": "CN_SCENE",
+     "link": 6
+    },
+    {
+     "name": "part_3",
+     "type": "CN_SCENE",
+     "link": 7
+    },
+    {
+     "name": "part_4",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_5",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_6",
+     "type": "CN_SCENE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      8
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNStack"
+   },
+   "widgets_values": [
+    "vertical",
+    14.0,
+    "left",
+    "bottom",
+    "safe area",
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "id": 8,
+   "type": "CNAnimateIn",
+   "pos": [
+    1600,
+    0.0
+   ],
+   "size": [
+    340,
+    236
+   ],
+   "flags": {},
+   "order": 9,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 8
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      9
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAnimateIn"
+   },
+   "widgets_values": [
+    "last item",
+    "slide from left",
+    0.3,
+    0.6,
+    "ease out",
+    120.0,
+    0.15
+   ],
+   "title": "Lower third slides in"
+  },
+  {
+   "id": 9,
+   "type": "CNAnimateOut",
+   "pos": [
+    2000,
+    0.0
+   ],
+   "size": [
+    340,
+    236
+   ],
+   "flags": {},
+   "order": 10,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 9
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      10
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAnimateOut"
+   },
+   "widgets_values": [
+    "last item",
+    "fade",
+    3.0,
+    0.5,
+    "ease in",
+    80.0,
+    0.0
+   ]
+  },
+  {
+   "id": 11,
+   "type": "CNSaveVideo",
+   "pos": [
+    2400,
+    0.0
+   ],
+   "size": [
+    340,
+    300
+   ],
+   "flags": {},
+   "order": 11,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 10
+    },
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": null
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "link": null
+    },
+    {
+     "name": "audio",
+     "type": "AUDIO",
+     "link": 11
+    },
+    {
+     "name": "row",
+     "type": "CN_ROW",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "path",
+     "type": "STRING",
+     "links": null
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNSaveVideo"
+   },
+   "widgets_values": [
+    "mp4 (H.264)",
+    0.0,
+    80,
+    1.0,
+    "#000000",
+    "cratenode/motion/lower_third"
+   ],
+   "title": "MP4 with the clip's audio"
+  },
+  {
+   "id": 12,
+   "type": "CNDropShadow",
+   "pos": [
+    400,
+    196.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 12
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      5
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNDropShadow"
+   },
+   "widgets_values": [
+    "last item",
+    0.0,
+    4.0,
+    16.0,
+    "#000000",
+    0.6
+   ],
+   "title": "Shadow on the part"
+  },
+  {
+   "id": 13,
+   "type": "CNDropShadow",
+   "pos": [
+    400,
+    448.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 6,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 13
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      7
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNDropShadow"
+   },
+   "widgets_values": [
+    "last item",
+    0.0,
+    4.0,
+    16.0,
+    "#000000",
+    0.6
+   ],
+   "title": "Shadow on the part"
+  }
+ ],
+ "links": [
+  [
+   1,
+   1,
+   0,
+   2,
+   0,
+   "VIDEO"
+  ],
+  [
+   2,
+   2,
+   0,
+   3,
+   0,
+   "IMAGE"
+  ],
+  [
+   3,
+   2,
+   2,
+   3,
+   1,
+   "FLOAT"
+  ],
+  [
+   4,
+   3,
+   0,
+   7,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   5,
+   12,
+   0,
+   7,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   6,
+   5,
+   0,
+   7,
+   2,
+   "CN_SCENE"
+  ],
+  [
+   7,
+   13,
+   0,
+   7,
+   3,
+   "CN_SCENE"
+  ],
+  [
+   8,
+   7,
+   0,
+   8,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   9,
+   8,
+   0,
+   9,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   10,
+   9,
+   0,
+   11,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   11,
+   2,
+   1,
+   11,
+   3,
+   "AUDIO"
+  ],
+  [
+   12,
+   4,
+   0,
+   12,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   13,
+   6,
+   0,
+   13,
+   0,
+   "CN_SCENE"
+  ]
+ ],
+ "groups": [],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.75,
+   "offset": [
+    40,
+    40
+   ]
+  }
+ },
+ "version": 0.4
+}

@@ -10,11 +10,11 @@ from comfy_api.latest import IO, UI
 
 from . import cmyk as cmk
 from . import color as col
-from . import printpdf, render
+from . import printpdf
 from . import scene as sc
 from . import template as tpl
 from .fonts import registry
-from .nodes_common import ROOT, PaletteT, RowT, SceneT
+from .nodes_common import ROOT, PaletteT, RowT, SceneT, with_warnings
 
 CAT = f"{ROOT}/Print"
 CONFIG = "(config)"
@@ -110,6 +110,7 @@ class CNSavePrintPDF(IO.ComfyNode):
                   f"{mode}; CMYK via {info['profile']}; converted {conv}")
         if not info["calibrated"]:
             report += "\nWARNING: no CMYK profile, colours are uncalibrated. Set cmyk_profile in the config."
+        report = with_warnings(report, scene.items)
         return IO.NodeOutput(path, report, ui=UI.PreviewText(report))
 
 
