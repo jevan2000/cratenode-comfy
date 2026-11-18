@@ -7,6 +7,7 @@ bottom-right. Both use the same font registry, text layout and skia drawing, so
 only the data model differs.
 
 - Workflows: `examples/spike/scene_thumbnail.api.json`, `examples/spike/image_thumbnail.api.json`
+  (removed in step 2 with the spike nodes; see commit `c634ace`)
 - Run headless: `python tools/run_workflow.py examples/spike/scene_thumbnail.api.json`
 - Measured on 2026-11-17 in the sandbox ComfyUI (v0.42.5), CPU only.
 
