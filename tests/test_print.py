@@ -204,9 +204,11 @@ class PrintPDF(unittest.TestCase):
         page = pypdfium2.PdfDocument(p)[0].render(scale=1).to_numpy()[:, :, :3].astype(np.float32) / 255
         ref = sc.render(design(), 1.0, REG)[:, :, :3]
         self.assertEqual(page.shape, ref.shape)
-        la, lb = page.mean(2), ref.mean(2)
-        corr = np.corrcoef(la.ravel(), lb.ravel())[0, 1]
-        self.assertGreater(corr, 0.9, "same picture (colours differ: CMYK)")
+        # Same picture: compare edges, not brightness. The previewer turns CMYK back into RGB
+        # its own way (without a profile), so tones differ; shapes and positions must not.
+        edges = lambda a: np.abs(np.diff(a.mean(2), axis=0)).ravel()  # noqa: E731
+        corr = np.corrcoef(edges(page), edges(ref))[0, 1]
+        self.assertGreater(corr, 0.9, "same shapes in the same places")
 
 
 if __name__ == "__main__":
