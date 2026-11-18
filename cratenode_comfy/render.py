@@ -20,15 +20,26 @@ def parse_color(s: str, alpha: float = 1.0) -> tuple[float, float, float, float]
 
 
 def surface(width: int, height: int) -> skia.Surface:
-    info = skia.ImageInfo.Make(width, height, skia.kRGBA_8888_ColorType, skia.kUnpremul_AlphaType)
+    # Premultiplied: skia's native format; blending on an unpremul surface is several times slower.
+    info = skia.ImageInfo.Make(width, height, skia.kRGBA_8888_ColorType, skia.kPremul_AlphaType)
     return skia.Surface.MakeRaster(info)
+
+
+def snapshot_u8(surf: skia.Surface) -> np.ndarray:
+    """H x W x 4 uint8, straight alpha. Read premultiplied (a plain copy) and un-premultiply
+    only the partly transparent pixels in numpy: skia's unpremul readback is ~70x slower."""
+    arr = surf.makeImageSnapshot().toarray(colorType=skia.kRGBA_8888_ColorType, alphaType=skia.kPremul_AlphaType)
+    a = arr[:, :, 3]
+    part = (a > 0) & (a < 255)
+    if part.any():
+        af = a[part].astype(np.float32)[:, None]
+        arr[part, :3] = np.clip(np.round(arr[part, :3].astype(np.float32) * 255.0 / af), 0, 255).astype(np.uint8)
+    return arr
 
 
 def to_rgba(surf: skia.Surface) -> np.ndarray:
     """H x W x 4 float32 straight alpha, 0..1."""
-    img = surf.makeImageSnapshot()
-    arr = img.toarray(colorType=skia.kRGBA_8888_ColorType, alphaType=skia.kUnpremul_AlphaType)
-    return arr.astype(np.float32) / 255.0
+    return snapshot_u8(surf).astype(np.float32) / 255.0
 
 
 def image_from_rgba(rgba: np.ndarray) -> skia.Image:

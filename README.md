@@ -61,6 +61,13 @@ parts by their size so you never compute coordinates.
 | | **Pick Color** | One colour as `#hex` for any colour input: by name, the most readable against a background, lightest, darkest |
 | | **Contrast Check** | WCAG contrast ratio and grade (AA / AAA) |
 | | **Recolor Scene** | Swap colours throughout a design (`primary -> accent`) |
+| Motion | **Timeline** | A design's length and frame rate |
+| | **Animate In**, **Animate Out** | Presets: fade, fade up/down, slides, pop, zoom, wipe, blur in; stagger plays the parts of a Stack / Grid in turn |
+| | **Animate** | Keyframes (`0: 0, 2: 360`) with easing for x, y, scale, rotation, opacity, blur or wipe |
+| | **Add Video**, **Video to Scene** | Video frames (an IMAGE batch) inside a design, or a design on top of a video |
+| | **Render Frame** | One moment as IMAGE + alpha |
+| | **Render Animation** | All frames as an IMAGE + MASK batch (for VideoHelperSuite or any image node) |
+| | **Save Video** | MP4 (H.264), MOV (ProRes 4444 with alpha), WebM (VP9 with alpha) or GIF, with audio; streamed through ffmpeg |
 
 Masks: our `MASK` outputs are coverage (1 = opaque). ComfyUI's **Load Image** mask
 is the opposite (1 = transparent), so image inputs have a `mask_meaning` switch.
@@ -106,6 +113,24 @@ Kits are read from `brand/` in your data folder and from this package's
 **Pick Color** outputs into any colour input. With a palette connected, Fill
 Template and Recolor Scene accept colour names (`title.color: accent`).
 
+## Motion and video
+
+Animation is added to items like effects: **Animate In** after a Text Box
+animates that box; after a Stack (with `stagger`) it animates the parts one
+after another. Animation only moves, scales, fades, blurs or wipes what the
+layout already placed, so layouts never jump. **Timeline** sets the length (or
+leave it at 0: the last animation + 1 s).
+
+**Save Video** renders frame by frame straight into ffmpeg, so long or 4K videos
+don't fill memory. It needs `ffmpeg` on PATH (or `CRATENODE_FFMPEG` pointing at
+it). For overlays, load a clip with ComfyUI's **Load Video** → **Get Video
+Components**, start the design with **Video to Scene**, and pass the audio to
+Save Video.
+
+Speed tip: an item with effects (shadow, glow, outline) is drawn once and then
+moved per frame, unless something inside it is animated. For a shadowed title
+that animates in parts, put the shadow on each part, not on the Stack.
+
 If a render comes out black, check that the chain starts from a **Canvas**: a part
 on its own has a transparent background, and Save Image drops transparency.
 
@@ -123,6 +148,8 @@ python tools/run_workflow.py examples/thumbnail.api.json --server http://127.0.0
 - **batch_template**: three CSV rows → Load Template → Fill Template → one JPEG per row, named from the row.
 - **batch_workflow**: the same batch with the graph as the template (Row Value feeds the Text Box).
 - **colour**: a square card built from the example brand kit (colours, fonts, logo; title colour picked for contrast), a recoloured variant (`primary -> accent`), a contrast check, and a palette taken from the background photo.
+- **motion**: an animated title card (staggered rise-and-blur, logo pop, fade out) saved as MP4 and GIF, plus a transparent WebM overlay version.
+- **video_overlay**: a lower third sliding in over a clip (core Load Video), saved as MP4 with the clip's audio.
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 
 ## Configuration

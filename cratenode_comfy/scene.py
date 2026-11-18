@@ -18,9 +18,10 @@ from dataclasses import dataclass, field, replace
 import numpy as np
 import skia
 
+from . import motion
 from . import text as textmod
 from .fonts import FontRegistry, registry
-from .render import fit_rects, image_from_rgba, surface, to_rgba
+from .render import fit_rects, image_from_rgba, snapshot_u8, surface, to_rgba
 
 RGBA = tuple  # (r, g, b, a), 0..1
 
@@ -198,6 +199,7 @@ class TextItem:
     style: Style = Style()
     flow: Flow = Flow()
     name: str = ""
+    anim: tuple = ()  # motion.Track, ...
 
 
 @dataclass(frozen=True)
@@ -211,6 +213,7 @@ class ImageItem:
     style: Style = Style()
     flow: Flow = Flow()
     name: str = ""
+    anim: tuple = ()  # motion.Track, ...
     _skimage: list = field(default_factory=list, init=False, compare=False, repr=False)  # decode cache
 
     def skimage(self) -> skia.Image:
@@ -236,6 +239,7 @@ class ShapeItem:
     style: Style = Style()
     flow: Flow = Flow()
     name: str = ""
+    anim: tuple = ()  # motion.Track, ...
 
 
 @dataclass(frozen=True)
@@ -248,6 +252,7 @@ class GroupItem:
     style: Style = Style()
     flow: Flow = Flow()
     name: str = ""
+    anim: tuple = ()  # motion.Track, ...
 
 
 @dataclass(frozen=True)
@@ -268,9 +273,60 @@ class LayoutItem:
     style: Style = Style()
     flow: Flow = Flow()
     name: str = ""
+    anim: tuple = ()  # motion.Track, ...
 
 
-Item = TextItem | ImageItem | ShapeItem | GroupItem | LayoutItem
+@dataclass(frozen=True)
+class VideoItem:
+    """A frame sequence (N x H x W x 3|4 uint8) in a box; the frame follows the time.
+    ``start`` delays it (seconds); ``loop`` repeats it, else it holds the last frame."""
+
+    frames: np.ndarray = field(compare=False, repr=False)
+    fps: float = 30.0
+    x: float = 0.0
+    y: float = 0.0
+    w: float = 0.0
+    h: float = 0.0
+    mode: str = "fill"
+    start: float = 0.0
+    loop: bool = True
+    style: Style = Style()
+    flow: Flow = Flow()
+    name: str = ""
+    anim: tuple = ()
+    _cache: dict = field(default_factory=dict, init=False, compare=False, repr=False)  # last decoded frame
+
+    @property
+    def count(self) -> int:
+        return int(self.frames.shape[0])
+
+    @property
+    def duration(self) -> float:
+        return self.count / self.fps if self.fps > 0 else 0.0
+
+    def index(self, t: float | None) -> int:
+        if t is None or self.fps <= 0:
+            return 0
+        i = int(math.floor((t - self.start) * self.fps + 1e-6))
+        if i < 0:
+            return 0
+        return i % self.count if self.loop else min(i, self.count - 1)
+
+    def skimage(self, t: float | None) -> skia.Image:
+        i = self.index(t)
+        if self._cache.get("i") != i:
+            f = self.frames[i]
+            opaque = f.shape[2] == 3
+            if opaque:
+                f = np.concatenate([f, np.full(f.shape[:2] + (1,), 255, np.uint8)], axis=2)
+            self._cache["img"] = skia.Image.fromarray(
+                np.ascontiguousarray(f), colorType=skia.kRGBA_8888_ColorType,
+                alphaType=skia.kOpaque_AlphaType if opaque else skia.kUnpremul_AlphaType)
+            self._cache["i"] = i
+        return self._cache["img"]
+
+
+Item = TextItem | ImageItem | ShapeItem | GroupItem | LayoutItem | VideoItem
 
 
 def children(it, reg: FontRegistry) -> tuple[tuple, float, float]:
@@ -289,6 +345,8 @@ class Scene:
     background: Fill = (0.0, 0.0, 0.0, 0.0)
     items: tuple = ()
     margin: tuple = (0.0, 0.0, 0.0, 0.0)  # safe area: left, top, right, bottom
+    fps: float = 30.0
+    duration: float = 0.0  # seconds; 0 = worked out from animations and videos (scene_duration)
 
     def add(self, item) -> "Scene":
         return replace(self, items=self.items + (item,))
@@ -301,6 +359,49 @@ class Scene:
     def safe_box(self) -> tuple[float, float, float, float]:
         l, t, r, b = self.margin
         return (l, t, self.width - l - r, self.height - t - b)
+
+
+def add_anim(item, tracks: tuple):
+    return replace(item, anim=item.anim + tuple(tracks))
+
+
+def _shift(tracks, dt: float) -> tuple:
+    return tuple(replace(t, keys=tuple((k + dt, v) for k, v in t.keys)) for t in tracks)
+
+
+def animate(item, tracks: tuple, stagger: float = 0.0):
+    """Add animation tracks to an item. With ``stagger`` (seconds), each part of a
+    Stack / Grid, or each item of a group, plays them in turn."""
+    if stagger > 0 and isinstance(item, LayoutItem) and len(item.parts) > 1:
+        parts = tuple((GroupItem(items=p, anim=_shift(tracks, i * stagger)),) for i, p in enumerate(item.parts))
+        return replace(item, parts=parts)
+    if stagger > 0 and isinstance(item, GroupItem) and len(item.items) > 1:
+        kids = tuple(add_anim(x, _shift(tracks, i * stagger)) for i, x in enumerate(item.items))
+        return replace(item, items=kids)
+    return add_anim(item, tracks)
+
+
+def _walk(items):
+    for it in items:
+        yield it
+        if isinstance(it, GroupItem):
+            yield from _walk(it.items)
+        elif isinstance(it, LayoutItem):
+            for p in it.parts:
+                yield from _walk(p)
+
+
+def scene_duration(scene: "Scene", default: float = 3.0) -> float:
+    """The scene's duration, or: the longest video, or the last keyframe + 1 s hold."""
+    if scene.duration > 0:
+        return scene.duration
+    vids = [it.start + it.duration for it in _walk(scene.items) if isinstance(it, VideoItem)]
+    if vids:
+        return max(vids)
+    keys = [motion.anim_end(it.anim) for it in _walk(scene.items) if it.anim]
+    if keys:
+        return max(keys) + 1.0
+    return default
 
 
 def with_style(item, **changes):
@@ -363,6 +464,10 @@ def place_items(items: tuple, reg: FontRegistry, ox: float = 0.0, oy: float = 0.
             ih, iw = it.rgba.shape[:2]
             src, dst = fit_rects(iw, ih, it.x + ox, it.y + oy + dy, it.w or iw, it.h or ih, it.mode)
             p = Placed(it, (dst.left(), dst.top(), dst.right(), dst.bottom()), src=src, dst=dst)
+        elif isinstance(it, VideoItem):
+            ih, iw = it.frames.shape[1:3]
+            src, dst = fit_rects(iw, ih, it.x + ox, it.y + oy + dy, it.w or iw, it.h or ih, it.mode)
+            p = Placed(it, (dst.left(), dst.top(), dst.right(), dst.bottom()), src=src, dst=dst)
         elif isinstance(it, ShapeItem):
             x0, y0, x1, y1 = _shape_bounds(it, dy)
             p = Placed(it, (x0 + ox, y0 + oy, x1 + ox, y1 + oy))
@@ -411,7 +516,8 @@ def _shape_path(it: ShapeItem, b) -> skia.Path:
     return path
 
 
-def _draw_content(canvas: skia.Canvas, p: Placed, reg: FontRegistry) -> None:
+def _draw_content(canvas: skia.Canvas, p: Placed, reg: FontRegistry, t: float | None = None,
+                  cache: dict | None = None) -> None:
     it = p.item
     if isinstance(it, TextItem):
         laid = p.laid
@@ -428,6 +534,8 @@ def _draw_content(canvas: skia.Canvas, p: Placed, reg: FontRegistry) -> None:
             laid.paragraph.paint(canvas, laid.x, laid.y)
     elif isinstance(it, ImageItem):
         canvas.drawImageRect(it.skimage(), p.src, p.dst, skia.SamplingOptions(skia.CubicResampler.Mitchell()), None)
+    elif isinstance(it, VideoItem):
+        canvas.drawImageRect(it.skimage(t), p.src, p.dst, skia.SamplingOptions(skia.FilterMode.kLinear), None)
     elif isinstance(it, ShapeItem):
         path = _shape_path(it, p.bounds)
         if it.fill is not None and it.kind != "line":
@@ -438,28 +546,98 @@ def _draw_content(canvas: skia.Canvas, p: Placed, reg: FontRegistry) -> None:
             sp.setColor4f(skia.Color4f(*it.stroke))
             canvas.drawPath(path, sp)
     else:
-        _draw_list(canvas, p.children, reg)
+        _draw_list(canvas, p.children, reg, t, cache)
 
 
-def _draw_one(canvas: skia.Canvas, p: Placed, reg: FontRegistry, blend_override=None) -> None:
+def _static(p: Placed) -> bool:
+    """True when an item looks the same at every time (no video, no animated children)."""
+    if isinstance(p.item, VideoItem):
+        return False
+    return all(not k.item.anim and _static(k) for k in (p.children or ()))
+
+
+def _layer_image(p: Placed, reg: FontRegistry, cache: dict) -> tuple[skia.Image, skia.Rect, float]:
+    """The item with its effects, drawn once at the frame scale (frames of an animation reuse it)."""
+    hit = cache.get(id(p))
+    if hit is not None:
+        return hit
+    s = cache["scale"]
+    r = effect_reach(p.item.style.effects) + 2
+    x0, y0, x1, y1 = p.bounds
+    L, T = math.floor((x0 - r) * s), math.floor((y0 - r) * s)
+    R, B = math.ceil((x1 + r) * s), math.ceil((y1 + r) * s)
+    surf = surface(max(1, R - L), max(1, B - T))
+    c = surf.getCanvas()
+    c.clear(skia.ColorTRANSPARENT)
+    c.translate(-L, -T)
+    c.scale(s, s)
+    c.saveLayer(None, skia.Paint(ImageFilter=effects_filter(p.item.style.effects)))
+    _draw_content(c, p, reg, None)
+    c.restore()
+    hit = (surf.makeImageSnapshot(), skia.Rect.MakeLTRB(L / s, T / s, R / s, B / s), s)
+    cache[id(p)] = hit
+    return hit
+
+
+def _draw_one(canvas: skia.Canvas, p: Placed, reg: FontRegistry, blend_override=None, t: float | None = None,
+              cache: dict | None = None) -> None:
     st = p.item.style
+    a = motion.state(p.item.anim, t)
+    if a["opacity"] <= 0.0 or a["wipe"] <= 0.0:
+        return
+    effects = st.effects + ((Blur(a["blur"]),) if a["blur"] > 0.05 else ())
+    opacity = st.opacity * a["opacity"]
     blend = blend_override or BLEND_MODES.get(st.blend, skia.BlendMode.kSrcOver)
-    filt = effects_filter(st.effects)
-    if st.opacity < 1.0 or blend != skia.BlendMode.kSrcOver or filt is not None:
-        paint = skia.Paint(Alphaf=max(0.0, min(1.0, st.opacity)), BlendMode=blend)
+    filt = effects_filter(effects)
+    x0, y0, x1, y1 = p.bounds
+    moved = not motion.is_identity(a)
+    if moved:
+        # Animation is drawn around the laid-out item: move, rotate and scale about its centre.
+        canvas.save()
+        cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+        canvas.translate(a["x"] + cx, a["y"] + cy)
+        if a["rotation"]:
+            canvas.rotate(a["rotation"])
+        if a["scale"] != 1.0:
+            canvas.scale(a["scale"], a["scale"])
+        canvas.translate(-cx, -cy)
+        if a["wipe"] < 1.0:
+            reach = effect_reach(effects) + 2
+            canvas.clipRect(skia.Rect.MakeLTRB(x0 - reach, y0 - reach, x0 + (x1 - x0) * a["wipe"], y1 + reach),
+                            skia.ClipOp.kIntersect, True)
+    if cache is not None and st.effects and _static(p):
+        # Effects are slow on the CPU; in an animation draw them once and move the result.
+        img, rect, s = _layer_image(p, reg, cache)
+        paint = skia.Paint(Alphaf=max(0.0, min(1.0, opacity)), BlendMode=blend)
+        if a["blur"] > 0.05:
+            paint.setImageFilter(skia.ImageFilters.Blur(a["blur"] / 2 * s, a["blur"] / 2 * s, skia.TileMode.kDecal, None))
+        canvas.save()
+        canvas.translate(rect.left(), rect.top())
+        canvas.scale(1 / s, 1 / s)
+        canvas.drawImage(img, 0, 0, skia.SamplingOptions(skia.FilterMode.kLinear), paint)
+        canvas.restore()
+    elif opacity < 1.0 or blend != skia.BlendMode.kSrcOver or filt is not None:
+        paint = skia.Paint(Alphaf=max(0.0, min(1.0, opacity)), BlendMode=blend)
         if filt is not None:
             paint.setImageFilter(filt)
-        # Only as big as the item plus what its effects reach (not the whole canvas).
-        r = effect_reach(st.effects) + 2
-        x0, y0, x1, y1 = p.bounds
-        canvas.saveLayer(skia.Rect.MakeLTRB(x0 - r, y0 - r, x1 + r, y1 + r), paint)
-        _draw_content(canvas, p, reg)
+        # Only as big as the item plus what its effects reach (not the whole canvas). The
+        # clip matters: without it skia runs the filter over the whole canvas on restore.
+        r = effect_reach(effects) + 2
+        rect = skia.Rect.MakeLTRB(x0 - r, y0 - r, x1 + r, y1 + r)
+        canvas.save()
+        canvas.clipRect(rect, skia.ClipOp.kIntersect, True)
+        canvas.saveLayer(rect, paint)
+        _draw_content(canvas, p, reg, t, cache)
+        canvas.restore()
         canvas.restore()
     else:
-        _draw_content(canvas, p, reg)
+        _draw_content(canvas, p, reg, t, cache)
+    if moved:
+        canvas.restore()
 
 
-def _draw_list(canvas: skia.Canvas, placed: list[Placed], reg: FontRegistry) -> None:
+def _draw_list(canvas: skia.Canvas, placed: list[Placed], reg: FontRegistry, t: float | None = None,
+               cache: dict | None = None) -> None:
     i = 0
     while i < len(placed):
         # An item with clip_to_previous is drawn only where the item before it is.
@@ -467,33 +645,67 @@ def _draw_list(canvas: skia.Canvas, placed: list[Placed], reg: FontRegistry) -> 
         while j < len(placed) and placed[j].item.style.clip_to_previous:
             j += 1
         if j == i + 1:
-            _draw_one(canvas, placed[i], reg)
+            _draw_one(canvas, placed[i], reg, t=t, cache=cache)
         else:
             canvas.saveLayer()
-            _draw_one(canvas, placed[i], reg)
+            _draw_one(canvas, placed[i], reg, t=t, cache=cache)
             for k in range(i + 1, j):
-                _draw_one(canvas, placed[k], reg, blend_override=skia.BlendMode.kSrcATop)
+                _draw_one(canvas, placed[k], reg, blend_override=skia.BlendMode.kSrcATop, t=t, cache=cache)
             canvas.restore()
         i = j
 
 
-def _paint_scene(canvas: skia.Canvas, scene: Scene, reg: FontRegistry) -> None:
+def _paint_scene(canvas: skia.Canvas, scene: Scene, reg: FontRegistry, t: float | None = None,
+                 cache: dict | None = None, placed: list[Placed] | None = None) -> None:
     bg = scene.background
     if isinstance(bg, Gradient) or bg[3] > 0:
         canvas.drawRect(skia.Rect.MakeWH(scene.width, scene.height), fill_paint(bg, (0, 0, scene.width, scene.height)))
-    _draw_list(canvas, place_items(scene.items, reg), reg)
+    _draw_list(canvas, placed if placed is not None else place_items(scene.items, reg), reg, t, cache)
 
 
-def render(scene: Scene, scale: float = 1.0, reg: FontRegistry | None = None) -> np.ndarray:
-    """H x W x 4 float32 straight alpha at ``scale`` x the canvas size."""
+def render(scene: Scene, scale: float = 1.0, reg: FontRegistry | None = None, t: float | None = None) -> np.ndarray:
+    """H x W x 4 float32 straight alpha at ``scale`` x the canvas size. ``t`` (seconds)
+    poses animations and picks video frames (None = no animation, first video frame)."""
     reg = reg or registry()
     w, h = max(1, round(scene.width * scale)), max(1, round(scene.height * scale))
     surf = surface(w, h)
     canvas = surf.getCanvas()
     canvas.clear(skia.ColorTRANSPARENT)
     canvas.scale(scale, scale)
-    _paint_scene(canvas, scene, reg)
+    _paint_scene(canvas, scene, reg, t)
     return to_rgba(surf)
+
+
+def frame_times(scene: Scene, fps: float = 0.0, start: int = 0, count: int = 0, step: int = 1) -> list[float]:
+    """Times (s) of frames start, start + step, ... over the scene's duration (count 0 = all)."""
+    fps = fps or scene.fps or 30.0
+    total = max(1, int(round(scene_duration(scene) * fps)))
+    idx = list(range(start, total, max(1, step)))
+    if count:
+        idx = idx[:count]
+    return [i / fps for i in idx]
+
+
+def render_frames(scene: Scene, times: list[float], scale: float = 1.0, reg: FontRegistry | None = None,
+                  as_uint8: bool = False):
+    """Yield one H x W x 4 frame per time (float 0..1, or uint8). Layout is worked out
+    once, since animation never changes it."""
+    reg = reg or registry()
+    w, h = max(1, round(scene.width * scale)), max(1, round(scene.height * scale))
+    placed = place_items(scene.items, reg)
+    cache = {"scale": scale}  # items with effects, drawn once (see _layer_image)
+    surf = surface(w, h)
+    for t in times:
+        canvas = surf.getCanvas()
+        canvas.clear(skia.ColorTRANSPARENT)
+        canvas.save()
+        canvas.scale(scale, scale)
+        _paint_scene(canvas, scene, reg, t, cache, placed)
+        canvas.restore()
+        if as_uint8:
+            yield snapshot_u8(surf)
+        else:
+            yield to_rgba(surf)
 
 
 def to_pdf(scene: Scene, path: str, dpi: float = 300.0, reg: FontRegistry | None = None) -> None:

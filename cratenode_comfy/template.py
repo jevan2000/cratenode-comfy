@@ -28,6 +28,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+from . import motion
 from . import scene as sc
 from . import text as textmod
 from .render import parse_color
@@ -35,7 +36,7 @@ from .render import parse_color
 VERSION = 1
 _CLASSES = {c.__name__: c for c in (
     sc.Scene, sc.TextItem, sc.ImageItem, sc.ShapeItem, sc.GroupItem, sc.LayoutItem, sc.Style, sc.Flow,
-    sc.Gradient, sc.Shadow, sc.Glow, sc.Outline, sc.Blur, textmod.TextSpec)}
+    sc.Gradient, sc.Shadow, sc.Glow, sc.Outline, sc.Blur, textmod.TextSpec, motion.Track)}
 
 
 # ---- scene <-> JSON ----
@@ -69,6 +70,9 @@ def to_data(obj):
     """Plain JSON-able data for a scene, item or any value inside one."""
     if isinstance(obj, np.ndarray):
         return _encode_image(obj)
+    if isinstance(obj, sc.VideoItem):
+        raise ValueError("a video can't be saved in a template; leave an image slot and add the video after "
+                         "Load Template")
     if is_dataclass(obj):
         out = {"type": type(obj).__name__}
         for f in fields(obj):

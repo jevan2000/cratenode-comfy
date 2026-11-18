@@ -1,0 +1,394 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "placeholder-logo.png"
+    }
+  },
+  "2": {
+    "class_type": "CNCanvas",
+    "inputs": {
+      "preset": "YouTube thumbnail / HD 1920x1080",
+      "landscape_flip": false,
+      "width": 1920,
+      "height": 1080,
+      "background": "#0b1d3a",
+      "safe_margin": 5.0
+    }
+  },
+  "3": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "MOTION *DESIGN*",
+      "font": "Montserrat",
+      "font_override": "",
+      "weight": 800,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 128.0,
+      "color": "#ffffff",
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 1600.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "4": {
+    "class_type": "CNShape",
+    "inputs": {
+      "shape": "rectangle",
+      "x": 0.0,
+      "y": 0.0,
+      "width": 160.0,
+      "height": 10.0,
+      "color": "#f2b134",
+      "stroke_color": "",
+      "stroke_width": 0.0,
+      "corner_radius": 0.0,
+      "sides": 5,
+      "inner_ratio": 0.5,
+      "rotation": 0.0,
+      "below_previous": false,
+      "gap": 0.0
+    },
+    "_meta": {
+      "title": "Accent bar"
+    }
+  },
+  "5": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "Animated in ComfyUI",
+      "font": "Inter",
+      "font_override": "",
+      "weight": 400,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 46.0,
+      "color": "#c9d4e5",
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 1600.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "6": {
+    "class_type": "CNStack",
+    "inputs": {
+      "scene": [
+        "2",
+        0
+      ],
+      "direction": "vertical",
+      "gap": 30.0,
+      "align": "center",
+      "valign": "middle",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0,
+      "part_1": [
+        "3",
+        0
+      ],
+      "part_2": [
+        "4",
+        0
+      ],
+      "part_3": [
+        "5",
+        0
+      ]
+    }
+  },
+  "7": {
+    "class_type": "CNAnimateIn",
+    "inputs": {
+      "scene": [
+        "6",
+        0
+      ],
+      "target": "last item",
+      "preset": "rise and blur",
+      "start": 0.2,
+      "duration": 0.8,
+      "easing": "ease out",
+      "distance": 80.0,
+      "stagger": 0.2
+    },
+    "_meta": {
+      "title": "Animate In: parts one after another"
+    }
+  },
+  "8": {
+    "class_type": "CNAddImage",
+    "inputs": {
+      "image": [
+        "1",
+        0
+      ],
+      "mask": [
+        "1",
+        1
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "mode": "fit",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 140.0,
+      "box_height": 140.0,
+      "batch_index": 0,
+      "below_previous": false,
+      "gap": 0.0
+    }
+  },
+  "9": {
+    "class_type": "CNPlace",
+    "inputs": {
+      "scene": [
+        "7",
+        0
+      ],
+      "part": [
+        "8",
+        0
+      ],
+      "align": "right",
+      "valign": "bottom",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0
+    }
+  },
+  "10": {
+    "class_type": "CNAnimateIn",
+    "inputs": {
+      "scene": [
+        "9",
+        0
+      ],
+      "target": "last item",
+      "preset": "pop",
+      "start": 1.2,
+      "duration": 0.6,
+      "easing": "back out",
+      "distance": 80.0,
+      "stagger": 0.0
+    },
+    "_meta": {
+      "title": "Logo pops in"
+    }
+  },
+  "11": {
+    "class_type": "CNAnimateOut",
+    "inputs": {
+      "scene": [
+        "10",
+        0
+      ],
+      "target": "whole scene",
+      "preset": "fade",
+      "start": 4.2,
+      "duration": 0.6,
+      "easing": "ease in",
+      "distance": 80.0,
+      "stagger": 0.0
+    },
+    "_meta": {
+      "title": "Everything fades out"
+    }
+  },
+  "12": {
+    "class_type": "CNTimeline",
+    "inputs": {
+      "scene": [
+        "11",
+        0
+      ],
+      "duration": 5.0,
+      "fps": 30.0
+    }
+  },
+  "13": {
+    "class_type": "CNSaveVideo",
+    "inputs": {
+      "scene": [
+        "12",
+        0
+      ],
+      "format": "mp4 (H.264)",
+      "fps": 0.0,
+      "quality": 80,
+      "scale": 1.0,
+      "matte": "#000000",
+      "filename_prefix": "cratenode/motion/title_card"
+    },
+    "_meta": {
+      "title": "MP4"
+    }
+  },
+  "14": {
+    "class_type": "CNSaveVideo",
+    "inputs": {
+      "scene": [
+        "12",
+        0
+      ],
+      "format": "gif",
+      "fps": 15.0,
+      "quality": 80,
+      "scale": 0.4,
+      "matte": "#000000",
+      "filename_prefix": "cratenode/motion/title_card"
+    },
+    "_meta": {
+      "title": "GIF preview"
+    }
+  },
+  "15": {
+    "class_type": "CNRenderFrame",
+    "inputs": {
+      "scene": [
+        "12",
+        0
+      ],
+      "time": 1.0,
+      "scale": 0.5
+    },
+    "_meta": {
+      "title": "Frame at 1.0 s"
+    }
+  },
+  "16": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "15",
+        0
+      ]
+    }
+  },
+  "17": {
+    "class_type": "CNCanvas",
+    "inputs": {
+      "preset": "YouTube thumbnail / HD 1920x1080",
+      "landscape_flip": false,
+      "width": 1920,
+      "height": 1080,
+      "background": "#00000000",
+      "safe_margin": 5.0
+    }
+  },
+  "18": {
+    "class_type": "CNStack",
+    "inputs": {
+      "scene": [
+        "17",
+        0
+      ],
+      "direction": "vertical",
+      "gap": 30.0,
+      "align": "center",
+      "valign": "middle",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0,
+      "part_1": [
+        "3",
+        0
+      ],
+      "part_2": [
+        "4",
+        0
+      ],
+      "part_3": [
+        "5",
+        0
+      ]
+    }
+  },
+  "19": {
+    "class_type": "CNAnimateIn",
+    "inputs": {
+      "scene": [
+        "18",
+        0
+      ],
+      "target": "last item",
+      "preset": "wipe",
+      "start": 0.2,
+      "duration": 0.9,
+      "easing": "ease in out",
+      "distance": 80.0,
+      "stagger": 0.15
+    }
+  },
+  "20": {
+    "class_type": "CNAnimateOut",
+    "inputs": {
+      "scene": [
+        "19",
+        0
+      ],
+      "target": "last item",
+      "preset": "fade down",
+      "start": 3.2,
+      "duration": 0.5,
+      "easing": "ease in",
+      "distance": 80.0,
+      "stagger": 0.0
+    }
+  },
+  "21": {
+    "class_type": "CNTimeline",
+    "inputs": {
+      "scene": [
+        "20",
+        0
+      ],
+      "duration": 4.0,
+      "fps": 30.0
+    }
+  },
+  "22": {
+    "class_type": "CNSaveVideo",
+    "inputs": {
+      "scene": [
+        "21",
+        0
+      ],
+      "format": "webm (VP9, alpha)",
+      "fps": 0.0,
+      "quality": 80,
+      "scale": 0.5,
+      "matte": "#000000",
+      "filename_prefix": "cratenode/motion/title_overlay"
+    },
+    "_meta": {
+      "title": "Transparent overlay (WebM alpha)"
+    }
+  }
+}

@@ -7,7 +7,8 @@ import logging
 from typing_extensions import override
 from comfy_api.latest import ComfyExtension, IO
 
-from . import fonts, nodes_canvas, nodes_color, nodes_data, nodes_effects, nodes_layout, nodes_output, nodes_shapes, nodes_type
+from . import (fonts, nodes_canvas, nodes_color, nodes_data, nodes_effects, nodes_layout, nodes_motion, nodes_output,
+               nodes_shapes, nodes_type)
 
 
 class CrateNodeComfy(ComfyExtension):
@@ -20,7 +21,7 @@ class CrateNodeComfy(ComfyExtension):
             logging.warning("CrateNode-Comfy fonts: %s", p)
         return (nodes_canvas.NODES + nodes_type.NODES + nodes_shapes.NODES + nodes_layout.NODES
                 + nodes_effects.NODES + nodes_output.NODES + nodes_data.NODES
-                + nodes_color.NODES)
+                + nodes_color.NODES + nodes_motion.NODES)
 
 
 async def comfy_entrypoint() -> CrateNodeComfy:

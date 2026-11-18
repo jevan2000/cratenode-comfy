@@ -1,0 +1,228 @@
+{
+  "1": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "placeholder-clip.mp4"
+    }
+  },
+  "2": {
+    "class_type": "GetVideoComponents",
+    "inputs": {
+      "video": [
+        "1",
+        0
+      ]
+    }
+  },
+  "3": {
+    "class_type": "CNVideoToScene",
+    "inputs": {
+      "frames": [
+        "2",
+        0
+      ],
+      "fps": [
+        "2",
+        2
+      ],
+      "safe_margin": 6.0
+    }
+  },
+  "4": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "Speaker Name",
+      "font": "Montserrat",
+      "font_override": "",
+      "weight": 800,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 60.0,
+      "color": "#ffffff",
+      "align": "left",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 900.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "5": {
+    "class_type": "CNShape",
+    "inputs": {
+      "shape": "rectangle",
+      "x": 0.0,
+      "y": 0.0,
+      "width": 220.0,
+      "height": 8.0,
+      "color": "#f2b134",
+      "stroke_color": "",
+      "stroke_width": 0.0,
+      "corner_radius": 0.0,
+      "sides": 5,
+      "inner_ratio": 0.5,
+      "rotation": 0.0,
+      "below_previous": false,
+      "gap": 0.0
+    },
+    "_meta": {
+      "title": "Accent bar"
+    }
+  },
+  "6": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "Title or topic goes here",
+      "font": "Inter",
+      "font_override": "",
+      "weight": 400,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 34.0,
+      "color": "#e6ecf5",
+      "align": "left",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 900.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "12": {
+    "class_type": "CNDropShadow",
+    "inputs": {
+      "scene": [
+        "4",
+        0
+      ],
+      "target": "last item",
+      "dx": 0.0,
+      "dy": 4.0,
+      "blur": 16.0,
+      "color": "#000000",
+      "opacity": 0.6
+    },
+    "_meta": {
+      "title": "Shadow on the part"
+    }
+  },
+  "13": {
+    "class_type": "CNDropShadow",
+    "inputs": {
+      "scene": [
+        "6",
+        0
+      ],
+      "target": "last item",
+      "dx": 0.0,
+      "dy": 4.0,
+      "blur": 16.0,
+      "color": "#000000",
+      "opacity": 0.6
+    },
+    "_meta": {
+      "title": "Shadow on the part"
+    }
+  },
+  "7": {
+    "class_type": "CNStack",
+    "inputs": {
+      "scene": [
+        "3",
+        0
+      ],
+      "direction": "vertical",
+      "gap": 14.0,
+      "align": "left",
+      "valign": "bottom",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0,
+      "part_1": [
+        "12",
+        0
+      ],
+      "part_2": [
+        "5",
+        0
+      ],
+      "part_3": [
+        "13",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "CNAnimateIn",
+    "inputs": {
+      "scene": [
+        "7",
+        0
+      ],
+      "target": "last item",
+      "preset": "slide from left",
+      "start": 0.3,
+      "duration": 0.6,
+      "easing": "ease out",
+      "distance": 120.0,
+      "stagger": 0.15
+    },
+    "_meta": {
+      "title": "Lower third slides in"
+    }
+  },
+  "9": {
+    "class_type": "CNAnimateOut",
+    "inputs": {
+      "scene": [
+        "8",
+        0
+      ],
+      "target": "last item",
+      "preset": "fade",
+      "start": 3.0,
+      "duration": 0.5,
+      "easing": "ease in",
+      "distance": 80.0,
+      "stagger": 0.0
+    }
+  },
+  "11": {
+    "class_type": "CNSaveVideo",
+    "inputs": {
+      "scene": [
+        "9",
+        0
+      ],
+      "format": "mp4 (H.264)",
+      "fps": 0.0,
+      "quality": 80,
+      "scale": 1.0,
+      "matte": "#000000",
+      "filename_prefix": "cratenode/motion/lower_third",
+      "audio": [
+        "2",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "MP4 with the clip's audio"
+    }
+  }
+}

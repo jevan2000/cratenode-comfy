@@ -3,7 +3,7 @@
     python tools/run_workflow.py examples/spike/scene_thumbnail.api.json
         [--server http://127.0.0.1:8195] [--out out/run] [--set 5.text="A longer title"]
 
-- Images named by LoadImage nodes are uploaded from examples/assets first.
+- Files named by LoadImage / LoadVideo nodes are uploaded from examples/assets first.
 - ``--set NODE.INPUT=VALUE`` overrides an input (JSON values allowed: 120, true, "text").
 - Outputs (images, and text such as saved PDF paths) are saved under --out, with
   ``run.json`` describing the run (prompt id, seconds, files).
@@ -77,8 +77,9 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
 
     for node in wf.values():
-        if node.get("class_type") == "LoadImage":
-            asset = ASSETS / str(node["inputs"].get("image", ""))
+        key = {"LoadImage": "image", "LoadVideo": "file"}.get(node.get("class_type"))
+        if key:
+            asset = ASSETS / str(node["inputs"].get(key, ""))
             if asset.is_file():
                 upload(a.server, asset)
 
@@ -100,7 +101,9 @@ def main() -> None:
     status = hist["status"]
     files = []
     for node_id, outputs in hist.get("outputs", {}).items():
-        for img in outputs.get("images", []):
+        saved = [v for vals in outputs.values() if isinstance(vals, list)
+                 for v in vals if isinstance(v, dict) and "filename" in v]  # images, gifs, videos
+        for img in saved:
             q = urllib.parse.urlencode({k: img[k] for k in ("filename", "subfolder", "type")})
             dest = out / f"{node_id}_{img['filename']}"
             dest.write_bytes(http("GET", f"{a.server}/view?{q}"))
