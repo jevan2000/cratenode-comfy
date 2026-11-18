@@ -1,69 +1,127 @@
-"""Inputs shared by both spike pipelines."""
+"""Types, inputs and helpers shared by every node family."""
 
 from __future__ import annotations
+
+from dataclasses import replace
 
 from comfy_api.latest import IO
 
 from . import render, text
+from . import scene as sc
+from .fonts import registry
 
+SceneT = IO.Custom("CN_SCENE")
+FillT = IO.Custom("CN_FILL")
+
+ROOT = "CrateNode-Comfy"
 MASK_MEANINGS = ["LoadImage (1 = transparent)", "alpha (1 = opaque)"]
+TARGETS = ["last item", "whole scene"]
+
+# name: (width, height)
+CANVAS_PRESETS = {
+    "custom": None,
+    "YouTube thumbnail / HD 1920x1080": (1920, 1080),
+    "4K UHD 3840x2160": (3840, 2160),
+    "Instagram square 1080x1080": (1080, 1080),
+    "Instagram portrait 1080x1350": (1080, 1350),
+    "Story / Reel / TikTok 1080x1920": (1080, 1920),
+    "Facebook cover 1640x624": (1640, 624),
+    "X / Twitter header 1500x500": (1500, 500),
+    "LinkedIn banner 1584x396": (1584, 396),
+    "Slide 16:9 1920x1080": (1920, 1080),
+    "US Letter @300dpi 2550x3300": (2550, 3300),
+    "A4 @300dpi 2480x3508": (2480, 3508),
+    "Tabloid 11x17 @300dpi 3300x5100": (3300, 5100),
+    "Poster 18x24 @150dpi 2700x3600": (2700, 3600),
+    "Postcard 6x4 @300dpi 1800x1200": (1800, 1200),
+}
+
+
+def font_options() -> list[str]:
+    fams = registry().families()
+    return fams or ["Inter"]
+
+
+def default_font(prefer=("Montserrat", "Inter")) -> str:
+    fams = font_options()
+    for p in prefer:
+        if p in fams:
+            return p
+    return fams[0]
+
+
+def color(s: str) -> tuple:
+    return render.parse_color(s)
+
+
+def new_part(scene):
+    """The scene to add to, or a fresh transparent part (for Stack, Place, Grid)."""
+    return scene if scene is not None else sc.Scene(1920, 1080)
+
+
+def flow_inputs() -> list:
+    return [
+        IO.Boolean.Input("below_previous", default=False,
+                         tooltip="Sit under the previous item (its bottom + gap) instead of at y"),
+        IO.Float.Input("gap", default=24.0, min=-2000, max=2000, step=1.0),
+    ]
+
+
+def flow(kw) -> sc.Flow:
+    return sc.Flow(kw.pop("below_previous", False), kw.pop("gap", 24.0))
 
 
 def text_inputs() -> list:
     return [
         IO.String.Input("text", default="Your *headline* here", multiline=True,
-                        tooltip="*words* use the bold weight; \\* is a literal star"),
-        IO.String.Input("font_family", default="Montserrat",
-                        tooltip="Family from the font folders, the bundled fonts (Inter, Montserrat) or the system"),
+                        tooltip="*words* use the bold weight; \\* is a literal star; new lines break"),
+        IO.Combo.Input("font", options=font_options(), default=default_font(),
+                       tooltip="Fonts from your font folders and the bundled fonts"),
+        IO.String.Input("font_override", default="", advanced=True,
+                        tooltip="Any installed system font family; used instead of 'font' when set"),
         IO.Int.Input("weight", default=700, min=100, max=1000, step=100),
         IO.Int.Input("bold_weight", default=900, min=100, max=1000, step=100, tooltip="Weight for *marked* words"),
-        IO.Float.Input("size", default=96.0, min=4.0, max=2000.0, step=1.0, tooltip="Font size in pixels"),
+        IO.Boolean.Input("italic", default=False),
+        IO.Float.Input("size", default=96.0, min=4.0, max=4000.0, step=1.0, tooltip="Font size in pixels"),
         IO.String.Input("color", default="#ffffff", tooltip="#rrggbb or #rrggbbaa"),
         IO.Combo.Input("align", options=text.ALIGNS, default="center"),
         IO.Combo.Input("valign", options=text.VALIGNS, default="top",
                        tooltip="With a box height: bottom keeps the last line in place, extra lines grow upward"),
         IO.Combo.Input("case", options=text.CASES, default="as typed"),
-        IO.Float.Input("x", default=96.0, min=-10000, max=10000, step=1.0),
-        IO.Float.Input("y", default=96.0, min=-10000, max=10000, step=1.0),
-        IO.Float.Input("box_width", default=1728.0, min=0.0, max=20000, step=1.0, tooltip="Wrap width; 0 = no wrapping"),
-        IO.Float.Input("box_height", default=0.0, min=0.0, max=20000, step=1.0, tooltip="0 = as tall as the text"),
+        IO.Float.Input("x", default=96.0, min=-20000, max=20000, step=1.0),
+        IO.Float.Input("y", default=96.0, min=-20000, max=20000, step=1.0),
+        IO.Float.Input("box_width", default=1728.0, min=0.0, max=40000, step=1.0, tooltip="Wrap width; 0 = no wrapping"),
+        IO.Float.Input("box_height", default=0.0, min=0.0, max=40000, step=1.0, tooltip="0 = as tall as the text"),
         IO.Boolean.Input("auto_fit", default=False, tooltip="Shrink the font until the text fits the box"),
-        IO.Float.Input("min_size", default=12.0, min=1.0, max=2000.0, step=1.0, advanced=True),
+        IO.Float.Input("min_size", default=12.0, min=1.0, max=4000.0, step=1.0, advanced=True),
         IO.Float.Input("line_height", default=1.15, min=0.5, max=4.0, step=0.05, advanced=True),
-        IO.Float.Input("letter_spacing", default=0.0, min=-50.0, max=200.0, step=0.5, advanced=True),
+        IO.Float.Input("letter_spacing", default=0.0, min=-100.0, max=400.0, step=0.5, advanced=True),
     ]
 
 
 def text_spec(kw: dict) -> text.TextSpec:
+    family = (kw.get("font_override") or "").strip() or kw["font"]
     return text.TextSpec(
-        text=kw["text"],
-        family=kw["font_family"],
-        weight=kw["weight"],
-        bold_weight=kw["bold_weight"],
-        size=kw["size"],
-        color=render.parse_color(kw["color"]),
-        align=kw["align"],
-        valign=kw["valign"],
-        case=kw["case"],
-        x=kw["x"],
-        y=kw["y"],
-        width=kw["box_width"],
-        height=kw["box_height"],
-        auto_fit=kw["auto_fit"],
-        min_size=kw["min_size"],
-        line_height=kw["line_height"],
-        letter_spacing=kw["letter_spacing"],
+        text=kw["text"], family=family, weight=kw["weight"], bold_weight=kw["bold_weight"],
+        italic=kw["italic"], size=kw["size"], color=color(kw["color"]), align=kw["align"],
+        valign=kw["valign"], case=kw["case"], x=kw["x"], y=kw["y"], width=kw["box_width"],
+        height=kw["box_height"], auto_fit=kw["auto_fit"], min_size=kw["min_size"],
+        line_height=kw["line_height"], letter_spacing=kw["letter_spacing"],
     )
 
 
-def shadow_inputs() -> list:
-    return [
-        IO.Float.Input("dx", default=0.0, min=-500, max=500, step=1.0),
-        IO.Float.Input("dy", default=8.0, min=-500, max=500, step=1.0),
-        IO.Float.Input("blur", default=24.0, min=0.0, max=500, step=1.0),
-        IO.String.Input("shadow_color", default="#000000"),
-        IO.Float.Input("opacity", default=0.6, min=0.0, max=1.0, step=0.05),
-    ]
+def target_input() -> IO.Combo.Input:
+    return IO.Combo.Input("target", options=TARGETS, default=TARGETS[0],
+                          tooltip="last item: the item added just before; whole scene: everything so far, as one")
+
+
+def apply_to_target(scene: sc.Scene, target: str, fn) -> sc.Scene:
+    """Change the last item, or wrap everything into one group and change that."""
+    if not scene.items:
+        raise ValueError("the scene has no items yet; add something first")
+    if target == "whole scene":
+        return replace(scene, items=(fn(sc.GroupItem(items=scene.items)),))
+    return scene.map_last(fn)
 
 
 def mask_to_alpha(mask, meaning: str):

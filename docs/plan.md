@@ -30,6 +30,11 @@ templates, data-driven batches, motion, smart design helpers and print output.
 | Licence | MIT |
 | Never in this repo | Licensed fonts, ICC profiles, brand assets, private paths or hosts, tokens. Examples use OFL fonts and placeholder content; private templates and brand kits live in a configured data folder |
 
+## Status
+
+- Step 1 (spike): done 2026-11-17, SCENE chosen.
+- Step 2 (core families): done 2026-11-18. Canvas presets and safe areas, gradients, Text Box, Shape, Add Image / Image to Scene, Stack / Place / Grid / Layers, Drop Shadow / Outer Glow / Outline / Blur / Opacity & Blend / Clip to Previous, Render / Save PDF.
+
 ## Build order
 
 1. **Spike:** a thumbnail (background, title + subtitle, logo, shadow, PNG) built in both data models; compare quality, speed, wiring, reflow, resolution independence and PDF ability; pick the model.
