@@ -48,6 +48,7 @@ parts by their size so you never compute coordinates.
 | | **Opacity & Blend** | Opacity and 17 blend modes (multiply, screen, overlay, ...) |
 | | **Clip to Previous** | Show the last item only inside the one before it (a photo inside text) |
 | Output | **Render Scene** | IMAGE + alpha MASK at any scale |
+| | **Export Image** | PNG, JPEG or WebP from a scene or any IMAGE batch: transparency kept (PNG/WebP) or flattened onto a matte, scale, DPI tag, sRGB profile, workflow embedded, and a `max_kb` budget that lowers quality until the file fits |
 | | **Save PDF** | Vector PDF, fonts embedded |
 
 Masks: our `MASK` outputs are coverage (1 = opaque). ComfyUI's **Load Image** mask
@@ -65,6 +66,7 @@ python tools/run_workflow.py examples/thumbnail.api.json --server http://127.0.0
 ```
 
 - **thumbnail**: background image, headline with shadow and subtitle in a Stack, logo placed bottom-right.
+- **export**: the thumbnail saved four ways: a YouTube JPEG under 2 MB, a half-size WebP for the web, the title alone as a transparent PNG overlay, and a 2x JPEG tagged 300 dpi made from a rendered IMAGE.
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 
 ## Configuration

@@ -34,6 +34,7 @@ templates, data-driven batches, motion, smart design helpers and print output.
 
 - Step 1 (spike): done 2026-11-17, SCENE chosen.
 - Step 2 (core families): done 2026-11-18. Canvas presets and safe areas, gradients, Text Box, Shape, Add Image / Image to Scene, Stack / Place / Grid / Layers, Drop Shadow / Outer Glow / Outline / Blur / Opacity & Blend / Clip to Previous, Render / Save PDF.
+- Step 3 (export): done 2026-11-18. Export Image: PNG / JPEG / WebP (lossy or lossless) from a scene or an IMAGE batch; transparency or a matte; scale; DPI; sRGB ICC; workflow metadata like Save Image; `max_kb` size budget (highest quality that fits). Example `examples/export.api.json`.
 
 ## Build order
 
