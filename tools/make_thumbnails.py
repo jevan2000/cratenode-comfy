@@ -30,15 +30,30 @@ SOURCES = {
     "batch_workflow": ["batch_workflow.api/*.jpg"],
     "colour": ["colour.api/16_*.png", "colour.api/19_*.png"],
     "motion": ["motion.api/16_*.png"],
-    "video_overlay": ["video_overlay.api/frame_*.png"],
+    "video_overlay": ["video_overlay.api/11_*.mp4@1.5"],
     "smart": ["smart.api/10_*.jpg"],
     "print": ["print.api/18_*.png"],
+    "layers_blend": ["layers_blend.api/20_*.png"],
+    "keyframes": ["keyframes.api/14_*.mp4@2.0"],
 }
 
 
 def latest(pattern):
+    """The newest file matching pattern; ``video.mp4@seconds`` grabs that frame with ffmpeg."""
+    pattern, _, at = pattern.partition("@")
     files = sorted(glob.glob(str(OUT / pattern)), key=lambda p: Path(p).stat().st_mtime)
-    return files[-1] if files else None
+    if not files:
+        return None
+    if not at:
+        return files[-1]
+    import subprocess
+
+    from cratenode_comfy.video import ffmpeg_path
+
+    still = str(Path(files[-1]).with_suffix(f".{at}s.png"))
+    subprocess.run([ffmpeg_path(), "-v", "error", "-y", "-ss", at, "-i", files[-1], "-frames:v", "1", still],
+                   check=True)
+    return still
 
 
 def tile(paths) -> Image.Image:

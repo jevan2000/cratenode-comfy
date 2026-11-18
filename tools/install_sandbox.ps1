@@ -3,9 +3,12 @@
 # Defaults come from the environment variables COMFYUI_ROOT and COMFYUI_PYTHON.
 # Copies, never links, so a half-edited checkout can't break a running ComfyUI.
 # Restart ComfyUI afterwards (only when it is idle).
+# -Workflows also copies the example workflows into ComfyUI's Workflows sidebar
+# (user/default/workflows/CrateNode-Comfy/), replacing earlier copies of them.
 param(
   [string]$ComfyRoot = $env:COMFYUI_ROOT,
-  [string]$Python = $env:COMFYUI_PYTHON
+  [string]$Python = $env:COMFYUI_PYTHON,
+  [switch]$Workflows
 )
 $ErrorActionPreference = 'Stop'
 if (-not $ComfyRoot -or -not $Python) { throw "give -ComfyRoot and -Python, or set COMFYUI_ROOT and COMFYUI_PYTHON" }
@@ -28,5 +31,11 @@ if (Test-Path $inputDir) {
     $t = Join-Path $inputDir $_.Name
     if (-not (Test-Path $t)) { Copy-Item $_.FullName $t }
   }
+}
+if ($Workflows) {
+  $wf = Join-Path $ComfyRoot "user\default\workflows\CrateNode-Comfy"
+  New-Item -ItemType Directory -Force $wf | Out-Null
+  Copy-Item (Join-Path $src "example_workflows\*.json") $wf -Force
+  "workflows copied to $wf"
 }
 "installed to $dst"

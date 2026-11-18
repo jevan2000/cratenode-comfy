@@ -1,0 +1,1262 @@
+{
+ "last_node_id": 20,
+ "last_link_id": 23,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "CNPalette",
+   "pos": [
+    0,
+    0.0
+   ],
+   "size": [
+    340,
+    138
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "links": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "swatches",
+     "type": "IMAGE",
+     "links": [
+      1
+     ],
+     "slot_index": 1
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPalette"
+   },
+   "widgets_values": [
+    "ink: #14121f\npaper: #f4efe6\ncoral: #ff6b5b\nteal: #19a7a1\ngold: #f2b134",
+    "poster"
+   ],
+   "title": "Palette (typed in)"
+  },
+  {
+   "id": 2,
+   "type": "PreviewImage",
+   "pos": [
+    400,
+    0.0
+   ],
+   "size": [
+    340,
+    328
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 1
+    }
+   ],
+   "outputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "PreviewImage"
+   },
+   "widgets_values": [],
+   "title": "Palette swatches"
+  },
+  {
+   "id": 3,
+   "type": "CNPickColor",
+   "pos": [
+    400,
+    368.0
+   ],
+   "size": [
+    340,
+    162
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": 2
+    }
+   ],
+   "outputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "links": [
+      6
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPickColor"
+   },
+   "widgets_values": [
+    "by name or number",
+    "paper",
+    "#000000"
+   ]
+  },
+  {
+   "id": 4,
+   "type": "CNPickColor",
+   "pos": [
+    400,
+    570.0
+   ],
+   "size": [
+    340,
+    162
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": 3
+    }
+   ],
+   "outputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "links": [
+      8
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPickColor"
+   },
+   "widgets_values": [
+    "by name or number",
+    "coral",
+    "#000000"
+   ]
+  },
+  {
+   "id": 5,
+   "type": "CNPickColor",
+   "pos": [
+    400,
+    772.0
+   ],
+   "size": [
+    340,
+    162
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": 4
+    }
+   ],
+   "outputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "links": [
+      10
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPickColor"
+   },
+   "widgets_values": [
+    "by name or number",
+    "teal",
+    "#000000"
+   ]
+  },
+  {
+   "id": 6,
+   "type": "CNPickColor",
+   "pos": [
+    400,
+    974.0
+   ],
+   "size": [
+    340,
+    162
+   ],
+   "flags": {},
+   "order": 6,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": 5
+    }
+   ],
+   "outputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "links": [
+      15,
+      16
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPickColor"
+   },
+   "widgets_values": [
+    "by name or number",
+    "ink",
+    "#000000"
+   ]
+  },
+  {
+   "id": 7,
+   "type": "CNCanvas",
+   "pos": [
+    800,
+    0.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 7,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "background",
+     "type": "STRING",
+     "widget": {
+      "name": "background"
+     },
+     "link": 6
+    },
+    {
+     "name": "background_fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      7
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNCanvas"
+   },
+   "widgets_values": [
+    "Instagram portrait 1080x1350",
+    false,
+    1080,
+    1350,
+    "#000000",
+    5.0
+   ]
+  },
+  {
+   "id": 8,
+   "type": "CNSafeArea",
+   "pos": [
+    1200,
+    0.0
+   ],
+   "size": [
+    340,
+    164
+   ],
+   "flags": {},
+   "order": 10,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 7
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      9
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNSafeArea"
+   },
+   "widgets_values": [
+    90.0,
+    120.0,
+    90.0,
+    120.0
+   ],
+   "title": "Safe Area: wider margins"
+  },
+  {
+   "id": 9,
+   "type": "CNShape",
+   "pos": [
+    1600,
+    0.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 12,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "widget": {
+      "name": "color"
+     },
+     "link": 8
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 9
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      11
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "ellipse",
+    90.0,
+    180.0,
+    640.0,
+    640.0,
+    "#ffffff",
+    "",
+    0.0,
+    0.0,
+    5,
+    0.5,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 10,
+   "type": "CNShape",
+   "pos": [
+    2000,
+    0.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 14,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "widget": {
+      "name": "color"
+     },
+     "link": 10
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 11
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      12
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "ellipse",
+    350.0,
+    420.0,
+    640.0,
+    640.0,
+    "#ffffff",
+    "",
+    0.0,
+    0.0,
+    5,
+    0.5,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 11,
+   "type": "CNOpacityBlend",
+   "pos": [
+    2400,
+    0.0
+   ],
+   "size": [
+    340,
+    140
+   ],
+   "flags": {},
+   "order": 15,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 12
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      13
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNOpacityBlend"
+   },
+   "widgets_values": [
+    "last item",
+    0.9,
+    "multiply"
+   ],
+   "title": "Multiply the second circle"
+  },
+  {
+   "id": 12,
+   "type": "CNShape",
+   "pos": [
+    2800,
+    0.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 16,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 13
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      14
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "star",
+    600.0,
+    150.0,
+    360.0,
+    360.0,
+    "#f2b134",
+    "",
+    0.0,
+    0.0,
+    8,
+    0.45,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 13,
+   "type": "CNBlur",
+   "pos": [
+    3200,
+    0.0
+   ],
+   "size": [
+    340,
+    116
+   ],
+   "flags": {},
+   "order": 17,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 14
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      21
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNBlur"
+   },
+   "widgets_values": [
+    "last item",
+    18.0
+   ],
+   "title": "Blur the star (soft focus)"
+  },
+  {
+   "id": 14,
+   "type": "CNTextBox",
+   "pos": [
+    800,
+    252.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 8,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "widget": {
+      "name": "color"
+     },
+     "link": 15
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      18
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "LAYERS\n& *BLENDS*",
+    "Montserrat",
+    "",
+    800,
+    900,
+    false,
+    150.0,
+    "#ffffff",
+    "left",
+    "top",
+    "as typed",
+    96.0,
+    96.0,
+    900.0,
+    0.0,
+    false,
+    12.0,
+    0.95,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 15,
+   "type": "CNTextBox",
+   "pos": [
+    800,
+    910.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 9,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "color",
+     "type": "STRING",
+     "widget": {
+      "name": "color"
+     },
+     "link": 16
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      19
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "Opacity, blend modes, blur and a typed-in palette",
+    "Inter",
+    "",
+    400,
+    900,
+    false,
+    40.0,
+    "#ffffff",
+    "left",
+    "top",
+    "as typed",
+    96.0,
+    96.0,
+    900.0,
+    0.0,
+    false,
+    12.0,
+    1.15,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 16,
+   "type": "CNCanvas",
+   "pos": [
+    0,
+    178.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "background_fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      17
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNCanvas"
+   },
+   "widgets_values": [
+    "Instagram portrait 1080x1350",
+    false,
+    1080,
+    1350,
+    "#00000000",
+    8.0
+   ],
+   "title": "Clear canvas for the type layer"
+  },
+  {
+   "id": 17,
+   "type": "CNStack",
+   "pos": [
+    1200,
+    204.0
+   ],
+   "size": [
+    340,
+    416
+   ],
+   "flags": {},
+   "order": 11,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 17
+    },
+    {
+     "name": "part_1",
+     "type": "CN_SCENE",
+     "link": 18
+    },
+    {
+     "name": "part_2",
+     "type": "CN_SCENE",
+     "link": 19
+    },
+    {
+     "name": "part_3",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_4",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_5",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "part_6",
+     "type": "CN_SCENE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      20
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNStack"
+   },
+   "widgets_values": [
+    "vertical",
+    24.0,
+    "left",
+    "bottom",
+    "safe area",
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "id": 18,
+   "type": "CNOpacityBlend",
+   "pos": [
+    1600,
+    490.0
+   ],
+   "size": [
+    340,
+    140
+   ],
+   "flags": {},
+   "order": 13,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 20
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      22
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNOpacityBlend"
+   },
+   "widgets_values": [
+    "whole scene",
+    0.92,
+    "normal"
+   ],
+   "title": "Type layer at 92%"
+  },
+  {
+   "id": 19,
+   "type": "CNLayers",
+   "pos": [
+    3600,
+    0.0
+   ],
+   "size": [
+    340,
+    200
+   ],
+   "flags": {},
+   "order": 18,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 21
+    },
+    {
+     "name": "layer_1",
+     "type": "CN_SCENE",
+     "link": 22
+    },
+    {
+     "name": "layer_2",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "layer_3",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "layer_4",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "layer_5",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "layer_6",
+     "type": "CN_SCENE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      23
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNLayers"
+   },
+   "widgets_values": [],
+   "title": "Layers: shapes, then type"
+  },
+  {
+   "id": 20,
+   "type": "CNExport",
+   "pos": [
+    4000,
+    0.0
+   ],
+   "size": [
+    340,
+    658
+   ],
+   "flags": {},
+   "order": 19,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 23
+    },
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": null
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "link": null
+    },
+    {
+     "name": "row",
+     "type": "CN_ROW",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "paths",
+     "type": "STRING",
+     "links": null
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNExport"
+   },
+   "widgets_values": [
+    "alpha (1 = opaque)",
+    "png",
+    92,
+    false,
+    true,
+    "#ffffff",
+    1.0,
+    0.0,
+    0,
+    true,
+    "cratenode/layers_blend"
+   ]
+  }
+ ],
+ "links": [
+  [
+   1,
+   1,
+   1,
+   2,
+   0,
+   "IMAGE"
+  ],
+  [
+   2,
+   1,
+   0,
+   3,
+   0,
+   "CN_PALETTE"
+  ],
+  [
+   3,
+   1,
+   0,
+   4,
+   0,
+   "CN_PALETTE"
+  ],
+  [
+   4,
+   1,
+   0,
+   5,
+   0,
+   "CN_PALETTE"
+  ],
+  [
+   5,
+   1,
+   0,
+   6,
+   0,
+   "CN_PALETTE"
+  ],
+  [
+   6,
+   3,
+   0,
+   7,
+   0,
+   "STRING"
+  ],
+  [
+   7,
+   7,
+   0,
+   8,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   8,
+   4,
+   0,
+   9,
+   0,
+   "STRING"
+  ],
+  [
+   9,
+   8,
+   0,
+   9,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   10,
+   5,
+   0,
+   10,
+   0,
+   "STRING"
+  ],
+  [
+   11,
+   9,
+   0,
+   10,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   12,
+   10,
+   0,
+   11,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   13,
+   11,
+   0,
+   12,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   14,
+   12,
+   0,
+   13,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   15,
+   6,
+   0,
+   14,
+   0,
+   "STRING"
+  ],
+  [
+   16,
+   6,
+   0,
+   15,
+   0,
+   "STRING"
+  ],
+  [
+   17,
+   16,
+   0,
+   17,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   18,
+   14,
+   0,
+   17,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   19,
+   15,
+   0,
+   17,
+   2,
+   "CN_SCENE"
+  ],
+  [
+   20,
+   17,
+   0,
+   18,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   21,
+   13,
+   0,
+   19,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   22,
+   18,
+   0,
+   19,
+   1,
+   "CN_SCENE"
+  ],
+  [
+   23,
+   19,
+   0,
+   20,
+   0,
+   "CN_SCENE"
+  ]
+ ],
+ "groups": [],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.75,
+   "offset": [
+    40,
+    40
+   ]
+  }
+ },
+ "version": 0.4
+}

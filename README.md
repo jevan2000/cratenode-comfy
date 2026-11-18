@@ -33,7 +33,8 @@ nodes fail with "SkIcuLoader datafile missing", copy `icudtl.dat` from
 ## Quick start
 
 Open **Templates** in ComfyUI (Workflow → Browse Templates) and pick
-**cratenode-comfy**: the twelve example workflows below open ready to run. Their
+**cratenode-comfy**: the fourteen example workflows below open ready to run, and
+together use every node. Their
 Load Image / Load Video nodes use the placeholder files in `api_examples/assets/`;
 copy those into ComfyUI's `input` folder (the install script does) or pick your own.
 
@@ -217,6 +218,8 @@ python tools/run_workflow.py api_examples/thumbnail.api.json --server http://127
 - **smart**: a title auto-placed in the calm side of a busy picture, readability checked before and after a smart scrim, and Find Quiet Area's heat map.
 - **copy_variants**: three headline variants from Copy Writer, one design each (set `model` to an installed Ollama model first).
 - **print**: a US Letter flyer with bleed from the example brand kit, saved as a vector CMYK PDF and a flattened one with crop marks, plus a soft proof, an out-of-gamut mask and CMYK values.
+- **layers_blend**: a typed-in palette, wider safe-area margins, circles in multiply, a blurred star, and a type layer put on top with Layers.
+- **keyframes**: keyframe animation (a video sliding in picture-in-picture, a spinning and pulsing star, a wiped-in title), rendered as a frame batch and saved as MP4 from that batch.
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 
 ## Configuration
@@ -257,7 +260,8 @@ python -m unittest discover -s tests -v
 Tools: `run_workflow.py` (run an API workflow headless), `api_to_ui.py` (API →
 UI workflows), `make_thumbnails.py`, `gen_node_docs.py` (docs/nodes.md from a
 running ComfyUI), `make_placeholders.py` (the example assets),
-`install_sandbox.ps1`.
+`install_sandbox.ps1` (`-Workflows` also copies the examples into ComfyUI's
+Workflows sidebar, folder CrateNode-Comfy).
 
 ## Licence
 

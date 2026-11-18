@@ -1,0 +1,856 @@
+{
+ "last_node_id": 14,
+ "last_link_id": 16,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "LoadVideo",
+   "pos": [
+    0,
+    0.0
+   ],
+   "size": [
+    340,
+    116
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [],
+   "outputs": [
+    {
+     "name": "VIDEO",
+     "type": "VIDEO",
+     "links": [
+      1
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "LoadVideo"
+   },
+   "widgets_values": [
+    "placeholder-clip.mp4",
+    "image"
+   ]
+  },
+  {
+   "id": 2,
+   "type": "GetVideoComponents",
+   "pos": [
+    400,
+    0.0
+   ],
+   "size": [
+    340,
+    156
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "video",
+     "type": "VIDEO",
+     "link": 1
+    }
+   ],
+   "outputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "links": [
+      2
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "audio",
+     "type": "AUDIO",
+     "links": null
+    },
+    {
+     "name": "fps",
+     "type": "FLOAT",
+     "links": [
+      3
+     ],
+     "slot_index": 2
+    },
+    {
+     "name": "bit_depth",
+     "type": "COMBO",
+     "links": null
+    },
+    {
+     "name": "color_space",
+     "type": "COMBO",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "GetVideoComponents"
+   },
+   "widgets_values": []
+  },
+  {
+   "id": 3,
+   "type": "CNCanvas",
+   "pos": [
+    0,
+    156.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "background_fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      4
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNCanvas"
+   },
+   "widgets_values": [
+    "custom",
+    false,
+    1280,
+    720,
+    "#101420",
+    5.0
+   ]
+  },
+  {
+   "id": 4,
+   "type": "CNAddVideo",
+   "pos": [
+    800,
+    0.0
+   ],
+   "size": [
+    340,
+    400
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "frames",
+     "type": "IMAGE",
+     "link": 2
+    },
+    {
+     "name": "fps",
+     "type": "FLOAT",
+     "widget": {
+      "name": "fps"
+     },
+     "link": 3
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 4
+    },
+    {
+     "name": "mask",
+     "type": "MASK",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      5
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAddVideo"
+   },
+   "widgets_values": [
+    "LoadImage (1 = transparent)",
+    30.0,
+    "fill",
+    640.0,
+    180.0,
+    560.0,
+    315.0,
+    0.0,
+    true,
+    false,
+    24.0,
+    ""
+   ],
+   "title": "Add Video: picture in picture"
+  },
+  {
+   "id": 5,
+   "type": "CNAnimate",
+   "pos": [
+    1200,
+    0.0
+   ],
+   "size": [
+    340,
+    188
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 5
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      6
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAnimate"
+   },
+   "widgets_values": [
+    "last item",
+    "x",
+    "0: 700\n0.8: 0",
+    "back out",
+    0.0
+   ],
+   "title": "Keyframes: the video slides in"
+  },
+  {
+   "id": 6,
+   "type": "CNShape",
+   "pos": [
+    1600,
+    0.0
+   ],
+   "size": [
+    340,
+    450
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 6
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      7
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "star",
+    170.0,
+    200.0,
+    300.0,
+    300.0,
+    "#f2b134",
+    "",
+    0.0,
+    0.0,
+    5,
+    0.45,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 7,
+   "type": "CNAnimate",
+   "pos": [
+    2000,
+    0.0
+   ],
+   "size": [
+    340,
+    188
+   ],
+   "flags": {},
+   "order": 6,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 7
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      8
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAnimate"
+   },
+   "widgets_values": [
+    "last item",
+    "rotation",
+    "0: 0\n4: 360",
+    "linear",
+    0.0
+   ],
+   "title": "Keyframes: spin"
+  },
+  {
+   "id": 8,
+   "type": "CNAnimate",
+   "pos": [
+    2400,
+    0.0
+   ],
+   "size": [
+    340,
+    188
+   ],
+   "flags": {},
+   "order": 7,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 8
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      9
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAnimate"
+   },
+   "widgets_values": [
+    "last item",
+    "scale",
+    "0: 0.6\n1: 1.1\n2: 0.9\n3: 1.1\n4: 1",
+    "ease in out",
+    0.0
+   ],
+   "title": "Keyframes: pulse"
+  },
+  {
+   "id": 9,
+   "type": "CNTextBox",
+   "pos": [
+    2800,
+    0.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 8,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 9
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      10
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "KEYFRAMES",
+    "Montserrat",
+    "",
+    800,
+    900,
+    false,
+    72.0,
+    "#ffffff",
+    "center",
+    "top",
+    "as typed",
+    0.0,
+    560.0,
+    1280.0,
+    0.0,
+    false,
+    12.0,
+    1.15,
+    0.0,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 10,
+   "type": "CNAnimate",
+   "pos": [
+    3200,
+    0.0
+   ],
+   "size": [
+    340,
+    188
+   ],
+   "flags": {},
+   "order": 9,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 10
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      11
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNAnimate"
+   },
+   "widgets_values": [
+    "last item",
+    "wipe",
+    "0.5: 0\n1.5: 1",
+    "ease out",
+    0.0
+   ],
+   "title": "Keyframes: letter wipe"
+  },
+  {
+   "id": 11,
+   "type": "CNTimeline",
+   "pos": [
+    3600,
+    0.0
+   ],
+   "size": [
+    340,
+    138
+   ],
+   "flags": {},
+   "order": 10,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 11
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      12
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "seconds",
+     "type": "FLOAT",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTimeline"
+   },
+   "widgets_values": [
+    4.0,
+    24.0
+   ]
+  },
+  {
+   "id": 12,
+   "type": "CNRenderAnimation",
+   "pos": [
+    4000,
+    0.0
+   ],
+   "size": [
+    340,
+    232
+   ],
+   "flags": {},
+   "order": 11,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 12
+    }
+   ],
+   "outputs": [
+    {
+     "name": "frames",
+     "type": "IMAGE",
+     "links": [
+      13,
+      15
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "links": [
+      16
+     ],
+     "slot_index": 1
+    },
+    {
+     "name": "fps",
+     "type": "FLOAT",
+     "links": [
+      14
+     ],
+     "slot_index": 2
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNRenderAnimation"
+   },
+   "widgets_values": [
+    0.5,
+    0.0,
+    0,
+    0,
+    1
+   ],
+   "title": "Render Animation: frames as a batch"
+  },
+  {
+   "id": 13,
+   "type": "PreviewImage",
+   "pos": [
+    4400,
+    0.0
+   ],
+   "size": [
+    340,
+    328
+   ],
+   "flags": {},
+   "order": 12,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 13
+    }
+   ],
+   "outputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "PreviewImage"
+   },
+   "widgets_values": [],
+   "title": "Every frame (batch)"
+  },
+  {
+   "id": 14,
+   "type": "CNSaveVideo",
+   "pos": [
+    4400,
+    368.0
+   ],
+   "size": [
+    340,
+    300
+   ],
+   "flags": {},
+   "order": 13,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "fps",
+     "type": "FLOAT",
+     "widget": {
+      "name": "fps"
+     },
+     "link": 14
+    },
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": null
+    },
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 15
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "link": 16
+    },
+    {
+     "name": "audio",
+     "type": "AUDIO",
+     "link": null
+    },
+    {
+     "name": "row",
+     "type": "CN_ROW",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "path",
+     "type": "STRING",
+     "links": null
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNSaveVideo"
+   },
+   "widgets_values": [
+    "mp4 (H.264)",
+    0.0,
+    80,
+    1.0,
+    "#000000",
+    "cratenode/motion/keyframes"
+   ],
+   "title": "Save Video from the frame batch"
+  }
+ ],
+ "links": [
+  [
+   1,
+   1,
+   0,
+   2,
+   0,
+   "VIDEO"
+  ],
+  [
+   2,
+   2,
+   0,
+   4,
+   0,
+   "IMAGE"
+  ],
+  [
+   3,
+   2,
+   2,
+   4,
+   1,
+   "FLOAT"
+  ],
+  [
+   4,
+   3,
+   0,
+   4,
+   2,
+   "CN_SCENE"
+  ],
+  [
+   5,
+   4,
+   0,
+   5,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   6,
+   5,
+   0,
+   6,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   7,
+   6,
+   0,
+   7,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   8,
+   7,
+   0,
+   8,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   9,
+   8,
+   0,
+   9,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   10,
+   9,
+   0,
+   10,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   11,
+   10,
+   0,
+   11,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   12,
+   11,
+   0,
+   12,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   13,
+   12,
+   0,
+   13,
+   0,
+   "IMAGE"
+  ],
+  [
+   14,
+   12,
+   2,
+   14,
+   0,
+   "FLOAT"
+  ],
+  [
+   15,
+   12,
+   0,
+   14,
+   2,
+   "IMAGE"
+  ],
+  [
+   16,
+   12,
+   1,
+   14,
+   3,
+   "MASK"
+  ]
+ ],
+ "groups": [],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.75,
+   "offset": [
+    40,
+    40
+   ]
+  }
+ },
+ "version": 0.4
+}
