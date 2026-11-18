@@ -9,7 +9,7 @@ import numpy as np
 from . import scene as sc
 from .fonts import FontRegistry, registry
 
-BACKGROUNDS = ["checkerboard", "white", "black", "grey"]
+BACKGROUNDS = ["checkerboard", "auto", "dark checkerboard", "white", "black", "grey"]
 GUIDES = ["none", "safe area", "safe area + item outlines"]
 SAFE = (0.0, 0.85, 1.0)  # cyan
 BOUNDS = (1.0, 0.25, 0.75)  # magenta
@@ -24,7 +24,18 @@ def backdrop(h: int, w: int, kind: str = "checkerboard", cell: int = 12) -> np.n
         return np.full((h, w, 3), 0.5, np.float32)
     yy, xx = np.mgrid[0:h, 0:w]
     check = ((yy // cell + xx // cell) % 2).astype(np.float32)
-    return np.repeat((0.78 + 0.12 * check)[:, :, None], 3, axis=2)
+    base, step = (0.14, 0.07) if kind == "dark checkerboard" else (0.78, 0.12)
+    return np.repeat((base + step * check)[:, :, None], 3, axis=2)
+
+
+def auto_backdrop(rgba: np.ndarray) -> str:
+    """A dark checkerboard behind light content (white text), else the light one."""
+    a = rgba[:, :, 3]
+    seen = a > 0.1
+    if not seen.any():
+        return "checkerboard"
+    lum = (rgba[:, :, :3] @ np.array([0.2126, 0.7152, 0.0722], np.float32))[seen]
+    return "dark checkerboard" if float(lum.mean()) > 0.6 else "checkerboard"
 
 
 def _dashed_rect(img: np.ndarray, x0, y0, x1, y1, color, width: int = 1, dash: int = 8) -> None:
@@ -57,6 +68,8 @@ def preview(scene: sc.Scene, scale: float = 0.5, t: float | None = None, guides:
     rgba = sc.render(scene, scale, reg, t)
     h, w = rgba.shape[:2]
     a = rgba[:, :, 3:4]
+    if background == "auto":
+        background = auto_backdrop(rgba)
     img = (rgba[:, :, :3] * a + backdrop(h, w, background) * (1 - a)).astype(np.float32)
     lw = max(1, round(2 * scale))
     if guides in ("safe area", "safe area + item outlines"):
@@ -68,6 +81,37 @@ def preview(scene: sc.Scene, scale: float = 0.5, t: float | None = None, guides:
             x0, y0, x1, y1 = p.bounds
             _dashed_rect(img, x0 * scale, y0 * scale, x1 * scale, y1 * scale, BOUNDS, lw, dash=4)
     return img
+
+
+def fit_scale(w: float, h: float, max_w: int, max_h: int) -> float:
+    return min(max_w / max(w, 1.0), max_h / max(h, 1.0))
+
+
+def part_preview(scene: sc.Scene, max_w: int = 320, max_h: int = 200, pad: float = 12.0,
+                 background: str = "auto", reg: FontRegistry | None = None) -> np.ndarray:
+    """A part (items without a real canvas, e.g. a Text Box with no scene) cropped to
+    what it actually draws (the letters, not their text box; effects included) and
+    fitted into max_w x max_h. H x W x 3 float."""
+    from .smart import ink_bounds
+
+    reg = reg or registry()
+    ink = ink_bounds(scene.items, reg)
+    if ink is None:
+        return backdrop(max_h // 2, max_w, "checkerboard" if background == "auto" else background)
+    x0, y0, x1, y1 = ink[0] - pad, ink[1] - pad, ink[2] + pad, ink[3] + pad
+    crop = sc.Scene(max(1, int(np.ceil(x1 - x0))), max(1, int(np.ceil(y1 - y0))), scene.background,
+                    items=(sc.GroupItem(items=scene.items, dx=-x0, dy=-y0),))
+    return preview(crop, min(1.0, fit_scale(crop.width, crop.height, max_w, max_h)), None, "none", background, reg)
+
+
+def to_png(img: np.ndarray) -> bytes:
+    import io
+
+    from PIL import Image
+
+    buf = io.BytesIO()
+    Image.fromarray(np.round(np.clip(img, 0, 1) * 255).astype(np.uint8), "RGB").save(buf, "PNG", optimize=False)
+    return buf.getvalue()
 
 
 def describe(scene: sc.Scene, reg: FontRegistry | None = None) -> str:

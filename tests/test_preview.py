@@ -54,6 +54,36 @@ class Preview(unittest.TestCase):
         self.assertAlmostEqual(float(rest[50, 100, 0]), 1.0, places=2)
         self.assertAlmostEqual(float(start[50, 100, 0]), 0.0, places=2)
 
+    def test_part_preview_crops_and_fits(self):
+        # a small shape far from the origin: cropped to it (plus padding), then fitted
+        s = sc.Scene(1920, 1080).add(sc.ShapeItem("rectangle", 1500, 900, 100, 50, RED))
+        img = preview.part_preview(s, 320, 200, pad=10, background="black", reg=REG)
+        self.assertEqual(img.shape, (70, 120, 3), "100x50 + 2x10 padding, not shrunk")
+        # text: cropped to the letters, not to its (much wider) text box
+        from cratenode_comfy import text
+
+        t = sc.Scene(1920, 1080).add(sc.TextItem(text.TextSpec("Hi", "Montserrat", 700, size=80, x=0, y=0,
+                                                                width=1728, color=(1, 1, 1, 1))))
+        self.assertLess(preview.part_preview(t, 320, 200, reg=REG).shape[1], 200)
+        # white content gets the dark checkerboard
+        auto = preview.part_preview(t, 320, 200, pad=10, reg=REG)
+        self.assertLess(float(auto[2, 2].mean()), 0.3)
+        np.testing.assert_allclose(img[35, 60], (1, 0, 0))
+        big = sc.Scene(10, 10).add(sc.ShapeItem("rectangle", 0, 0, 2000, 500, RED))
+        self.assertLessEqual(preview.part_preview(big, 320, 200, reg=REG).shape[1], 320)
+
+    def test_part_preview_includes_effects(self):
+        s = sc.Scene(10, 10).add(sc.add_effect(sc.ShapeItem("rectangle", 0, 0, 100, 100, RED),
+                                               sc.Shadow(dx=0, dy=30, blur=20)))
+        with_fx = preview.part_preview(s, 400, 400, pad=0, background="white", reg=REG)
+        self.assertGreater(with_fx.shape[0], 100 + 30, "room for the shadow below")
+        self.assertLess(float(with_fx[-8, 50].mean()), 0.95, "the shadow is in the crop")
+
+    def test_png(self):
+        png = preview.to_png(np.zeros((4, 6, 3), np.float32))
+        self.assertTrue(png.startswith(b"\x89PNG"))
+        self.assertEqual(preview.fit_scale(640, 400, 320, 200), 0.5)
+
     def test_describe(self):
         self.assertEqual(preview.describe(part_scene()), "400x200: 1 shape")
         s = sc.Scene(200, 100, fps=24).add(sc.animate(sc.ShapeItem(), motion.preset("pop", 0, 1)))

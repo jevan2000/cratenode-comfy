@@ -20,6 +20,12 @@ class CrateNodeComfy(ComfyExtension):
                      __version__, len(reg.faces), len(reg.families()), reg.config.source)
         for p in reg.problems:
             logging.warning("CrateNode-Comfy fonts: %s", p)
+        try:
+            from . import nodes_live
+
+            nodes_live.add_routes()  # live previews on the nodes (web/live_preview.js)
+        except Exception as e:  # previews are a convenience; never block loading the nodes
+            logging.warning("CrateNode-Comfy: live previews unavailable: %s", e)
         return (nodes_canvas.NODES + nodes_type.NODES + nodes_shapes.NODES + nodes_layout.NODES
                 + nodes_effects.NODES + nodes_output.NODES + nodes_data.NODES
                 + nodes_color.NODES + nodes_motion.NODES + nodes_smart.NODES + nodes_print.NODES)

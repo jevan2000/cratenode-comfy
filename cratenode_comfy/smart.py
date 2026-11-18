@@ -136,7 +136,7 @@ def ink_bounds(items: tuple, reg: FontRegistry | None = None, max_side: int = 10
     b = sc.content_bounds(items, reg)
     if b is None:
         return None
-    pad = 4.0
+    pad = 4.0 + max((sc.effect_reach(it.style.effects) for it in items), default=0.0)  # shadows, glows
     w, h = b[2] - b[0] + 2 * pad, b[3] - b[1] + 2 * pad
     s = min(1.0, max_side / max(w, h))
     part = sc.Scene(max(1, math.ceil(w)), max(1, math.ceil(h)),

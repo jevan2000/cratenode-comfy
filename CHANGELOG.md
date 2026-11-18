@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Live previews on the nodes** before running: Canvas, Text Box, Shape, Linear and
+  Radial Gradient, Palette, Safe Area, Contrast Check and the effect nodes show a
+  picture under their settings that updates as they change. `web/live_preview.js`
+  posts the node's widget values to `/cratenode/preview`, which runs the node's own
+  code and returns a small PNG (effects on a sample "Aa"; text cropped to its
+  letters; a dark checkerboard behind light content). Not saved into workflows.
 - **Preview Scene** node: a quick preview of the design so far, anywhere in a chain
   (the scene passes through). Transparency over a checkerboard or a solid colour,
   optional guides (safe area, item outlines; preview only), any moment of an

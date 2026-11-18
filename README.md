@@ -54,6 +54,15 @@ While you build, drop a **Preview Scene** anywhere in the chain to see the desig
 so far; the scene passes straight through, so it can stay in place. Turn on
 `guides` to see the safe area and where each item sits.
 
+**Live previews:** Canvas, Text Box, Shape, the gradients, Palette, Safe Area,
+Contrast Check and the effect nodes (Drop Shadow, Outer Glow, Outline, Blur,
+Opacity & Blend, Clip to Previous) show a picture at the bottom of the node that
+follows their settings as you change them, before anything runs. The pack's own
+code draws it (through a small endpoint, `/cratenode/preview`), so it looks exactly
+like the output. Effect nodes show their effect on a sample "Aa". Values arriving
+through a link aren't known until the workflow runs, so the preview uses the
+widget's own value.
+
 ## Nodes
 
 Full inputs and outputs: [docs/nodes.md](docs/nodes.md).

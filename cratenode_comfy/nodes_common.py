@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from dataclasses import replace
 
 from comfy_api.latest import IO
@@ -60,6 +61,9 @@ def color(s: str) -> tuple:
     return render.parse_color(s)
 
 
+QUIET = threading.local()  # live previews set QUIET.on: no warnings in the log for them
+
+
 def font_warnings(items) -> list[str]:
     """Licence warnings for the fonts the text in ``items`` uses (never an error).
     Scoped licences are checked against ``licence_scope`` in the config."""
@@ -80,8 +84,9 @@ def font_warnings(items) -> list[str]:
             msg = reg.licence_warning(face, scope) if face is not None else None
             if msg and msg not in out:
                 out.append(msg)
-    for m in out:
-        logging.warning("CrateNode-Comfy font licence: %s", m)
+    if not getattr(QUIET, "on", False):
+        for m in out:
+            logging.warning("CrateNode-Comfy font licence: %s", m)
     return out
 
 
