@@ -20,7 +20,7 @@ templates, data-driven batches, motion, smart design helpers and print output.
 |---|---|
 | Engine | [skia-python](https://github.com/kyamagu/skia-python): paths, effects, blend modes, Paragraph rich text, RGB PDF |
 | Print | reportlab for CMYK PDF; Pillow ImageCms (littleCMS) for colour conversion through a configured profile; exact CMYK values on demand |
-| Data model | Spike first: the same design as a vector SCENE pipeline and as an IMAGE+MASK pipeline; the winner becomes the pack's model, with converters both ways |
+| Data model | **SCENE (vector) with converters both ways** — chosen 2026-11-17 after the step 1 spike ([spike-results.md](spike-results.md)). Render turns a scene into IMAGE/MASK; image nodes turn IMAGE/MASK back into scene items. The IMAGE+MASK spike nodes are retired in step 2 |
 | Fonts | A configured font folder first, then system fonts; licence data from font catalogs; a warning (never an error) when a font is used outside its licence scope |
 | Templates | JSON files with named slots, plus example workflows; a "Save as Template" node writes a design back to JSON |
 | Batches | CSV/JSON rows use ComfyUI list execution; filename templates like `{date}_{title}` |

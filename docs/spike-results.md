@@ -33,6 +33,10 @@ only the data model differs.
 - Speed: the scene model redraws everything on each run. Caching decoded images
   and laid-out text inside scene items would close most of the 0.4 s gap.
 
+## Decision
+
+2026-11-17: **SCENE + converters** (the recommendation below).
+
 ## Recommendation
 
 **SCENE as the backbone**, with converters both ways (Render → IMAGE/MASK, and
