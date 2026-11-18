@@ -1,4 +1,4 @@
-"""Output: render a scene to IMAGE/MASK, export PNG/JPEG/WebP, or save a vector PDF."""
+"""Output: preview a scene while building it, render it to IMAGE/MASK, export PNG/JPEG/WebP, or save a vector PDF."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import os
 
 from comfy_api.latest import IO, UI
 
-from . import export, render
+from . import export, preview, render
 from . import template as tpl
 from . import scene as sc
 from .nodes_common import MASK_MEANINGS, ROOT, RowT, SceneT, mask_to_alpha, with_warnings
@@ -14,6 +14,35 @@ from .nodes_common import MASK_MEANINGS, ROOT, RowT, SceneT, mask_to_alpha, with
 CAT = f"{ROOT}/Output"
 NAME_TIP = ("{column} takes a value from the data row; also {date}, {time}, {index} (row number), "
             "and ComfyUI's %date:yyyy-MM-dd%, %width%, %height%. a/b makes a subfolder")
+
+
+class CNPreviewScene(IO.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return IO.Schema(
+            node_id="CNPreviewScene", display_name="Preview Scene", category=CAT,
+            description="See the design so far, anywhere in a chain: the scene passes straight through, and the "
+                        "node shows a quick preview (transparency over a checkerboard). Guides show the safe area "
+                        "and each item's outline; they are only in the preview. For animations, pick a time.",
+            is_output_node=True,
+            inputs=[SceneT.Input("scene"),
+                    IO.Float.Input("scale", default=0.5, min=0.05, max=4.0, step=0.05,
+                                   tooltip="Preview size; smaller is faster"),
+                    IO.Combo.Input("guides", options=preview.GUIDES, default="none"),
+                    IO.Combo.Input("background", options=preview.BACKGROUNDS, default="checkerboard",
+                                   tooltip="What shows through transparent areas (preview only)"),
+                    IO.Float.Input("time", default=-1.0, min=-1.0, max=3600.0, step=0.05,
+                                   tooltip="Seconds into an animation; -1 = at rest (no animation)")],
+            outputs=[SceneT.Output(display_name="scene"), IO.String.Output(display_name="info")],
+        )
+
+    @classmethod
+    def execute(cls, scene, scale, guides, background, time):
+        import torch
+
+        img = preview.preview(scene, scale, None if time < 0 else time, guides, background)
+        info = preview.describe(scene)
+        return IO.NodeOutput(scene, info, ui=UI.PreviewImage(torch.from_numpy(img)[None], cls=cls))
 
 
 class CNRender(IO.ComfyNode):
@@ -143,4 +172,4 @@ class CNExport(IO.ComfyNode):
         return {}
 
 
-NODES = [CNRender, CNExport, CNSavePDF]
+NODES = [CNPreviewScene, CNRender, CNExport, CNSavePDF]

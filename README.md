@@ -2,7 +2,7 @@
 
 A design suite for ComfyUI: typography, layout, shapes, effects, templates,
 data-driven batches, colour and brand kits, motion and video, smart layout helpers
-and CMYK print output. 49 custom nodes that sit next to your image-generation
+and CMYK print output. 50 custom nodes that sit next to your image-generation
 nodes, so one graph can generate a background, set the type, and export a
 thumbnail, a video or a print-ready PDF.
 
@@ -50,6 +50,10 @@ Item nodes (Text Box, Shape, Add Image) take an optional `scene`: connected, the
 add to it; left empty, they make a *part* for Stack, Place or Grid, which position
 parts by their size so you never compute coordinates.
 
+While you build, drop a **Preview Scene** anywhere in the chain to see the design
+so far; the scene passes straight through, so it can stay in place. Turn on
+`guides` to see the safe area and where each item sits.
+
 ## Nodes
 
 Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
@@ -70,7 +74,8 @@ Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 | Effects | **Drop Shadow**, **Outer Glow**, **Outline**, **Blur** | On the last item or the whole scene so far |
 | | **Opacity & Blend** | Opacity and 17 blend modes (multiply, screen, overlay, ...) |
 | | **Clip to Previous** | Show the last item only inside the one before it (a photo inside text) |
-| Output | **Render Scene** | IMAGE + alpha MASK at any scale |
+| Output | **Preview Scene** | See the design so far anywhere in a chain (the scene passes through): a quick preview on the node, transparency over a checkerboard, optional safe-area and item-outline guides, any moment of an animation |
+| | **Render Scene** | IMAGE + alpha MASK at any scale |
 | | **Export Image** | PNG, JPEG or WebP from a scene or any IMAGE batch: transparency kept (PNG/WebP) or flattened onto a matte, scale, DPI tag, sRGB profile, workflow embedded, and a `max_kb` budget that lowers quality until the file fits |
 | | **Save PDF** | Vector PDF, fonts embedded |
 | Data | **Load Template** | A saved design (JSON) as a scene, from your templates folder or the bundled ones |

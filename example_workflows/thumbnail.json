@@ -1,6 +1,6 @@
 {
- "last_node_id": 13,
- "last_link_id": 13,
+ "last_node_id": 14,
+ "last_link_id": 14,
  "nodes": [
   {
    "id": 1,
@@ -408,7 +408,8 @@
      "name": "scene",
      "type": "CN_SCENE",
      "links": [
-      10
+      10,
+      14
      ],
      "slot_index": 0
     }
@@ -547,7 +548,7 @@
     114
    ],
    "flags": {},
-   "order": 10,
+   "order": 11,
    "mode": 0,
    "inputs": [
     {
@@ -590,7 +591,7 @@
     352
    ],
    "flags": {},
-   "order": 12,
+   "order": 13,
    "mode": 0,
    "inputs": [
     {
@@ -625,7 +626,7 @@
     138
    ],
    "flags": {},
-   "order": 11,
+   "order": 12,
    "mode": 0,
    "inputs": [
     {
@@ -653,6 +654,50 @@
     "cratenode/thumbnail",
     300.0
    ]
+  },
+  {
+   "id": 14,
+   "type": "CNPreviewScene",
+   "pos": [
+    1200,
+    298.0
+   ],
+   "size": [
+    340,
+    186
+   ],
+   "flags": {},
+   "order": 10,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 14
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": null
+    },
+    {
+     "name": "info",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPreviewScene"
+   },
+   "widgets_values": [
+    0.5,
+    "safe area + item outlines",
+    "checkerboard",
+    -1.0
+   ],
+   "title": "Preview Scene: layout so far (guides)"
   }
  ],
  "links": [
@@ -757,6 +802,14 @@
    10,
    0,
    13,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   14,
+   8,
+   0,
+   14,
    0,
    "CN_SCENE"
   ]

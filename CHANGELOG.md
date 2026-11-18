@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Preview Scene** node: a quick preview of the design so far, anywhere in a chain
+  (the scene passes through). Transparency over a checkerboard or a solid colour,
+  optional guides (safe area, item outlines; preview only), any moment of an
+  animation, and an `info` line (size, items, duration). Used in the thumbnail and
+  motion examples.
 - Two more examples, so every node is used by at least one: **layers_blend**
   (Palette, Safe Area, Opacity & Blend, Blur, Layers) and **keyframes** (Animate,
   Add Video, Render Animation, Save Video from a frame batch).

@@ -1,6 +1,6 @@
 {
- "last_node_id": 22,
- "last_link_id": 24,
+ "last_node_id": 23,
+ "last_link_id": 25,
  "nodes": [
   {
    "id": 1,
@@ -620,7 +620,8 @@
      "links": [
       13,
       14,
-      15
+      15,
+      25
      ],
      "slot_index": 0
     },
@@ -827,7 +828,7 @@
     328
    ],
    "flags": {},
-   "order": 21,
+   "order": 22,
    "mode": 0,
    "inputs": [
     {
@@ -1164,6 +1165,50 @@
     "cratenode/motion/title_overlay"
    ],
    "title": "Transparent overlay (WebM alpha)"
+  },
+  {
+   "id": 23,
+   "type": "CNPreviewScene",
+   "pos": [
+    2800,
+    858.0
+   ],
+   "size": [
+    340,
+    186
+   ],
+   "flags": {},
+   "order": 21,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 25
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": null
+    },
+    {
+     "name": "info",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPreviewScene"
+   },
+   "widgets_values": [
+    0.5,
+    "none",
+    "checkerboard",
+    0.6
+   ],
+   "title": "Preview Scene: at 0.6 s"
   }
  ],
  "links": [
@@ -1356,6 +1401,14 @@
    21,
    0,
    22,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   25,
+   12,
+   0,
+   23,
    0,
    "CN_SCENE"
   ]

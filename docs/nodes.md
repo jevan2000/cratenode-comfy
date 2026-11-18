@@ -1,6 +1,6 @@
 # Node reference
 
-All 49 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
+All 50 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
 Types: *scene* is a design (`CN_SCENE`), *fill* a gradient, *data row* one CSV/JSON row, *palette* a named colour palette.
 
 - [Canvas](#canvas)
@@ -624,6 +624,20 @@ Outputs: `scene` (scene), `seconds` (float)
 | `row` | data row (optional) |  | A data row for {column} names |
 
 Outputs: `paths` (string), `report` (string)
+
+### Preview Scene
+
+`CNPreviewScene`. See the design so far, anywhere in a chain: the scene passes straight through, and the node shows a quick preview (transparency over a checkerboard). Guides show the safe area and each item's outline; they are only in the preview. For animations, pick a time.
+
+| Input | Type | Default | Notes |
+|---|---|---|---|
+| `scene` | scene |  |  |
+| `scale` | float | `0.5` | Preview size; smaller is faster |
+| `guides` | choice | `none` |  |
+| `background` | choice | `checkerboard` | What shows through transparent areas (preview only) |
+| `time` | float | `-1.0` | Seconds into an animation; -1 = at rest (no animation) |
+
+Outputs: `scene` (scene), `info` (string)
 
 ### Render Scene
 

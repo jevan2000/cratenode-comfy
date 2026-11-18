@@ -390,5 +390,21 @@
     "_meta": {
       "title": "Transparent overlay (WebM alpha)"
     }
+  },
+  "23": {
+    "class_type": "CNPreviewScene",
+    "_meta": {
+      "title": "Preview Scene: at 0.6 s"
+    },
+    "inputs": {
+      "scene": [
+        "12",
+        0
+      ],
+      "scale": 0.5,
+      "guides": "none",
+      "background": "checkerboard",
+      "time": 0.6
+    }
   }
 }
