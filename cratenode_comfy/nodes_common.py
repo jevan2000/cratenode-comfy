@@ -36,6 +36,10 @@ CANVAS_PRESETS = {
     "Tabloid 11x17 @300dpi 3300x5100": (3300, 5100),
     "Poster 18x24 @150dpi 2700x3600": (2700, 3600),
     "Postcard 6x4 @300dpi 1800x1200": (1800, 1200),
+    # print sizes with 1/8 in (3 mm for A4) bleed on every side: trim + 2 x bleed
+    "US Letter + 1/8in bleed @300dpi 2625x3375": (2625, 3375),
+    "A4 + 3mm bleed @300dpi 2551x3579": (2551, 3579),
+    "Postcard 6x4 + 1/8in bleed @300dpi 1875x1275": (1875, 1275),
 }
 
 

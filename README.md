@@ -73,6 +73,9 @@ parts by their size so you never compute coordinates.
 | | **Readability Check** | WCAG contrast of each text against the pixels behind its letters; report and a pass/fail overlay |
 | | **Smart Scrim** | A gradient band, box or soft glow under the last item, only as strong as needed to reach a contrast |
 | | **Copy Writer (Ollama)** | Headlines, shorter text, subtitles, taglines or calls to action from a local Ollama model; variants come out as a list (one design each) |
+| Print | **Save Print PDF (CMYK)** | CMYK PDF: vector (text stays text, exact CMYK for flat colours) or flattened; bleed, crop marks, trim/bleed boxes, the profile as output intent |
+| | **Soft Proof (CMYK)** | How a design will print through the profile, and a mask of out-of-gamut colours |
+| | **CMYK Values** | The CMYK a colour prints with (profile or your exact value) |
 
 Masks: our `MASK` outputs are coverage (1 = opaque). ComfyUI's **Load Image** mask
 is the opposite (1 = transparent), so image inputs have a `mask_meaning` switch.
@@ -149,6 +152,25 @@ and the GPU is used only when it says yes, otherwise the CPU (the report says wh
 model you name; nothing is downloaded for you. Its `variants` output is a list, so
 a Text Box fed by it makes one design per variant.
 
+## Print (CMYK)
+
+**Save Print PDF** writes the design with skia's PDF backend (text stays text,
+fonts embedded, shadows and glows as their own layers at print resolution) and
+converts it to CMYK: colours of text, shapes and gradients become `k`/`K` values,
+images go through the ICC profile, and the profile is embedded as the output
+intent. `flatten` makes it one CMYK image instead (blend modes then look as on
+screen).
+
+- **Profile:** set `cmyk_profile` in the config to your printer's ICC profile
+  (none ships with this package), or pick one found in the data folder's `color/`
+  or the system colour folder. Without one, colours are uncalibrated and the
+  report says so.
+- **Exact values** for vector colours: `primary = 90 55 0 0` or `#1f6feb = 90 55 0 0`
+  (percent). `pure_black` prints `#000000` as 0/0/0/100.
+- **Bleed:** start from a Canvas preset with bleed (e.g. US Letter + 1/8in bleed,
+  2625x3375 @300dpi) and keep `canvas includes bleed`; the TrimBox is set inside it.
+  `extend background` grows the page by the bleed in the background colour.
+
 If a render comes out black, check that the chain starts from a **Canvas**: a part
 on its own has a transparent background, and Save Image drops transparency.
 
@@ -170,6 +192,7 @@ python tools/run_workflow.py examples/thumbnail.api.json --server http://127.0.0
 - **video_overlay**: a lower third sliding in over a clip (core Load Video), saved as MP4 with the clip's audio.
 - **smart**: a title auto-placed in the calm side of a busy picture, readability checked before and after a smart scrim, and Find Quiet Area's heat map.
 - **copy_variants**: three headline variants from Copy Writer, one design each (set `model` to an installed Ollama model first).
+- **print**: a US Letter flyer with bleed from the example brand kit, saved as a vector CMYK PDF and a flattened one with crop marks, plus a soft proof, an out-of-gamut mask and CMYK values.
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 
 ## Configuration

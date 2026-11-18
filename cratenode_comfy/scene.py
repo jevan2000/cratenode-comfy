@@ -145,8 +145,9 @@ def effect_reach(effects: tuple) -> float:
     return reach
 
 
-def effects_filter(effects: tuple) -> skia.ImageFilter | None:
-    """One image filter: layers under the item (shadow, glow, outline) then the item."""
+def effects_filter(effects: tuple, under_only: bool = False) -> skia.ImageFilter | None:
+    """One image filter: layers under the item (shadow, glow, outline) then the item.
+    ``under_only``: just the layers under it (the item itself is drawn separately)."""
     if not effects:
         return None
     src = None
@@ -169,9 +170,14 @@ def effects_filter(effects: tuple) -> skia.ImageFilter | None:
             under.append(_tint(e.color, e.opacity, halo))
         elif isinstance(e, Outline) and e.width > 0:
             under.append(_tint(e.color, e.opacity, _grow(e.width, src)))
+    if under_only:
+        return skia.ImageFilters.Merge(under) if under else None
     if not under:
         return src
     return skia.ImageFilters.Merge(under + [src])
+
+
+_UNDER = (Shadow, Glow, Outline)
 
 
 # ---- items ----
@@ -605,7 +611,26 @@ def _draw_one(canvas: skia.Canvas, p: Placed, reg: FontRegistry, blend_override=
             reach = effect_reach(effects) + 2
             canvas.clipRect(skia.Rect.MakeLTRB(x0 - reach, y0 - reach, x0 + (x1 - x0) * a["wipe"], y1 + reach),
                             skia.ClipOp.kIntersect, True)
-    if cache is not None and st.effects and _static(p):
+    split = (cache is not None and cache.get("pdf") and any(isinstance(e, _UNDER) for e in effects)
+             and not any(isinstance(e, Blur) and e.radius > 0 for e in effects))
+    if split:
+        # PDF: a filtered layer becomes an image, so draw only the shadow / glow / outline
+        # through the filter and the item itself on top, as vectors (text stays text).
+        r = effect_reach(effects) + 2
+        rect = skia.Rect.MakeLTRB(x0 - r, y0 - r, x1 + r, y1 + r)
+        group = opacity < 1.0 or blend != skia.BlendMode.kSrcOver
+        if group:
+            canvas.saveLayer(rect, skia.Paint(Alphaf=max(0.0, min(1.0, opacity)), BlendMode=blend))
+        canvas.save()
+        canvas.clipRect(rect, skia.ClipOp.kIntersect, True)
+        canvas.saveLayer(rect, skia.Paint(ImageFilter=effects_filter(effects, under_only=True)))
+        _draw_content(canvas, p, reg, t, cache)
+        canvas.restore()
+        canvas.restore()
+        _draw_content(canvas, p, reg, t, cache)
+        if group:
+            canvas.restore()
+    elif cache is not None and "scale" in cache and st.effects and _static(p):
         # Effects are slow on the CPU; in an animation draw them once and move the result.
         img, rect, s = _layer_image(p, reg, cache)
         paint = skia.Paint(Alphaf=max(0.0, min(1.0, opacity)), BlendMode=blend)
@@ -708,13 +733,19 @@ def render_frames(scene: Scene, times: list[float], scale: float = 1.0, reg: Fon
             yield to_rgba(surf)
 
 
-def to_pdf(scene: Scene, path: str, dpi: float = 300.0, reg: FontRegistry | None = None) -> None:
-    """Vector RGB PDF of the scene (text stays text) via skia's PDF backend."""
+def to_pdf(scene: Scene, path: str, dpi: float = 300.0, reg: FontRegistry | None = None,
+           raster_dpi: float | None = None) -> None:
+    """Vector RGB PDF of the scene via skia's PDF backend. Text and shapes stay vectors,
+    also under shadows, glows and outlines (drawn as their own layer). What skia must
+    rasterise (effects, blurred items) is rasterised at ``raster_dpi`` (default ``dpi``)."""
     reg = reg or registry()
     s = 72.0 / dpi
     stream = skia.FILEWStream(path)
-    with skia.PDF.MakeDocument(stream) as doc:
+    meta = skia.PDF.Metadata()
+    meta.fRasterDPI = float(raster_dpi or dpi)
+    meta.fCreator = "CrateNode-Comfy"
+    with skia.PDF.MakeDocument(stream, meta) as doc:
         with doc.page(scene.width * s, scene.height * s) as canvas:
             canvas.scale(s, s)
-            _paint_scene(canvas, scene, reg)
+            _paint_scene(canvas, scene, reg, cache={"pdf": True})
     stream.flush()

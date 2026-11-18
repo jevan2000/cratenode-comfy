@@ -39,6 +39,7 @@ class Config:
     system_fonts: bool = True
     data_dir: Path | None = None
     gpu_gate: str = ""  # optional URL answering {"ok": true|false}; see devices.py
+    cmyk_profile: str = ""  # ICC output profile for print PDFs (never bundled)
     source: str = "defaults"
 
     @staticmethod
@@ -51,6 +52,7 @@ class Config:
             system_fonts=bool(d.get("system_fonts", True)),
             data_dir=Path(data_dir) if data_dir else None,
             gpu_gate=str(d.get("gpu_gate", "") or ""),
+            cmyk_profile=str(d.get("cmyk_profile", "") or ""),
             source=source,
         )
 

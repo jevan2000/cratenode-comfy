@@ -1,0 +1,408 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "placeholder-background.jpg"
+    }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "placeholder-logo.png"
+    }
+  },
+  "3": {
+    "class_type": "CNCanvas",
+    "inputs": {
+      "preset": "US Letter + 1/8in bleed @300dpi 2625x3375",
+      "landscape_flip": false,
+      "width": 2625,
+      "height": 3375,
+      "background": "#ffffff",
+      "safe_margin": 8.0
+    }
+  },
+  "4": {
+    "class_type": "CNBrandKit",
+    "inputs": {
+      "kit": "example",
+      "path": "",
+      "logo": "primary"
+    },
+    "_meta": {
+      "title": "Brand Kit"
+    }
+  },
+  "5": {
+    "class_type": "CNAddImage",
+    "inputs": {
+      "scene": [
+        "3",
+        0
+      ],
+      "image": [
+        "1",
+        0
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "mode": "fill",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 2625.0,
+      "box_height": 1900.0,
+      "batch_index": 0,
+      "below_previous": false,
+      "gap": 0.0
+    }
+  },
+  "6": {
+    "class_type": "CNPickColor",
+    "inputs": {
+      "palette": [
+        "4",
+        0
+      ],
+      "mode": "by name or number",
+      "name": "primary",
+      "against": "#000000"
+    }
+  },
+  "7": {
+    "class_type": "CNPickColor",
+    "inputs": {
+      "palette": [
+        "4",
+        0
+      ],
+      "mode": "by name or number",
+      "name": "accent",
+      "against": "#000000"
+    }
+  },
+  "8": {
+    "class_type": "CNShape",
+    "inputs": {
+      "scene": [
+        "5",
+        0
+      ],
+      "shape": "rectangle",
+      "x": 0.0,
+      "y": 1900.0,
+      "width": 2625.0,
+      "height": 1475.0,
+      "color": [
+        "6",
+        0
+      ],
+      "stroke_color": "",
+      "stroke_width": 0.0,
+      "corner_radius": 0.0,
+      "sides": 5,
+      "inner_ratio": 0.5,
+      "rotation": 0.0,
+      "below_previous": false,
+      "gap": 0.0
+    },
+    "_meta": {
+      "title": "Primary band (exact CMYK)"
+    }
+  },
+  "9": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "SPRING *GATHERING*",
+      "font": "Montserrat",
+      "font_override": [
+        "4",
+        1
+      ],
+      "weight": [
+        "4",
+        2
+      ],
+      "bold_weight": 900,
+      "italic": false,
+      "size": 230.0,
+      "color": "#ffffff",
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 2200.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "10": {
+    "class_type": "CNDropShadow",
+    "inputs": {
+      "scene": [
+        "9",
+        0
+      ],
+      "target": "last item",
+      "dx": 0.0,
+      "dy": 12.0,
+      "blur": 40.0,
+      "color": "#000000",
+      "opacity": 0.6
+    }
+  },
+  "11": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "Saturday, May 9  •  10 am  •  Riverside Park",
+      "font": "Inter",
+      "font_override": [
+        "4",
+        3
+      ],
+      "weight": [
+        "4",
+        4
+      ],
+      "bold_weight": 700,
+      "italic": false,
+      "size": 78.0,
+      "color": [
+        "7",
+        0
+      ],
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 2200.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.2,
+      "letter_spacing": 1.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "12": {
+    "class_type": "CNStack",
+    "inputs": {
+      "scene": [
+        "8",
+        0
+      ],
+      "part_1": [
+        "10",
+        0
+      ],
+      "part_2": [
+        "11",
+        0
+      ],
+      "direction": "vertical",
+      "gap": 48.0,
+      "align": "center",
+      "valign": "middle",
+      "area": "custom",
+      "x": 0.0,
+      "y": 1900.0,
+      "box_width": 2625.0,
+      "box_height": 1475.0
+    }
+  },
+  "13": {
+    "class_type": "CNAddImage",
+    "inputs": {
+      "image": [
+        "2",
+        0
+      ],
+      "mask": [
+        "2",
+        1
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "mode": "fit",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 300.0,
+      "box_height": 300.0,
+      "batch_index": 0,
+      "below_previous": false,
+      "gap": 0.0
+    }
+  },
+  "14": {
+    "class_type": "CNPlace",
+    "inputs": {
+      "scene": [
+        "12",
+        0
+      ],
+      "part": [
+        "13",
+        0
+      ],
+      "align": "right",
+      "valign": "top",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0
+    }
+  },
+  "15": {
+    "class_type": "CNSavePrintPDF",
+    "inputs": {
+      "filename_prefix": "cratenode/print/flyer",
+      "mode": "vector",
+      "scene": [
+        "14",
+        0
+      ],
+      "dpi": 300.0,
+      "bleed_mode": "canvas includes bleed",
+      "bleed": 0.125,
+      "crop_marks": true,
+      "output_intent": true,
+      "raster_dpi": 300.0,
+      "profile": "(config)",
+      "intent": "relative colorimetric",
+      "black_point": true,
+      "pure_black": true,
+      "cmyk_values": "primary = 90 55 0 0\naccent = 0 30 90 0",
+      "palette": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Print PDF: vector (text stays text)"
+    }
+  },
+  "16": {
+    "class_type": "CNSavePrintPDF",
+    "inputs": {
+      "filename_prefix": "cratenode/print/flyer_flat",
+      "mode": "flatten",
+      "scene": [
+        "14",
+        0
+      ],
+      "dpi": 300.0,
+      "bleed_mode": "canvas includes bleed",
+      "bleed": 0.125,
+      "crop_marks": true,
+      "output_intent": true,
+      "raster_dpi": 300.0,
+      "profile": "(config)",
+      "intent": "relative colorimetric",
+      "black_point": true,
+      "pure_black": true,
+      "cmyk_values": "primary = 90 55 0 0\naccent = 0 30 90 0",
+      "palette": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Print PDF: flattened"
+    }
+  },
+  "17": {
+    "class_type": "CNSoftProof",
+    "inputs": {
+      "scene": [
+        "14",
+        0
+      ],
+      "scale": 0.25,
+      "threshold": 6.0,
+      "profile": "(config)",
+      "intent": "relative colorimetric",
+      "black_point": true,
+      "pure_black": true,
+      "cmyk_values": "primary = 90 55 0 0\naccent = 0 30 90 0",
+      "palette": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Soft proof"
+    }
+  },
+  "18": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "17",
+        0
+      ]
+    }
+  },
+  "19": {
+    "class_type": "MaskToImage",
+    "inputs": {
+      "mask": [
+        "17",
+        1
+      ]
+    }
+  },
+  "20": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "19",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Out of gamut (white)"
+    }
+  },
+  "21": {
+    "class_type": "CNCMYKValues",
+    "inputs": {
+      "color": "accent",
+      "profile": "(config)",
+      "intent": "relative colorimetric",
+      "black_point": true,
+      "pure_black": true,
+      "cmyk_values": "primary = 90 55 0 0\naccent = 0 30 90 0",
+      "palette": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Accent prints as"
+    }
+  },
+  "22": {
+    "class_type": "CNCMYKValues",
+    "inputs": {
+      "color": "#2a6a8a",
+      "profile": "(config)",
+      "intent": "relative colorimetric",
+      "black_point": true,
+      "pure_black": true,
+      "cmyk_values": "primary = 90 55 0 0\naccent = 0 30 90 0",
+      "palette": [
+        "4",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Photo-blue prints as"
+    }
+  }
+}

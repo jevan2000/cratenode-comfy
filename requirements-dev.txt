@@ -1,0 +1,2 @@
+# Only for the tests: renders print PDFs to check them.
+pypdfium2
