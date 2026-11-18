@@ -1,0 +1,17 @@
+{
+  "cratenode_brand": 1,
+  "name": "Example Co.",
+  "colors": {
+    "primary": "#1f6feb",
+    "secondary": "#0b1d3a",
+    "accent": "#f2b134",
+    "light": "#f5f7fa",
+    "dark": "#111418"
+  },
+  "fonts": {
+    "heading": {"family": "Montserrat", "weight": 800},
+    "body": {"family": "Inter", "weight": 400}
+  },
+  "logos": {"primary": "logo.png"},
+  "notes": "A placeholder brand kit. Copy this folder into your data folder's brand/ and edit it."
+}

@@ -1,0 +1,366 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "placeholder-background.jpg"
+    }
+  },
+  "2": {
+    "class_type": "CNPaletteFromImage",
+    "inputs": {
+      "image": [
+        "1",
+        0
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "count": 5,
+      "sort": "by share",
+      "min_distance": 8.0,
+      "seed": 0
+    },
+    "_meta": {
+      "title": "Palette from Image"
+    }
+  },
+  "3": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "2",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "Photo palette"
+    }
+  },
+  "4": {
+    "class_type": "CNBrandKit",
+    "inputs": {
+      "kit": "example",
+      "path": "",
+      "logo": "primary"
+    },
+    "_meta": {
+      "title": "Brand Kit"
+    }
+  },
+  "5": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "4",
+        7
+      ]
+    },
+    "_meta": {
+      "title": "Brand swatches"
+    }
+  },
+  "6": {
+    "class_type": "CNPickColor",
+    "inputs": {
+      "palette": [
+        "4",
+        0
+      ],
+      "mode": "by name or number",
+      "name": "secondary",
+      "against": "#000000"
+    },
+    "_meta": {
+      "title": "Pick Color: secondary"
+    }
+  },
+  "7": {
+    "class_type": "CNPickColor",
+    "inputs": {
+      "palette": [
+        "4",
+        0
+      ],
+      "mode": "by name or number",
+      "name": "primary",
+      "against": "#000000"
+    },
+    "_meta": {
+      "title": "Pick Color: primary"
+    }
+  },
+  "8": {
+    "class_type": "CNPickColor",
+    "inputs": {
+      "palette": [
+        "4",
+        0
+      ],
+      "mode": "best contrast against",
+      "name": "",
+      "against": [
+        "7",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Pick Color: best contrast against"
+    }
+  },
+  "9": {
+    "class_type": "CNCanvas",
+    "inputs": {
+      "preset": "Instagram square 1080x1080",
+      "landscape_flip": false,
+      "width": 1080,
+      "height": 1080,
+      "background": [
+        "6",
+        0
+      ],
+      "safe_margin": 6.0
+    }
+  },
+  "10": {
+    "class_type": "CNShape",
+    "inputs": {
+      "scene": [
+        "9",
+        0
+      ],
+      "shape": "rectangle",
+      "x": 0.0,
+      "y": 300.0,
+      "width": 1080.0,
+      "height": 480.0,
+      "color": [
+        "7",
+        0
+      ],
+      "stroke_color": "",
+      "stroke_width": 0.0,
+      "corner_radius": 0.0,
+      "sides": 5,
+      "inner_ratio": 0.5,
+      "rotation": 0.0,
+      "below_previous": false,
+      "gap": 0.0
+    },
+    "_meta": {
+      "title": "Primary band"
+    }
+  },
+  "11": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "BUILT FROM A *BRAND KIT*",
+      "font": "Montserrat",
+      "font_override": [
+        "4",
+        1
+      ],
+      "weight": [
+        "4",
+        2
+      ],
+      "bold_weight": 900,
+      "italic": false,
+      "size": 104.0,
+      "color": [
+        "8",
+        0
+      ],
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 900.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0,
+      "slot": "title"
+    }
+  },
+  "12": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "Palette, fonts and logo from one JSON file",
+      "font": "Inter",
+      "font_override": [
+        "4",
+        3
+      ],
+      "weight": [
+        "4",
+        4
+      ],
+      "bold_weight": 700,
+      "italic": false,
+      "size": 40.0,
+      "color": [
+        "8",
+        0
+      ],
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 900.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.2,
+      "letter_spacing": 1.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "13": {
+    "class_type": "CNStack",
+    "inputs": {
+      "scene": [
+        "10",
+        0
+      ],
+      "part_1": [
+        "11",
+        0
+      ],
+      "part_2": [
+        "12",
+        0
+      ],
+      "direction": "vertical",
+      "gap": 28.0,
+      "align": "center",
+      "valign": "middle",
+      "area": "custom",
+      "x": 90.0,
+      "y": 300.0,
+      "box_width": 900.0,
+      "box_height": 480.0
+    }
+  },
+  "14": {
+    "class_type": "CNAddImage",
+    "inputs": {
+      "image": [
+        "4",
+        5
+      ],
+      "mask": [
+        "4",
+        6
+      ],
+      "mask_meaning": "alpha (1 = opaque)",
+      "mode": "fit",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 140.0,
+      "box_height": 140.0,
+      "batch_index": 0,
+      "below_previous": false,
+      "gap": 0.0
+    }
+  },
+  "15": {
+    "class_type": "CNPlace",
+    "inputs": {
+      "scene": [
+        "13",
+        0
+      ],
+      "part": [
+        "14",
+        0
+      ],
+      "align": "right",
+      "valign": "bottom",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0
+    }
+  },
+  "16": {
+    "class_type": "CNExport",
+    "inputs": {
+      "scene": [
+        "15",
+        0
+      ],
+      "mask_meaning": "alpha (1 = opaque)",
+      "format": "png",
+      "quality": 92,
+      "webp_lossless": false,
+      "transparent": true,
+      "matte": "#ffffff",
+      "scale": 1.0,
+      "dpi": 0.0,
+      "max_kb": 0,
+      "embed_workflow": true,
+      "filename_prefix": "cratenode/colour/brand_card"
+    }
+  },
+  "17": {
+    "class_type": "CNContrast",
+    "inputs": {
+      "text_color": [
+        "8",
+        0
+      ],
+      "background": "primary",
+      "palette": [
+        "4",
+        0
+      ],
+      "large_text": true
+    },
+    "_meta": {
+      "title": "Title on primary: contrast"
+    }
+  },
+  "18": {
+    "class_type": "CNRecolor",
+    "inputs": {
+      "scene": [
+        "15",
+        0
+      ],
+      "mapping": "primary -> accent\nlight -> dark",
+      "palette": [
+        "4",
+        0
+      ],
+      "tolerance": 0.02
+    },
+    "_meta": {
+      "title": "Variant: primary becomes accent"
+    }
+  },
+  "19": {
+    "class_type": "CNExport",
+    "inputs": {
+      "scene": [
+        "18",
+        0
+      ],
+      "mask_meaning": "alpha (1 = opaque)",
+      "format": "png",
+      "quality": 92,
+      "webp_lossless": false,
+      "transparent": true,
+      "matte": "#ffffff",
+      "scale": 1.0,
+      "dpi": 0.0,
+      "max_kb": 0,
+      "embed_workflow": true,
+      "filename_prefix": "cratenode/colour/brand_card_accent"
+    }
+  }
+}

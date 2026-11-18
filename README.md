@@ -55,6 +55,12 @@ parts by their size so you never compute coordinates.
 | | **Save as Template** | Write a design to a template JSON (images embedded) |
 | | **Data Rows** | Rows from a CSV/JSON file or pasted text; everything after it runs once per row |
 | | **Row Value** | One column of a row as text, for any text input |
+| Colour | **Palette** | Named colours (`primary: #1f6feb` lines) with a swatch preview |
+| | **Palette from Image** | An image's main colours and their shares (k-means in Lab, similar colours merged) |
+| | **Brand Kit** | A brand JSON: palette, heading/body fonts and weights, logo |
+| | **Pick Color** | One colour as `#hex` for any colour input: by name, the most readable against a background, lightest, darkest |
+| | **Contrast Check** | WCAG contrast ratio and grade (AA / AAA) |
+| | **Recolor Scene** | Swap colours throughout a design (`primary -> accent`) |
 
 Masks: our `MASK` outputs are coverage (1 = opaque). ComfyUI's **Load Image** mask
 is the opposite (1 = transparent), so image inputs have a `mask_meaning` switch.
@@ -83,6 +89,23 @@ whose `filename_prefix` takes `{column}` names plus `{date}`, `{time}` and
 Templates are read from `templates/` in your data folder (`data_dir` in the
 config) and from this package's `templates/`.
 
+## Colour and brand kits
+
+A brand kit is a folder with a `brand.json` (see `brand/example/`):
+
+```json
+{"cratenode_brand": 1, "name": "Example Co.",
+ "colors": {"primary": "#1f6feb", "accent": "#f2b134"},
+ "fonts": {"heading": {"family": "Montserrat", "weight": 800}, "body": {"family": "Inter", "weight": 400}},
+ "logos": {"primary": "logo.png"}}
+```
+
+Kits are read from `brand/` in your data folder and from this package's
+`brand/`. Wire **Brand Kit**'s fonts into a Text Box's `font_override` and
+`weight`, its logo into Add Image (with `mask_meaning` set to alpha), and
+**Pick Color** outputs into any colour input. With a palette connected, Fill
+Template and Recolor Scene accept colour names (`title.color: accent`).
+
 If a render comes out black, check that the chain starts from a **Canvas**: a part
 on its own has a transparent background, and Save Image drops transparency.
 
@@ -99,6 +122,7 @@ python tools/run_workflow.py examples/thumbnail.api.json --server http://127.0.0
 - **template_save**: the thumbnail with slots (`background`, `title`, `subtitle`, `logo`) saved as a template; it is bundled as `templates/thumbnail.json`.
 - **batch_template**: three CSV rows → Load Template → Fill Template → one JPEG per row, named from the row.
 - **batch_workflow**: the same batch with the graph as the template (Row Value feeds the Text Box).
+- **colour**: a square card built from the example brand kit (colours, fonts, logo; title colour picked for contrast), a recoloured variant (`primary -> accent`), a contrast check, and a palette taken from the background photo.
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 
 ## Configuration

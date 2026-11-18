@@ -157,7 +157,8 @@ def _fill_text(t: str, values: dict) -> str:
     return re.sub(r"\{([A-Za-z0-9_ .-]+)\}", sub, t)
 
 
-def fill(scene: sc.Scene, values: dict | None = None, images: dict | None = None) -> tuple[sc.Scene, list[str]]:
+def fill(scene: sc.Scene, values: dict | None = None, images: dict | None = None,
+         palette=None) -> tuple[sc.Scene, list[str]]:
     """Fill named slots and ``{key}`` placeholders.
 
     - ``values[name]`` replaces the text of a text slot;
@@ -165,8 +166,15 @@ def fill(scene: sc.Scene, values: dict | None = None, images: dict | None = None
     - ``{key}`` anywhere in any text is replaced by ``values[key]``;
     - ``images[name]`` (H x W x 4 float) replaces an image slot.
 
+    With a ``palette`` (color.Palette), colour values may be palette names ("primary").
+
     Returns the new scene and the value/image keys that matched nothing.
     """
+
+    def to_color(v):
+        v = str(v).strip()
+        return palette.get(v) if palette is not None and not v.startswith("#") else parse_color(v)
+
     values = {str(k): v for k, v in (values or {}).items()}
     images = images or {}
     used: set[str] = set()
@@ -187,12 +195,12 @@ def fill(scene: sc.Scene, values: dict | None = None, images: dict | None = None
                 used.update(k for k in values if "{" + k + "}" in spec.text)
                 spec = replace(spec, text=new_text)
             if name and f"{name}.color" in values:
-                spec = replace(spec, color=parse_color(str(values[f"{name}.color"])))
+                spec = replace(spec, color=to_color(values[f"{name}.color"]))
                 used.add(f"{name}.color")
             return replace(it, spec=spec) if spec is not it.spec else it
         if isinstance(it, sc.ShapeItem) and name and f"{name}.color" in values:
             used.add(f"{name}.color")
-            return replace(it, fill=parse_color(str(values[f"{name}.color"])))
+            return replace(it, fill=to_color(values[f"{name}.color"]))
         if isinstance(it, sc.ImageItem) and name and name in images:
             used.add(name)
             return replace(it, rgba=images[name])

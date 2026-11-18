@@ -13,7 +13,7 @@ from comfy_api.latest import IO, UI
 from . import render
 from . import template as tpl
 from .fonts import registry
-from .nodes_common import MASK_MEANINGS, ROOT, RowT, SceneT, mask_to_alpha
+from .nodes_common import MASK_MEANINGS, ROOT, PaletteT, RowT, SceneT, mask_to_alpha
 
 CAT = f"{ROOT}/Data"
 NONE = "(none)"
@@ -144,6 +144,8 @@ class CNFillTemplate(IO.ComfyNode):
             description="Replace slot text (by slot name), colours (name.color) and {placeholders} from a data row "
                         "and/or the values box, and image slots from images. Layouts reflow to the new text.",
             inputs=[SceneT.Input("scene"), RowT.Input("row", optional=True),
+                    PaletteT.Input("palette", optional=True,
+                                   tooltip="Lets colour values be palette names (title.color: accent)"),
                     IO.String.Input("values", default="", multiline=True,
                                     tooltip="key: value lines or a JSON object; these win over the row"),
                     IO.Combo.Input("mask_meaning", options=MASK_MEANINGS, default=MASK_MEANINGS[0])] + imgs,
@@ -151,7 +153,7 @@ class CNFillTemplate(IO.ComfyNode):
         )
 
     @classmethod
-    def execute(cls, scene, values, mask_meaning, row=None, **kw):
+    def execute(cls, scene, values, mask_meaning, row=None, palette=None, **kw):
         vals = {k: v for k, v in (row or {}).items() if not k.startswith("_")}
         vals.update(parse_values(values))
         images = {}
@@ -159,7 +161,7 @@ class CNFillTemplate(IO.ComfyNode):
             img, name = kw.get(f"image_{i}"), (kw.get(f"slot_{i}") or "").strip()
             if img is not None and name:
                 images[name] = render.comfy_to_rgba(img, mask_to_alpha(kw.get(f"mask_{i}"), mask_meaning))
-        out, unused = tpl.fill(scene, vals, images)
+        out, unused = tpl.fill(scene, vals, images, palette)
         report = "all values used" if not unused else "not in the template: " + ", ".join(unused)
         if unused:
             logging.info("CrateNode-Comfy Fill Template: %s", report)

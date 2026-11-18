@@ -13,6 +13,7 @@ from .fonts import registry
 SceneT = IO.Custom("CN_SCENE")
 FillT = IO.Custom("CN_FILL")
 RowT = IO.Custom("CN_ROW")  # one data row: {column: text}
+PaletteT = IO.Custom("CN_PALETTE")  # color.Palette
 
 ROOT = "CrateNode-Comfy"
 MASK_MEANINGS = ["LoadImage (1 = transparent)", "alpha (1 = opaque)"]

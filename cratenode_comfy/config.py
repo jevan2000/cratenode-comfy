@@ -29,6 +29,7 @@ PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 BUNDLED_FONTS = PACKAGE_ROOT / "fonts"
 LOCAL_CONFIG = PACKAGE_ROOT / "config.local.json"
 BUNDLED_TEMPLATES = PACKAGE_ROOT / "templates"  # public example templates
+BUNDLED_BRANDS = PACKAGE_ROOT / "brand"  # public example brand kit
 
 
 @dataclass
@@ -55,6 +56,11 @@ class Config:
         """Private templates (data_dir/templates) first, then the bundled examples."""
         own = [self.data_dir / "templates"] if self.data_dir else []
         return own + [BUNDLED_TEMPLATES]
+
+    def brand_folders(self) -> list[Path]:
+        """Private brand kits (data_dir/brand) first, then the bundled example."""
+        own = [self.data_dir / "brand"] if self.data_dir else []
+        return own + [BUNDLED_BRANDS]
 
     def resolve_data_path(self, p: str) -> Path:
         """A path as given, or relative to data_dir when it is relative and data_dir is set."""
