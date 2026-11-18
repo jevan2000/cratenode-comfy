@@ -6,7 +6,7 @@ import os
 
 from comfy_api.latest import IO, UI
 
-from . import export, preview, render
+from . import convert, export, preview, render
 from . import template as tpl
 from . import scene as sc
 from .nodes_common import MASK_MEANINGS, ROOT, RowT, SceneT, mask_to_alpha, with_warnings
@@ -45,11 +45,50 @@ class CNPreviewScene(IO.ComfyNode):
         return IO.NodeOutput(scene, info, ui=UI.PreviewImage(torch.from_numpy(img)[None], cls=cls))
 
 
+class CNSceneToImage(IO.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return IO.Schema(
+            node_id="CNSceneToImage", display_name="Scene to Image", category=CAT,
+            search_aliases=["scene to image", "convert scene", "to IMAGE", "rasterize", "design to image"],
+            description="Convert a design into a ComfyUI IMAGE + MASK for any other node: an image-generation "
+                        "pipeline (img2img, ControlNet, inpainting), Save Image, upscalers. Choose the size "
+                        "(scale, fit, exact), round it to a multiple of 8 or 64 for diffusion models, and flatten "
+                        "transparency onto a colour (otherwise it is black in RGB-only nodes). Text and shapes "
+                        "are drawn sharp at the output size.",
+            inputs=[SceneT.Input("scene"),
+                    IO.Combo.Input("size", options=convert.SIZE_MODES, default="scale"),
+                    IO.Float.Input("scale", default=1.0, min=0.05, max=8.0, step=0.05, tooltip="size = scale"),
+                    IO.Int.Input("width", default=1024, min=8, max=16384, step=8,
+                                 tooltip="fit width / fit inside / exact size"),
+                    IO.Int.Input("height", default=1024, min=8, max=16384, step=8,
+                                 tooltip="fit height / fit inside / exact size"),
+                    IO.Combo.Input("round_to", options=[str(m) for m in convert.MULTIPLES], default="1",
+                                   tooltip="Round width and height to a multiple (8 or 64 for diffusion latents)"),
+                    IO.Combo.Input("transparency", options=["keep (IMAGE + alpha MASK)", "flatten onto colour"],
+                                   default="keep (IMAGE + alpha MASK)"),
+                    IO.String.Input("matte", default="#ffffff", tooltip="Colour for flatten"),
+                    IO.Float.Input("time", default=-1.0, min=-1.0, max=3600.0, step=0.05,
+                                   tooltip="Seconds into an animation; -1 = at rest")],
+            outputs=[IO.Image.Output(display_name="image"),
+                     IO.Mask.Output(display_name="mask", tooltip="Alpha: 1 = opaque (Invert Mask for the reverse)"),
+                     IO.Int.Output(display_name="width"), IO.Int.Output(display_name="height")],
+        )
+
+    @classmethod
+    def execute(cls, scene, size, scale, width, height, round_to, transparency, matte, time):
+        rgba = convert.scene_to_rgba(scene, size, scale, width, height, int(round_to), None if time < 0 else time,
+                                     matte if transparency.startswith("flatten") else None)
+        img, alpha = render.rgba_to_comfy(rgba)
+        return IO.NodeOutput(img, alpha, int(rgba.shape[1]), int(rgba.shape[0]))
+
+
 class CNRender(IO.ComfyNode):
     @classmethod
     def define_schema(cls):
         return IO.Schema(
             node_id="CNRender", display_name="Render Scene", category=CAT,
+            search_aliases=["scene to image", "render", "to IMAGE"],
             description="Turn a design into an IMAGE and its alpha MASK (1 = opaque) for any ComfyUI node. "
                         "scale 2 renders at twice the canvas size, still sharp.",
             inputs=[SceneT.Input("scene"), IO.Float.Input("scale", default=1.0, min=0.05, max=8.0, step=0.05)],
@@ -172,4 +211,4 @@ class CNExport(IO.ComfyNode):
         return {}
 
 
-NODES = [CNPreviewScene, CNRender, CNExport, CNSavePDF]
+NODES = [CNPreviewScene, CNSceneToImage, CNRender, CNExport, CNSavePDF]

@@ -1,0 +1,308 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "placeholder-background.jpg"
+    }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "placeholder-logo.png"
+    }
+  },
+  "3": {
+    "class_type": "CNCanvas",
+    "inputs": {
+      "preset": "YouTube thumbnail / HD 1920x1080",
+      "landscape_flip": false,
+      "width": 1920,
+      "height": 1080,
+      "background": "#000000",
+      "safe_margin": 5.0
+    }
+  },
+  "4": {
+    "class_type": "CNAddImage",
+    "inputs": {
+      "scene": [
+        "3",
+        0
+      ],
+      "image": [
+        "1",
+        0
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "mode": "fill",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0,
+      "batch_index": 0,
+      "below_previous": false,
+      "gap": 0.0
+    }
+  },
+  "5": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "FIND YOUR *PEACE* IN A LOUD WORLD",
+      "font": "Montserrat",
+      "font_override": "",
+      "weight": 700,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 120.0,
+      "color": "#ffffff",
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 1600.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.05,
+      "letter_spacing": 0.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "6": {
+    "class_type": "CNDropShadow",
+    "inputs": {
+      "scene": [
+        "5",
+        0
+      ],
+      "target": "last item",
+      "dx": 0.0,
+      "dy": 10.0,
+      "blur": 30.0,
+      "color": "#000000",
+      "opacity": 0.7
+    }
+  },
+  "7": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "Week 3  •  Series Name  •  01.11.2027",
+      "font": "Inter",
+      "font_override": "",
+      "weight": 400,
+      "bold_weight": 700,
+      "italic": false,
+      "size": 44.0,
+      "color": "#d0d4dc",
+      "align": "center",
+      "valign": "top",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 1600.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.2,
+      "letter_spacing": 1.0,
+      "below_previous": false,
+      "gap": 24.0
+    }
+  },
+  "8": {
+    "class_type": "CNStack",
+    "inputs": {
+      "scene": [
+        "4",
+        0
+      ],
+      "part_1": [
+        "6",
+        0
+      ],
+      "part_2": [
+        "7",
+        0
+      ],
+      "direction": "vertical",
+      "gap": 28.0,
+      "align": "center",
+      "valign": "middle",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0
+    }
+  },
+  "9": {
+    "class_type": "CNAddImage",
+    "inputs": {
+      "image": [
+        "2",
+        0
+      ],
+      "mask": [
+        "2",
+        1
+      ],
+      "mask_meaning": "LoadImage (1 = transparent)",
+      "mode": "fit",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 160.0,
+      "box_height": 160.0,
+      "batch_index": 0,
+      "below_previous": false,
+      "gap": 0.0
+    }
+  },
+  "10": {
+    "class_type": "CNPlace",
+    "inputs": {
+      "scene": [
+        "8",
+        0
+      ],
+      "part": [
+        "9",
+        0
+      ],
+      "align": "right",
+      "valign": "bottom",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0
+    }
+  },
+  "11": {
+    "class_type": "CNSceneToImage",
+    "inputs": {
+      "scene": [
+        "10",
+        0
+      ],
+      "size": "fit width",
+      "scale": 1.0,
+      "width": 1024,
+      "height": 1024,
+      "round_to": "64",
+      "transparency": "flatten onto colour",
+      "matte": "#000000",
+      "time": -1.0
+    },
+    "_meta": {
+      "title": "Scene to Image: 1024 wide, multiple of 64 (SDXL-ready)"
+    }
+  },
+  "12": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "11",
+        0
+      ],
+      "filename_prefix": "cratenode/scene_to_image"
+    },
+    "_meta": {
+      "title": "Save Image (or feed VAE Encode / ControlNet)"
+    }
+  },
+  "13": {
+    "class_type": "CNCanvas",
+    "inputs": {
+      "preset": "YouTube thumbnail / HD 1920x1080",
+      "landscape_flip": false,
+      "width": 1920,
+      "height": 1080,
+      "background": "#00000000",
+      "safe_margin": 5.0
+    },
+    "_meta": {
+      "title": "Clear canvas"
+    }
+  },
+  "14": {
+    "class_type": "CNStack",
+    "inputs": {
+      "scene": [
+        "13",
+        0
+      ],
+      "part_1": [
+        "6",
+        0
+      ],
+      "part_2": [
+        "7",
+        0
+      ],
+      "direction": "vertical",
+      "gap": 28.0,
+      "align": "center",
+      "valign": "middle",
+      "area": "safe area",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 0.0,
+      "box_height": 0.0
+    }
+  },
+  "15": {
+    "class_type": "CNSceneToImage",
+    "inputs": {
+      "scene": [
+        "14",
+        0
+      ],
+      "size": "scale",
+      "scale": 0.5,
+      "width": 1024,
+      "height": 1024,
+      "round_to": "8",
+      "transparency": "keep (IMAGE + alpha MASK)",
+      "matte": "#000000",
+      "time": -1.0
+    },
+    "_meta": {
+      "title": "Scene to Image: keep transparency (IMAGE + MASK)"
+    }
+  },
+  "16": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "15",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Image"
+    }
+  },
+  "17": {
+    "class_type": "MaskToImage",
+    "inputs": {
+      "mask": [
+        "15",
+        1
+      ]
+    }
+  },
+  "18": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "17",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Mask (white = opaque)"
+    }
+  }
+}

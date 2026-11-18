@@ -2,7 +2,7 @@
 
 A design suite for ComfyUI: typography, layout, shapes, effects, templates,
 data-driven batches, colour and brand kits, motion and video, smart layout helpers
-and CMYK print output. 50 custom nodes that sit next to your image-generation
+and CMYK print output. 51 custom nodes that sit next to your image-generation
 nodes, so one graph can generate a background, set the type, and export a
 thumbnail, a video or a print-ready PDF.
 
@@ -33,7 +33,7 @@ nodes fail with "SkIcuLoader datafile missing", copy `icudtl.dat` from
 ## Quick start
 
 Open **Templates** in ComfyUI (Workflow → Browse Templates) and pick
-**cratenode-comfy**: the fourteen example workflows below open ready to run, and
+**cratenode-comfy**: the fifteen example workflows below open ready to run, and
 together use every node. Their
 Load Image / Load Video nodes use the placeholder files in `api_examples/assets/`;
 copy those into ComfyUI's `input` folder (the install script does) or pick your own.
@@ -84,6 +84,7 @@ Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 | | **Opacity & Blend** | Opacity and 17 blend modes (multiply, screen, overlay, ...) |
 | | **Clip to Previous** | Show the last item only inside the one before it (a photo inside text) |
 | Output | **Preview Scene** | See the design so far anywhere in a chain (the scene passes through): a quick preview on the node, transparency over a checkerboard, optional safe-area and item-outline guides, any moment of an animation |
+| | **Scene to Image** | Convert a design for any other pipeline (img2img, ControlNet, inpainting, Save Image, upscalers): size by scale, fit or exact, rounded to a multiple of 8 / 64 for diffusion models; keep transparency (IMAGE + MASK) or flatten onto a colour |
 | | **Render Scene** | IMAGE + alpha MASK at any scale |
 | | **Export Image** | PNG, JPEG or WebP from a scene or any IMAGE batch: transparency kept (PNG/WebP) or flattened onto a matte, scale, DPI tag, sRGB profile, workflow embedded, and a `max_kb` budget that lowers quality until the file fits |
 | | **Save PDF** | Vector PDF, fonts embedded |
@@ -234,6 +235,7 @@ python tools/run_workflow.py api_examples/thumbnail.api.json --server http://127
 - **print**: a US Letter flyer with bleed from the example brand kit, saved as a vector CMYK PDF and a flattened one with crop marks, plus a soft proof, an out-of-gamut mask and CMYK values.
 - **layers_blend**: a typed-in palette, wider safe-area margins, circles in multiply, a blurred star, and a type layer put on top with Layers.
 - **keyframes**: keyframe animation (a video sliding in picture-in-picture, a spinning and pulsing star, a wiped-in title), rendered as a frame batch and saved as MP4 from that batch.
+- **scene_to_image**: the thumbnail converted for other pipelines: flattened, 1024 wide and rounded to 64 (SDXL-ready) into Save Image, and the type alone with its transparency as IMAGE + MASK.
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 
 ## Configuration

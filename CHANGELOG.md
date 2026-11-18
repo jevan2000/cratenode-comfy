@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Scene to Image** node: converts a design into IMAGE + MASK for other pipelines,
+  sized by scale, fit width / height / inside, or an exact (stretched) size, rounded
+  to a multiple of 8–64 for diffusion latents, with transparency kept or flattened
+  onto a colour, at any moment of an animation. Rendered sharp at the output size;
+  faint edge pixels keep a clean colour when the IMAGE is used without its mask.
+  Render Scene and Scene to Image are found by searching "scene to image". New
+  example **scene_to_image**.
 - **Live previews on the nodes** before running: Canvas, Text Box, Shape, Linear and
   Radial Gradient, Palette, Safe Area, Contrast Check and the effect nodes show a
   picture under their settings that updates as they change. `web/live_preview.js`

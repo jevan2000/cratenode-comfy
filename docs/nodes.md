@@ -1,6 +1,6 @@
 # Node reference
 
-All 50 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
+All 51 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
 Types: *scene* is a design (`CN_SCENE`), *fill* a gradient, *data row* one CSV/JSON row, *palette* a named colour palette.
 
 - [Canvas](#canvas)
@@ -662,6 +662,24 @@ Outputs: `image` (image), `alpha` (mask)
 | `row` | data row (optional) |  | A data row for {column} names |
 
 Outputs: `path` (string)
+
+### Scene to Image
+
+`CNSceneToImage`. Convert a design into a ComfyUI IMAGE + MASK for any other node: an image-generation pipeline (img2img, ControlNet, inpainting), Save Image, upscalers. Choose the size (scale, fit, exact), round it to a multiple of 8 or 64 for diffusion models, and flatten transparency onto a colour (otherwise it is black in RGB-only nodes). Text and shapes are drawn sharp at the output size.
+
+| Input | Type | Default | Notes |
+|---|---|---|---|
+| `scene` | scene |  |  |
+| `size` | choice | `scale` |  |
+| `scale` | float | `1.0` | size = scale |
+| `width` | int | `1024` | fit width / fit inside / exact size |
+| `height` | int | `1024` | fit height / fit inside / exact size |
+| `round_to` | choice | `1` | Round width and height to a multiple (8 or 64 for diffusion latents) |
+| `transparency` | choice | `keep (IMAGE + alpha MASK)` |  |
+| `matte` | string | `#ffffff` | Colour for flatten |
+| `time` | float | `-1.0` | Seconds into an animation; -1 = at rest |
+
+Outputs: `image` (image), `mask` (mask), `width` (int), `height` (int)
 
 ## Print
 

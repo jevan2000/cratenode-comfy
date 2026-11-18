@@ -35,6 +35,7 @@ SOURCES = {
     "print": ["print.api/18_*.png"],
     "layers_blend": ["layers_blend.api/20_*.png"],
     "keyframes": ["keyframes.api/14_*.mp4@2.0"],
+    "scene_to_image": ["scene_to_image.api/12_*.png", "scene_to_image.api/18_*.png"],
 }
 
 
