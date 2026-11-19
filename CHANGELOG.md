@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Clear install errors:** when skia-python, pypdf or numpy is missing, the pack
+  now says which and prints the pip command for the Python running ComfyUI, instead
+  of a bare "IMPORT FAILED". README has a **Troubleshooting** section (missing
+  packages per install type, ICU data on Windows, Linux libraries, fonts, ffmpeg,
+  live previews, black renders). Checked on ComfyUI 0.34.0 as well as 0.42.5.
 - **Shape: `fill_opacity`** (0–1, default 1) fades the fill (colour or gradient)
   without touching the outline; 0 with a stroke makes an outline-only shape. It is
   the last input, so saved workflows keep their values.

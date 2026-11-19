@@ -14,7 +14,7 @@ are in [CHANGELOG.md](CHANGELOG.md).
 ## Install
 
 1. Clone into ComfyUI's `custom_nodes` folder and install the requirements into
-   ComfyUI's Python:
+   **the Python that runs ComfyUI** (cloning alone does not install them):
 
    ```
    cd ComfyUI/custom_nodes
@@ -22,13 +22,15 @@ are in [CHANGELOG.md](CHANGELOG.md).
    python -m pip install -r cratenode-comfy/requirements.txt
    ```
 
+   Use ComfyUI's own Python for that `python`, see
+   [Troubleshooting](#troubleshooting). ComfyUI-Manager installs the requirements
+   for you when it installs the pack.
+
 2. For video, install [ffmpeg](https://ffmpeg.org) on PATH (or set `CRATENODE_FFMPEG`).
 3. Restart ComfyUI. The nodes are under **CrateNode-Comfy** in the node menu.
 
-On Windows, skia's text layout needs `icudtl.dat` next to the base `python.exe`;
-`tools/install_sandbox.ps1` copies it (and installs into a given ComfyUI). If text
-nodes fail with "SkIcuLoader datafile missing", copy `icudtl.dat` from
-`site-packages` there.
+Tested with ComfyUI 0.34.0 and 0.42.5 on Windows (Python 3.11), and the unit
+tests run on Linux.
 
 ## Quick start
 
@@ -209,9 +211,6 @@ screen).
   2625x3375 @300dpi) and keep `canvas includes bleed`; the TrimBox is set inside it.
   `extend background` grows the page by the bleed in the background colour.
 
-If a render comes out black, check that the chain starts from a **Canvas**: a part
-on its own has a transparent background, and Save Image drops transparency.
-
 ## Examples
 
 Each example exists twice: in `example_workflows/` (UI format, with a thumbnail;
@@ -271,6 +270,45 @@ configure, so licensed material never has to live inside this package. Put a
 
 Workflows can be shared, so the pack only reads files from those folders and only
 sends text to this machine unless you allow more. See [SECURITY.md](SECURITY.md).
+
+## Troubleshooting
+
+**"IMPORT FAILED" for cratenode-comfy, or `No module named 'skia'` in the log.**
+The pack's Python packages (skia-python, pypdf) aren't installed in the Python that
+runs ComfyUI. Cloning a node pack doesn't install them, and `pip` on its own often
+points at a different Python. The log names what's missing and the exact command;
+it is one of these, run from the `ComfyUI` folder:
+
+| ComfyUI install | Command |
+|---|---|
+| Portable (Windows) | `..\python_embeded\python.exe -m pip install -r custom_nodes\cratenode-comfy\requirements.txt` |
+| A `venv` / `.venv` inside ComfyUI | `.venv\Scripts\python.exe -m pip install -r custom_nodes\cratenode-comfy\requirements.txt` (on Linux/macOS `.venv/bin/python`) |
+| Desktop app | Open its terminal (bottom panel) and run `python -m pip install -r custom_nodes/cratenode-comfy/requirements.txt` |
+| Unsure | The ComfyUI log prints `** Python executable:` at startup; use that one |
+
+Then restart ComfyUI. Installing through ComfyUI-Manager does this for you.
+
+**Text nodes fail with "SkIcuLoader datafile missing" (Windows).** skia's text
+layout looks for `icudtl.dat` next to the *base* `python.exe` (for a venv: the Python
+it was made from). Copy it from `site-packages` (where skia-python put it) to that
+folder; `tools/install_sandbox.ps1` does this.
+
+**`libEGL.so.1` (or `libGL`, `libfontconfig`) missing (Linux).** skia-python needs
+a few system libraries: `sudo apt-get install libegl1 libgl1 libfontconfig1`.
+
+**Only Inter and Montserrat in the font list.** Those are the bundled fonts. Point
+`font_folders` in a `config.local.json` at your fonts (see Configuration), or keep
+`system_fonts` on and type an installed family into the Text Box's `font_override`.
+
+**Save Video says ffmpeg was not found.** Install ffmpeg on PATH (ComfyUI must be
+started after that), or set `CRATENODE_FFMPEG` to the full path of `ffmpeg.exe`.
+
+**No live previews on the nodes.** Reload the ComfyUI page after installing or
+updating the pack (the browser caches the old scripts). They appear on Canvas, Text
+Box, Shape, gradients, Palette, Safe Area, Contrast Check and the effect nodes.
+
+**A render comes out black.** Check that the chain starts from a **Canvas**: a part
+on its own has a transparent background, and Save Image drops transparency.
 
 ## Development
 
