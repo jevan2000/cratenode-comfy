@@ -73,7 +73,7 @@ Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 | | **Safe Area** | Set the safe-area margins in pixels |
 | Fill | **Linear Gradient**, **Radial Gradient** | Up to 4 colour stops, for canvases, shapes and text |
 | Type | **Text Box** | Fonts from your folders, wrapping, align, vertical anchor (bottom grows upward), auto-fit, `*bold*` words, case, letter spacing, gradient text |
-| Shapes | **Shape** | Rectangle (rounded), ellipse, line, polygon, star; fill or gradient, stroke, rotation |
+| Shapes | **Shape** | Rectangle (rounded), ellipse, line, polygon, star; fill or gradient with its own opacity (0 + a stroke = outline only), stroke, rotation |
 | Image | **Add Image** | Fit, fill (crop) or stretch an image into a box |
 | | **Image to Scene** | Bring an image (an AI generation, a photo) into a design: a new canvas its size, or under / on top of / in place of an existing design, fitted to its canvas; a batch gives one design per image |
 | Layout | **Stack** | Up to 6 parts in a column or row with a gap, placed in the safe area / canvas / a custom box |

@@ -753,7 +753,7 @@ Outputs: `proof` (image), `out_of_gamut` (mask), `report` (string)
 
 ### Shape
 
-`CNShape`. A rectangle, ellipse, line, polygon or star in a box. A line runs from the box's top-left to its bottom-right corner (height 0 = horizontal).
+`CNShape`. A rectangle, ellipse, line, polygon or star in a box. A line runs from the box's top-left to its bottom-right corner (height 0 = horizontal). For an outline-only shape, set a stroke and fill_opacity 0.
 
 | Input | Type | Default | Notes |
 |---|---|---|---|
@@ -774,6 +774,7 @@ Outputs: `proof` (image), `out_of_gamut` (mask), `report` (string)
 | `scene` | scene (optional) |  |  |
 | `fill` | fill (optional) |  | Gradient fill; replaces the colour |
 | `slot` | string (optional) | `""` | A name for this item in a template (Fill Template replaces its text, image or colour by this name) |
+| `fill_opacity` | float (optional) | `1.0` | Opacity of the fill (colour or gradient), not the outline. 0 = no fill: with a stroke, an outline-only shape |
 
 Outputs: `scene` (scene)
 

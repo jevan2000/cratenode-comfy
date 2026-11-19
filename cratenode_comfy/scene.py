@@ -410,6 +410,18 @@ def scene_duration(scene: "Scene", default: float = 3.0) -> float:
     return default
 
 
+def fade_fill(fill, opacity: float):
+    """A colour or gradient with its alpha multiplied by ``opacity`` (0..1); 0 = no fill."""
+    k = max(0.0, min(1.0, float(opacity)))
+    if fill is None or k <= 0.0:
+        return None
+    if k >= 1.0:
+        return fill
+    if isinstance(fill, Gradient):
+        return replace(fill, stops=tuple((p, (c[0], c[1], c[2], c[3] * k)) for p, c in fill.stops))
+    return (fill[0], fill[1], fill[2], fill[3] * k)
+
+
 def with_style(item, **changes):
     return replace(item, style=replace(item.style, **changes))
 

@@ -93,6 +93,22 @@ class Shapes(unittest.TestCase):
         radial = R(sc.Scene(100, 100).add(rect(0, 0, 100, 100, sc.Gradient("radial", ((0, (1, 1, 1, 1)), (1, (0, 0, 0, 1)))))))
         self.assertGreater(radial[50, 50, 0], radial[5, 50, 0])
 
+    def test_fill_opacity(self):
+        self.assertEqual(sc.fade_fill((1, 0, 0, 0.8), 0.5), (1, 0, 0, 0.4))
+        self.assertIsNone(sc.fade_fill((1, 0, 0, 1), 0.0), "0 = no fill")
+        self.assertEqual(sc.fade_fill((1, 0, 0, 1), 1.0), (1, 0, 0, 1))
+        g = sc.Gradient("linear", ((0.0, (0, 0, 0, 1)), (1.0, (1, 1, 1, 0.5))))
+        self.assertEqual([c[3] for _, c in sc.fade_fill(g, 0.5).stops], [0.5, 0.25])
+        self.assertIsNone(sc.fade_fill(None, 0.5))
+        # a stroke-only rectangle: solid outline, see-through middle
+        s = sc.Scene(120, 80).add(sc.ShapeItem("rectangle", 10, 10, 100, 60, sc.fade_fill((1, 1, 1, 1), 0.0),
+                                               (1, 0, 0, 1), 6))
+        img = R(s)
+        np.testing.assert_allclose(img[10, 60], [1, 0, 0, 1], atol=0.01)
+        self.assertEqual(img[40, 60, 3], 0.0)
+        half = R(sc.Scene(120, 80).add(sc.ShapeItem("rectangle", 10, 10, 100, 60, sc.fade_fill((1, 1, 1, 1), 0.5))))
+        self.assertAlmostEqual(float(half[40, 60, 3]), 0.5, delta=0.01)
+
 
 class Effects(unittest.TestCase):
     def test_drop_shadow_sits_under_and_offset(self):

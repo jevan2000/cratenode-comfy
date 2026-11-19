@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **Shape: `fill_opacity`** (0–1, default 1) fades the fill (colour or gradient)
+  without touching the outline; 0 with a stroke makes an outline-only shape. It is
+  the last input, so saved workflows keep their values.
 - **Security hardening** (from a review of the whole repository and its history):
   Data Rows, Load Template and Brand Kit read files only from the data folder,
   ComfyUI's input folder, the package and `data_roots`; Copy Writer calls only this

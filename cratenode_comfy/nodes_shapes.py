@@ -15,7 +15,8 @@ class CNShape(IO.ComfyNode):
         return IO.Schema(
             node_id="CNShape", display_name="Shape", category=f"{ROOT}/Shapes",
             description="A rectangle, ellipse, line, polygon or star in a box. A line runs from the box's "
-                        "top-left to its bottom-right corner (height 0 = horizontal).",
+                        "top-left to its bottom-right corner (height 0 = horizontal). For an outline-only "
+                        "shape, set a stroke and fill_opacity 0.",
             inputs=[
                 SceneT.Input("scene", optional=True),
                 IO.Combo.Input("shape", options=sc.SHAPES, default="rectangle"),
@@ -31,19 +32,26 @@ class CNShape(IO.ComfyNode):
                 IO.Int.Input("sides", default=5, min=3, max=64, tooltip="Polygon sides / star points"),
                 IO.Float.Input("inner_ratio", default=0.5, min=0.05, max=1.0, step=0.01, tooltip="Stars"),
                 IO.Float.Input("rotation", default=0.0, min=-360.0, max=360.0, step=1.0),
-            ] + flow_inputs(),
+            ] + flow_inputs() + [
+                # Last on purpose: saved workflows store widget values by position, so a new
+                # widget must come after every existing one or old values shift into it.
+                IO.Float.Input("fill_opacity", default=1.0, min=0.0, max=1.0, step=0.01, optional=True,
+                               tooltip="Opacity of the fill (colour or gradient), not the outline. "
+                                       "0 = no fill: with a stroke, an outline-only shape"),
+            ],
             outputs=[SceneT.Output(display_name="scene")],
         )
 
     @classmethod
     def execute(cls, shape, x, y, width, height, color, stroke_color, stroke_width, corner_radius, sides,
-                inner_ratio, rotation, scene=None, fill=None, **kw):
+                inner_ratio, rotation, scene=None, fill=None, fill_opacity=1.0, **kw):
         scene = new_part(scene)
-        f = fill if fill is not None else (to_color(color) if color.strip() else None)
+        base = fill if fill is not None else (to_color(color) if color.strip() else None)
         stroke = to_color(stroke_color) if stroke_color.strip() else None
-        if shape == "line" and stroke is None:
-            stroke = f if isinstance(f, tuple) else (1.0, 1.0, 1.0, 1.0)
+        if shape == "line" and stroke is None:  # a line is drawn in its colour, whatever the fill opacity
+            stroke = base if isinstance(base, tuple) else (1.0, 1.0, 1.0, 1.0)
             stroke_width = stroke_width or 4.0
+        f = sc.fade_fill(base, fill_opacity)
         item = sc.ShapeItem(shape, x, y, width, height, f, stroke, stroke_width, corner_radius, sides,
                             inner_ratio, rotation, flow=flow(kw), name=slot(kw))
         return IO.NodeOutput(scene.add(item))
