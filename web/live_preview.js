@@ -35,34 +35,66 @@ function widgetValues(node) {
   return out;
 }
 
+const NOTE_H = 16; // caption line under the picture
+const PAD = 8;
+
+// The preview is drawn on the node's own canvas, like ComfyUI's built-in widgets, not as
+// an HTML element laid over it: floating elements drift away from the node on some
+// frontend versions (seen on 1.51.9 after moving or resizing a node), a canvas drawing
+// can't.
+function previewWidget(state) {
+  return {
+    name: WIDGET,
+    type: "cn_preview",
+    value: "",
+    serialize: false, // not part of saved workflows or prompts
+    options: { serialize: false },
+    computeSize(width) {
+      return [width, HEIGHT];
+    },
+    draw(ctx, node, width, y) {
+      const boxW = width - PAD * 2;
+      const boxH = HEIGHT - NOTE_H - PAD * 1.5;
+      const img = state.img;
+      ctx.save();
+      if (img && img.complete && img.naturalWidth) {
+        const k = Math.min(boxW / img.naturalWidth, boxH / img.naturalHeight, 1.5);
+        const w = img.naturalWidth * k, h = img.naturalHeight * k;
+        const x = PAD + (boxW - w) / 2, top = y + PAD / 2 + (boxH - h) / 2;
+        ctx.drawImage(img, x, top, w, h);
+        ctx.strokeStyle = "rgba(255,255,255,0.10)";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x - 0.5, top - 0.5, w + 1, h + 1);
+      }
+      ctx.fillStyle = state.noteColor;
+      ctx.font = "11px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      let text = state.note;
+      while (text.length > 4 && ctx.measureText(text).width > boxW) text = text.slice(0, -2);
+      if (text !== state.note) text = text.slice(0, -1) + "…";
+      ctx.fillText(text, width / 2, y + HEIGHT - NOTE_H / 2 - 2);
+      ctx.restore();
+    },
+  };
+}
+
 function attach(node, type) {
-  const root = document.createElement("div");
-  root.style.cssText =
-    "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;" +
-    "width:100%;height:100%;box-sizing:border-box;padding:4px;overflow:hidden;";
-  const img = document.createElement("img");
-  img.style.cssText = "max-width:100%;max-height:" + (HEIGHT - 24) + "px;object-fit:contain;" +
-    "border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,0.08);";
-  img.alt = "";
-  const note = document.createElement("div");
-  note.style.cssText = "font:11px sans-serif;color:#9aa3ad;text-align:center;line-height:1.2;" +
-    "max-height:2.4em;overflow:hidden;";
-  note.textContent = "live preview";
-  root.append(img, note);
-
-  const widget = node.addDOMWidget(WIDGET, "cn_preview", root, {
-    serialize: false,
-    hideOnZoom: false,
-    getMinHeight: () => HEIGHT,
-    getMaxHeight: () => HEIGHT,
-    getHeight: () => HEIGHT,
-  });
-  // Keep the preview out of saved workflows (widgets_values) too, not only out of prompts.
-  if (widget) widget.serialize = false;
-
-  const state = { last: "", timer: null, inflight: 0, url: null };
+  const state = {
+    last: "", timer: null, inflight: 0, url: null, img: null,
+    note: "live preview", noteColor: "#9aa3ad",
+  };
   node.cnPreview = state;
+  const widget = node.addCustomWidget(previewWidget(state));
+  if (widget) widget.serialize = false;
   live.add(node);
+
+  const redraw = () => node.setDirtyCanvas?.(true, true);
+  const setNote = (text, color) => {
+    state.note = text;
+    state.noteColor = color;
+    redraw();
+  };
 
   async function refresh(values) {
     const seq = ++state.inflight;
@@ -75,18 +107,21 @@ function attach(node, type) {
       if (seq !== state.inflight) return; // a newer request is on its way
       if (!r.ok) {
         const e = await r.json().catch(() => ({}));
-        note.textContent = "⚠ " + (e.error || r.statusText);
-        note.style.color = "#e0a050";
+        setNote("⚠ " + (e.error || r.statusText), "#e0a050");
         return;
       }
       const blob = await r.blob();
-      if (state.url) URL.revokeObjectURL(state.url);
-      state.url = URL.createObjectURL(blob);
-      img.src = state.url;
-      note.textContent = r.headers.get("X-CN-Note") || "live preview";
-      note.style.color = "#9aa3ad";
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        if (state.url) URL.revokeObjectURL(state.url);
+        state.url = url;
+        state.img = img;
+        setNote(r.headers.get("X-CN-Note") || "live preview", "#9aa3ad");
+      };
+      img.src = url;
     } catch (err) {
-      note.textContent = "⚠ preview unavailable";
+      setNote("⚠ preview unavailable", "#e0a050");
     }
   }
 

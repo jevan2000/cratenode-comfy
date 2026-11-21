@@ -71,7 +71,7 @@ Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 
 | Group | Node | What it does |
 |---|---|---|
-| Canvas | **Canvas** | Size from a preset (YouTube, Instagram, Story, Letter @300dpi, ...) or custom; background colour or gradient; safe-area margin |
+| Canvas | **Canvas** | Size from a preset (YouTube, Instagram, Story, Letter @300dpi, ...) or custom; background colour, gradient or `transparent` (for overlays and logos); safe-area margin |
 | | **Safe Area** | Set the safe-area margins in pixels |
 | Fill | **Linear Gradient**, **Radial Gradient** | Up to 4 colour stops, for canvases, shapes and text |
 | Type | **Text Box** | Fonts from your folders, wrapping, align, vertical anchor (bottom grows upward), auto-fit, `*bold*` words, case, letter spacing, gradient text |
@@ -302,6 +302,10 @@ a few system libraries: `sudo apt-get install libegl1 libgl1 libfontconfig1`.
 
 **Save Video says ffmpeg was not found.** Install ffmpeg on PATH (ComfyUI must be
 started after that), or set `CRATENODE_FFMPEG` to the full path of `ffmpeg.exe`.
+
+**The nodes don't appear in the menu or search after installing.** If the log
+shows the pack loaded (`CrateNode-Comfy 1.x: ... font faces`), reload the browser
+tab (Ctrl+Shift+R): a tab opened before ComfyUI restarted keeps the old node list.
 
 **No live previews on the nodes.** Reload the ComfyUI page after installing or
 updating the pack (the browser caches the old scripts). They appear on Canvas, Text
