@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Colour picker on hex colour fields.** Each colour field shows a chip with its
+  colour; clicking it opens a picker with RGB sliders (default) or HSL, opacity, a
+  hex box, an eyedropper where the browser has one, recent colours and buttons for
+  special values (Transparent, Auto, None). The field and live preview update while
+  dragging; Escape reverts. The value stays plain hex text, so saved workflows and
+  prompts are unchanged. `web/color_picker.js`; checked on frontends 1.51.9 and 1.55.
 - **Shape shows `fill_opacity` right under `color`.** Only the display order changes
   (in the browser): saved workflows keep the node's own order, so files saved before
   and after `fill_opacity` existed load the same values. Checked on frontends 1.51.9

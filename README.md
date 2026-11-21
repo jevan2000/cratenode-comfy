@@ -65,6 +65,17 @@ like the output. Effect nodes show their effect on a sample "Aa". Values arrivin
 through a link aren't known until the workflow runs, so the preview uses the
 widget's own value.
 
+**Colour picker:** every hex colour field (`color`, `stroke_color`, `background`,
+`matte` and so on) shows a small chip with its colour (a checkerboard shows through
+transparency; a red line means no colour, such as empty, `transparent` or `auto`).
+Click the chip to open a picker: RGB sliders by default or HSL (the choice is
+remembered), opacity, a hex box, an eyedropper (Chrome and Edge) and your recent
+colours. The field and the live preview follow as you drag; Escape puts the old
+value back, Enter, Done or a click outside keeps the new one. Fields that accept
+special values get buttons for them (Transparent, Auto, None). Clicking the text
+instead of the chip edits the value as before. The field still holds plain text
+(`#rrggbb`, or `#rrggbbaa` with opacity), so workflows and the API are unchanged.
+
 ## Nodes
 
 Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
@@ -307,7 +318,7 @@ started after that), or set `CRATENODE_FFMPEG` to the full path of `ffmpeg.exe`.
 shows the pack loaded (`CrateNode-Comfy 1.x: ... font faces`), reload the browser
 tab (Ctrl+Shift+R): a tab opened before ComfyUI restarted keeps the old node list.
 
-**No live previews on the nodes.** Reload the ComfyUI page after installing or
+**No live previews or colour chips on the nodes.** Reload the ComfyUI page after installing or
 updating the pack (the browser caches the old scripts). They appear on Canvas, Text
 Box, Shape, gradients, Palette, Safe Area, Contrast Check and the effect nodes.
 
