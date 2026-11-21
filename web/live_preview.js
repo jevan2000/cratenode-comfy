@@ -25,6 +25,55 @@ function getPreviewable() {
 
 const live = new Set(); // nodes with a preview
 
+// Widgets shown somewhere other than their place in the node definition. Saved workflows
+// store widget values by position, so new inputs are always added last on the server;
+// here they are only *shown* next to the setting they belong with. Files keep the
+// server's order (see keepFileOrder), so old and new workflows load the same values.
+const SHOW_AFTER = {
+  CNShape: { fill_opacity: "color" },
+};
+
+const saved = (w) => w.serialize !== false && w.options?.serialize !== false;
+
+function moveForDisplay(node, type) {
+  const moves = SHOW_AFTER[type];
+  if (!moves || !node.widgets) return;
+  node.cnFileOrder = node.widgets.filter(saved).map((w) => w.name);
+  for (const [name, after] of Object.entries(moves)) {
+    const from = node.widgets.findIndex((w) => w.name === name);
+    if (from < 0 || !node.widgets.some((w) => w.name === after)) continue;
+    const [w] = node.widgets.splice(from, 1);
+    node.widgets.splice(node.widgets.findIndex((x) => x.name === after) + 1, 0, w);
+  }
+  keepFileOrder(node);
+}
+
+// Translate widgets_values between file order (the server's) and display order.
+function keepFileOrder(node) {
+  const fileOrder = node.cnFileOrder;
+  const shown = () => node.widgets.filter(saved).map((w) => w.name);
+  const configure = node.configure;
+  node.configure = function (info) {
+    if (Array.isArray(info?.widgets_values)) {
+      const byName = {};
+      fileOrder.forEach((name, i) => { if (i < info.widgets_values.length) byName[name] = info.widgets_values[i]; });
+      const values = shown().map((name) => name in byName ? byName[name] : node.widgets.find((w) => w.name === name)?.value);
+      info = { ...info, widgets_values: values };
+    }
+    return configure.call(this, info);
+  };
+  const onSerialize = node.onSerialize;
+  node.onSerialize = function (o) {
+    const r = onSerialize?.apply(this, arguments);
+    if (Array.isArray(o?.widgets_values)) {
+      const byName = {};
+      shown().forEach((name, i) => { byName[name] = o.widgets_values[i]; });
+      o.widgets_values = fileOrder.map((name) => byName[name]);
+    }
+    return r;
+  };
+}
+
 function widgetValues(node) {
   const out = {};
   for (const w of node.widgets || []) {
@@ -159,11 +208,13 @@ app.registerExtension({
   async beforeRegisterNodeDef(nodeType, nodeData) {
     if (!nodeData?.name?.startsWith("CN")) return;
     const set = await getPreviewable();
-    if (!set.has(nodeData.name)) return;
+    const preview = set.has(nodeData.name), move = nodeData.name in SHOW_AFTER;
+    if (!preview && !move) return;
     const created = nodeType.prototype.onNodeCreated;
     nodeType.prototype.onNodeCreated = function () {
       const r = created?.apply(this, arguments);
-      attach(this, nodeData.name);
+      if (move) moveForDisplay(this, nodeData.name); // before the preview, which is never saved
+      if (preview) attach(this, nodeData.name);
       return r;
     };
   },

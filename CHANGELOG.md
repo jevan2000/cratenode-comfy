@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Shape shows `fill_opacity` right under `color`.** Only the display order changes
+  (in the browser): saved workflows keep the node's own order, so files saved before
+  and after `fill_opacity` existed load the same values. Checked on frontends 1.51.9
+  and 1.55.
 - **Canvas: `transparent`** toggle (last, optional) for designs with no background
   (overlays, logos, PNG/WebP/MOV with alpha); `background` also accepts the word
   `transparent`. It overrides the colour and fill.
