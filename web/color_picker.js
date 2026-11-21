@@ -90,13 +90,11 @@ function hookField(node, w) {
     } catch { /* never break the node's drawing */ }
     return r;
   };
-  // A click on the chip opens the picker; anywhere else in the field keeps the usual
-  // text prompt. Built-in widget classes handle clicks in onClick({e, node}), plain
-  // widgets in mouse(event, pos, node).
+  // A click anywhere in the field opens the picker (its text box takes typed values).
+  // Built-in widget classes handle clicks in onClick({e, node}), plain widgets in
+  // mouse(event, pos, node).
   const onChip = (e) => {
-    const x = e?.canvasX - node.pos[0], y = e?.canvasY - node.pos[1];
-    const chip = (node.cnChips || []).find((c) => c.w === w);
-    if (!chip || !(x >= chip.x && x <= chip.x + chip.cw && y >= chip.y && y <= chip.y + chip.ch)) return false;
+    if (!e) return false;
     openPicker(node, w, e.clientX ?? 200, e.clientY ?? 200);
     return true;
   };
@@ -272,8 +270,11 @@ function openPicker(node, w, clientX, clientY) {
     if (apply) setValue(h);
   }
 
+  // Typed hex codes (#rgb, #rrggbb, #rrggbbaa; the # is optional) apply as you type;
+  // Enter keeps the colour. An incomplete code is ignored and marked in red.
   hex.addEventListener("input", () => {
     const p = parseHex(hex.value);
+    hex.style.borderColor = p || !hex.value.trim() ? "#444" : "#d04040";
     if (p) { c = p; hsl = rgbToHsl(c); update(true); }
   });
   hex.addEventListener("keydown", (e) => { if (e.key === "Enter") close(true); });
@@ -324,6 +325,8 @@ function openPicker(node, w, clientX, clientY) {
 
   build();
   update(false);
+  hex.placeholder = "#rrggbb";
+  hex.title = "Type a hex code (#rrggbb, or #rrggbbaa with opacity); Enter keeps it";
   document.body.append(root);
   const bw = root.offsetWidth, bh = root.offsetHeight;
   root.style.left = Math.max(8, Math.min(window.innerWidth - bw - 8, clientX + 12)) + "px";

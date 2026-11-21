@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **Colour picker opens from the whole field**, not just the chip; type a hex code
+  in the picker's box (applied as you type, Enter keeps it, an incomplete code is
+  marked red and ignored).
 - **Colour picker on hex colour fields.** Each colour field shows a chip with its
   colour; clicking it opens a picker with RGB sliders (default) or HSL, opacity, a
   hex box, an eyedropper where the browser has one, recent colours and buttons for
