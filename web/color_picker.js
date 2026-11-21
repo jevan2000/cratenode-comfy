@@ -155,6 +155,78 @@ function drawChip(node, w, ctx, width, y) {
   }
 }
 
+// ---- the Swatches tab: a honeycomb of colours plus a row of greys ----
+
+const SVG = "http://www.w3.org/2000/svg";
+const RINGS = 6; // 127 cells: white in the middle, hue around, deeper towards the edge
+
+function swatchColors() {
+  const cells = [];
+  for (let q = -RINGS; q <= RINGS; q++) {
+    for (let r = -RINGS; r <= RINGS; r++) {
+      const ring = Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r));
+      if (ring > RINGS) continue;
+      const x = Math.sqrt(3) * (q + r / 2), y = 1.5 * r;
+      const d = ring / RINGS;
+      // blue at the top, then purple, red, orange, yellow, green, cyan going clockwise
+      const hue = ((Math.atan2(y, x) * 180) / Math.PI + 330) % 360;
+      const sat = Math.min(100, d * 140);
+      const light = 100 - 55 * d - 15 * Math.max(0, d - 0.6) / 0.4;
+      const rgb = hslToRgb({ h: hue, s: sat, l: light });
+      cells.push({ x, y, hex: toHex({ ...rgb, a: 255 }) });
+    }
+  }
+  return cells;
+}
+
+function hexagon(cx, cy, s) {
+  const pts = [];
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI / 180) * (60 * i - 90);
+    pts.push(`${(cx + s * Math.cos(a)).toFixed(2)},${(cy + s * Math.sin(a)).toFixed(2)}`);
+  }
+  return pts.join(" ");
+}
+
+function swatchGrid(parent, getColor, pick) {
+  const W = 244, across = 2 * RINGS + 1;
+  const s = W / across / Math.sqrt(3); // hexagon radius
+  const H = (3 * RINGS + 2) * s;
+  const greys = 13, gs = W / greys / Math.sqrt(3);
+  const svg = document.createElementNS(SVG, "svg");
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H + 2 * gs + 10);
+  svg.style.cssText = "display:block;margin:2px auto 4px;cursor:pointer;overflow:visible;";
+  const cells = [];
+  const add = (cx, cy, size, hex) => {
+    const p = document.createElementNS(SVG, "polygon");
+    p.setAttribute("points", hexagon(cx, cy, size * 0.96));
+    p.setAttribute("fill", hex);
+    const t = document.createElementNS(SVG, "title");
+    t.textContent = hex;
+    p.append(t);
+    p.addEventListener("click", () => pick(parseHex(hex)));
+    svg.append(p);
+    cells.push({ p, hex });
+  };
+  for (const c of swatchColors()) add(W / 2 + c.x * s, H / 2 + c.y * s, s, c.hex);
+  for (let i = 0; i < greys; i++) {
+    const v = Math.round(255 * (1 - i / (greys - 1)));
+    add((i + 0.5) * W / greys, H + 6 + gs, gs, toHex({ r: v, g: v, b: v, a: 255 }));
+  }
+  parent.append(svg);
+  // outline the cell that matches the current colour, if any
+  return () => {
+    const cur = toHex({ ...getColor(), a: 255 }).toLowerCase();
+    for (const { p, hex } of cells) {
+      const on = hex.toLowerCase() === cur;
+      p.setAttribute("stroke", on ? "#ffffff" : "none");
+      p.setAttribute("stroke-width", on ? "2.5" : "0");
+      if (on) svg.append(p); // draw on top so the outline isn't covered
+    }
+  };
+}
+
 // ---- the picker ----
 
 let open = null; // { root, close }
@@ -198,9 +270,9 @@ function openPicker(node, w, clientX, clientY) {
   const hex = el("input", "width:100%;box-sizing:border-box;background:#14161a;color:#e8eaed;border:1px solid #444;" +
     "border-radius:5px;padding:4px 6px;font:12px monospace;", { type: "text", spellcheck: false });
   const toggle = el("div", "display:flex;gap:4px;");
-  const modeBtn = (m) => el("button", "", { textContent: m.toUpperCase() });
-  const rgbBtn = modeBtn("rgb"), hslBtn = modeBtn("hsl");
-  toggle.append(rgbBtn, hslBtn);
+  const modeBtn = (label) => el("button", "", { textContent: label });
+  const rgbBtn = modeBtn("RGB"), hslBtn = modeBtn("HSL"), gridBtn = modeBtn("Swatches");
+  toggle.append(rgbBtn, hslBtn, gridBtn);
   right.append(hex, toggle);
   head.append(sw, right);
 
@@ -211,7 +283,7 @@ function openPicker(node, w, clientX, clientY) {
 
   const btnCss = "background:#2c2f36;color:#d7dbe0;border:1px solid #474b53;border-radius:5px;padding:3px 8px;" +
     "font:12px sans-serif;cursor:pointer;";
-  for (const b of [rgbBtn, hslBtn]) b.style.cssText = btnCss + "flex:1;";
+  for (const b of [rgbBtn, hslBtn, gridBtn]) b.style.cssText = btnCss + "flex:1;padding:3px 4px;";
 
   function row(label, max, get, set, gradient) {
     const r = el("div", "display:flex;align-items:center;gap:6px;");
@@ -231,10 +303,12 @@ function openPicker(node, w, clientX, clientY) {
   let refreshers = [];
   function build() {
     sliders.textContent = "";
-    rgbBtn.style.background = mode === "rgb" ? "#3b6fd4" : "#2c2f36";
-    hslBtn.style.background = mode === "hsl" ? "#3b6fd4" : "#2c2f36";
+    for (const [b, m] of [[rgbBtn, "rgb"], [hslBtn, "hsl"], [gridBtn, "grid"]])
+      b.style.background = mode === m ? "#3b6fd4" : "#2c2f36";
     const rgb = (o) => `rgb(${o.r},${o.g},${o.b})`;
-    if (mode === "rgb") {
+    if (mode === "grid") {
+      refreshers = [swatchGrid(sliders, () => c, (p) => { c = { ...p, a: c.a }; hsl = rgbToHsl(c); update(true); })];
+    } else if (mode === "rgb") {
       refreshers = ["r", "g", "b"].map((k) => row(k.toUpperCase(), 255, () => c[k],
         (v) => { c[k] = v; hsl = rgbToHsl(c); },
         () => `linear-gradient(90deg,${rgb({ ...c, [k]: 0 })},${rgb({ ...c, [k]: 255 })})`));
@@ -255,6 +329,7 @@ function openPicker(node, w, clientX, clientY) {
   }
 
   let current = start;
+  let typing = false;
   function setValue(v) {
     current = v;
     w.value = v;
@@ -265,7 +340,7 @@ function openPicker(node, w, clientX, clientY) {
   function update(apply) {
     const h = toHex(c);
     swFill.style.background = `rgba(${Math.round(c.r)},${Math.round(c.g)},${Math.round(c.b)},${c.a / 255})`;
-    if (document.activeElement !== hex) hex.value = h;
+    if (!typing) hex.value = h; // don't rewrite the box while the user types in it
     refreshers.forEach((f) => f());
     if (apply) setValue(h);
   }
@@ -275,11 +350,17 @@ function openPicker(node, w, clientX, clientY) {
   hex.addEventListener("input", () => {
     const p = parseHex(hex.value);
     hex.style.borderColor = p || !hex.value.trim() ? "#444" : "#d04040";
-    if (p) { c = p; hsl = rgbToHsl(c); update(true); }
+    if (p) { c = p; hsl = rgbToHsl(c); typing = true; update(true); typing = false; }
   });
   hex.addEventListener("keydown", (e) => { if (e.key === "Enter") close(true); });
-  rgbBtn.onclick = () => { mode = "rgb"; try { localStorage.setItem("cratenode.pickerMode", mode); } catch {} build(); update(false); };
-  hslBtn.onclick = () => { mode = "hsl"; try { localStorage.setItem("cratenode.pickerMode", mode); } catch {} build(); update(false); };
+  const setMode = (m) => {
+    mode = m;
+    try { localStorage.setItem("cratenode.pickerMode", mode); } catch {}
+    build(); update(false); place();
+  };
+  rgbBtn.onclick = () => setMode("rgb");
+  hslBtn.onclick = () => setMode("hsl");
+  gridBtn.onclick = () => setMode("grid");
 
   if ("EyeDropper" in window) {
     const eye = el("button", btnCss, { textContent: "Eyedropper", title: "Pick a colour from anywhere on screen" });
@@ -328,9 +409,13 @@ function openPicker(node, w, clientX, clientY) {
   hex.placeholder = "#rrggbb";
   hex.title = "Type a hex code (#rrggbb, or #rrggbbaa with opacity); Enter keeps it";
   document.body.append(root);
-  const bw = root.offsetWidth, bh = root.offsetHeight;
-  root.style.left = Math.max(8, Math.min(window.innerWidth - bw - 8, clientX + 12)) + "px";
-  root.style.top = Math.max(8, Math.min(window.innerHeight - bh - 8, clientY - 20)) + "px";
+  // Keep the popup on screen (it grows or shrinks when the tab changes).
+  function place() {
+    const bw = root.offsetWidth, bh = root.offsetHeight;
+    root.style.left = Math.max(8, Math.min(window.innerWidth - bw - 8, clientX + 12)) + "px";
+    root.style.top = Math.max(8, Math.min(window.innerHeight - bh - 8, clientY - 20)) + "px";
+  }
+  place();
   open = { root, close };
   hex.focus();
   hex.select();

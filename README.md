@@ -68,8 +68,9 @@ widget's own value.
 **Colour picker:** every hex colour field (`color`, `stroke_color`, `background`,
 `matte` and so on) shows a small chip with its colour (a checkerboard shows through
 transparency; a red line means no colour, such as empty, `transparent` or `auto`).
-Click the field to open a picker: RGB sliders by default or HSL (the choice is
-remembered), opacity, a box to type a hex code (`#rrggbb`, `#rgb` or `#rrggbbaa`),
+Click the field to open a picker with three tabs: RGB sliders (the default), HSL
+sliders, or Swatches (a honeycomb of ready colours plus a row of greys; click one).
+The tab you used last is remembered. It also has opacity, a box to type a hex code (`#rrggbb`, `#rgb` or `#rrggbbaa`),
 an eyedropper (Chrome and Edge) and your recent colours. The field and the live
 preview follow as you drag or type; Escape puts the old value back, Enter, Done or
 a click outside keeps the new one. Fields that accept special values get buttons for

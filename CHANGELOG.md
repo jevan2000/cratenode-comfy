@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **Colour picker: Swatches tab** next to RGB and HSL: a honeycomb of 127 colours
+  (white in the middle, hues around it, deeper towards the edge) and 13 greys; click
+  one to use it (opacity is kept). The current colour's cell is outlined.
 - **Colour picker opens from the whole field**, not just the chip; type a hex code
   in the picker's box (applied as you type, Enter keeps it, an incomplete code is
   marked red and ignored).
