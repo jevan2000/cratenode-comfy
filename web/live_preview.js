@@ -81,6 +81,10 @@ function widgetValues(node) {
     const v = w.value;
     if (["string", "number", "boolean"].includes(typeof v)) out[w.name] = v;
   }
+  // Layout nodes: how many part inputs are connected, so the preview shows that many
+  // stand-ins (what's connected isn't known until the workflow runs).
+  const parts = (node.inputs || []).filter((i) => /^part_\d+$/.test(i.name));
+  if (parts.length) out.__parts = parts.filter((i) => i.link != null).length;
   return out;
 }
 

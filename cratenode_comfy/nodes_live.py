@@ -20,7 +20,8 @@ from collections import OrderedDict
 from comfy_api.latest import IO
 
 from . import color as col
-from . import nodes_canvas, nodes_color, nodes_effects, nodes_shapes, nodes_type
+from . import layout as lay
+from . import nodes_canvas, nodes_color, nodes_effects, nodes_layout, nodes_shapes, nodes_type
 from . import preview as pv
 from . import scene as sc
 from . import text as textmod
@@ -34,11 +35,12 @@ _KINDS = {
     "CNPalette": "palette", "CNSafeArea": "safe", "CNContrast": "contrast",
     "CNDropShadow": "effect", "CNOuterGlow": "effect", "CNOutline": "effect", "CNBlur": "effect",
     "CNOpacityBlend": "effect", "CNClipToPrevious": "effect",
+    "CNGrid": "grid",
 }
 
 
 def _classes() -> dict:
-    mods = (nodes_canvas, nodes_type, nodes_shapes, nodes_color, nodes_effects)
+    mods = (nodes_canvas, nodes_type, nodes_shapes, nodes_color, nodes_effects, nodes_layout)
     return {c.define_schema().node_id: c for m in mods for c in m.NODES}
 
 
@@ -77,6 +79,59 @@ def _sample() -> sc.Scene:
     return s.add(sc.TextItem(spec))
 
 
+LAYOUT_CANVAS = (1920, 1080, (96.0, 96.0, 96.0, 96.0))  # the stand-in canvas for layout previews
+_TILE_SIZES = [(300, 180), (220, 260), (340, 140), (260, 220), (200, 160), (320, 240), (240, 140),
+               (280, 200), (180, 220)]
+_TILE_COLORS = ["#19a7a1", "#ff6b5b", "#f2b544", "#5b8def", "#9b6bd6", "#4fbf6a", "#e86aa6", "#3fb6d9",
+                "#c98a4b"]
+
+
+def sample_parts(n: int) -> list[sc.Scene]:
+    """Numbered stand-in parts of different sizes, so alignment inside the cells shows."""
+    parts = []
+    for i in range(n):
+        w, h = _TILE_SIZES[i % len(_TILE_SIZES)]
+        fill = col.resolve_color(_TILE_COLORS[i % len(_TILE_COLORS)])
+        spec = textmod.TextSpec(str(i + 1), "Montserrat", 800, size=min(w, h) * 0.5, color=(1.0, 1.0, 1.0, 0.95),
+                                x=0, y=h / 2 - min(w, h) * 0.33, width=w, align="center")
+        parts.append(sc.Scene(1, 1).add(sc.ShapeItem("rectangle", 0, 0, w, h, fill, radius=14))
+                     .add(sc.TextItem(spec)))
+    return parts
+
+
+def _linked_parts(widgets: dict, most: int) -> int:
+    """How many part inputs are connected (the browser sends ``__parts``); 0 = unknown."""
+    try:
+        return max(0, min(most, int(widgets.get("__parts") or 0)))
+    except (TypeError, ValueError):
+        return 0
+
+
+def _grid_preview(cls, kw: dict, widgets: dict):
+    """The grid with stand-in parts on a 1920 x 1080 canvas, its area (cyan) and cells (grey)."""
+    n = _linked_parts(widgets, nodes_layout.N_GRID) or 6
+    w, h, margin = LAYOUT_CANVAS
+    base = sc.Scene(w, h, (0.12, 0.13, 0.16, 1.0), margin=margin)
+    parts = {f"part_{i + 1}": p for i, p in enumerate(sample_parts(n))}
+    out = cls.execute(scene=base, **kw, **parts)
+    scale = pv.fit_scale(w, h, MAX_W, MAX_H)
+    img = pv.preview(out.args[0], scale)
+    bx, by, bw, bh = lay.area_box(base, kw.get("area", "safe area"), kw.get("x", 0.0), kw.get("y", 0.0),
+                                  kw.get("box_width", 0.0), kw.get("box_height", 0.0))
+    cols = max(1, int(kw.get("columns", 3)))
+    rows = (n + cols - 1) // cols
+    gx, gy = float(kw.get("gap_x", 24.0)), float(kw.get("gap_y", 24.0))
+    cw, ch = (bw - gx * (cols - 1)) / cols, (bh - gy * (rows - 1)) / rows
+    for i in range(rows * cols):
+        r, c = divmod(i, cols)
+        x0, y0 = bx + c * (cw + gx), by + r * (ch + gy)
+        pv._dashed_rect(img, x0 * scale, y0 * scale, (x0 + cw) * scale, (y0 + ch) * scale, (0.45, 0.48, 0.55),
+                        1, dash=3)
+    pv._dashed_rect(img, bx * scale, by * scale, (bx + bw) * scale, (by + bh) * scale, pv.SAFE, 1)
+    shown = "connected" if _linked_parts(widgets, nodes_layout.N_GRID) else "sample"
+    return img, f"{cols} x {rows} cells, {n} {shown} parts (stand-ins)"
+
+
 def _note(out) -> str:
     ui = getattr(out, "ui", None)
     if ui is None:
@@ -95,6 +150,9 @@ def render(node_type: str, widgets: dict) -> tuple[bytes, str]:
     kw = widget_kwargs(cls, widgets)
     QUIET.on = True
     try:
+        if kind == "grid":
+            img, note = _grid_preview(cls, kw, widgets)
+            return pv.to_png(img), note
         if kind in ("effect", "safe"):
             base = sc.Scene(1920, 1080, (0.12, 0.13, 0.16, 1.0)) if kind == "safe" else _sample()
             out = cls.execute(scene=base, **kw)

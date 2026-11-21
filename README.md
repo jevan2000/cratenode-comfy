@@ -65,6 +65,11 @@ like the output. Effect nodes show their effect on a sample "Aa". Values arrivin
 through a link aren't known until the workflow runs, so the preview uses the
 widget's own value.
 
+**Grid** shows its layout on a 1920 x 1080 stand-in canvas: numbered tiles of
+different sizes (one per connected part, or six when none are connected yet), the
+cells as grey dashed boxes and the area in cyan, so `columns`, gaps, `align`,
+`valign` and the area choice can be seen as you change them.
+
 **Colour picker:** every hex colour field (`color`, `stroke_color`, `background`,
 `matte` and so on) shows a small chip with its colour (a checkerboard shows through
 transparency; a red line means no colour, such as empty, `transparent` or `auto`).

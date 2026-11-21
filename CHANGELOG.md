@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **Grid has a live preview:** numbered stand-in tiles of different sizes (one per
+  connected part, six if none), the cells and the area, on a 1920 x 1080 stand-in
+  canvas, following columns, gaps, align/valign and area as they change.
 - **Colour picker: Swatches tab** next to RGB and HSL: a honeycomb of 127 colours
   (white in the middle, hues around it, deeper towards the edge) and 13 greys; click
   one to use it (opacity is kept). The current colour's cell is outlined.
