@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Canvas: `transparent`** toggle (last, optional) for designs with no background
+  (overlays, logos, PNG/WebP/MOV with alpha); `background` also accepts the word
+  `transparent`. It overrides the colour and fill.
+- **Live previews are drawn on the node itself** (like ComfyUI's own widgets) instead
+  of an HTML element over the canvas. On frontend 1.51.9 that element drifted away
+  from the node after it was moved or resized (seen on Canvas). The preview is still
+  left out of saved workflows and prompts.
+- README troubleshooting: refresh the browser tab if the nodes don't show after
+  installing.
 - **Clear install errors:** when skia-python, pypdf or numpy is missing, the pack
   now says which and prints the pip command for the Python running ComfyUI, instead
   of a bare "IMPORT FAILED". README has a **Troubleshooting** section (missing

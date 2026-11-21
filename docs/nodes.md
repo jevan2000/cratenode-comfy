@@ -21,7 +21,7 @@ Types: *scene* is a design (`CN_SCENE`), *fill* a gradient, *data row* one CSV/J
 
 ### Canvas
 
-`CNCanvas`. Start a design: size (preset or custom), background colour or fill, and safe-area margins.
+`CNCanvas`. Start a design: size (preset or custom), background colour, fill or transparent, and safe-area margins.
 
 | Input | Type | Default | Notes |
 |---|---|---|---|
@@ -29,9 +29,10 @@ Types: *scene* is a design (`CN_SCENE`), *fill* a gradient, *data row* one CSV/J
 | `landscape_flip` | boolean | `false` | Swap width and height |
 | `width` | int | `1920` | Used when preset is custom |
 | `height` | int | `1080` | Used when preset is custom |
-| `background` | string | `#000000` | #rrggbb or #rrggbbaa (alpha 00 = transparent) |
+| `background` | string | `#000000` | #rrggbb or #rrggbbaa, or 'transparent' |
 | `safe_margin` | float | `5.0` | Safe area inset, % of the shorter side (layout nodes can use it) |
 | `background_fill` | fill (optional) |  | A gradient; replaces the background colour |
+| `transparent` | boolean (optional) | `false` | No background: overlays, logos, PNG/WebP/MOV with alpha. Overrides the background colour and fill |
 
 Outputs: `scene` (scene)
 

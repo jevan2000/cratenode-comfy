@@ -13,6 +13,7 @@ from .nodes_common import (CANVAS_PRESETS, MASK_MEANINGS, ROOT, FillT, SceneT, c
 
 
 BATCH_MODES = ["one image (batch_index)", "every image (one design each)"]
+TRANSPARENT = (0.0, 0.0, 0.0, 0.0)
 
 
 class CNCanvas(IO.ComfyNode):
@@ -20,27 +21,37 @@ class CNCanvas(IO.ComfyNode):
     def define_schema(cls):
         return IO.Schema(
             node_id="CNCanvas", display_name="Canvas", category=f"{ROOT}/Canvas",
-            description="Start a design: size (preset or custom), background colour or fill, and safe-area margins.",
+            description="Start a design: size (preset or custom), background colour, fill or transparent, and "
+                        "safe-area margins.",
             inputs=[
                 IO.Combo.Input("preset", options=list(CANVAS_PRESETS), default="YouTube thumbnail / HD 1920x1080"),
                 IO.Boolean.Input("landscape_flip", default=False, tooltip="Swap width and height"),
                 IO.Int.Input("width", default=1920, min=1, max=16384, tooltip="Used when preset is custom"),
                 IO.Int.Input("height", default=1080, min=1, max=16384, tooltip="Used when preset is custom"),
-                IO.String.Input("background", default="#000000", tooltip="#rrggbb or #rrggbbaa (alpha 00 = transparent)"),
+                IO.String.Input("background", default="#000000",
+                                tooltip="#rrggbb or #rrggbbaa, or 'transparent'"),
                 FillT.Input("background_fill", optional=True, tooltip="A gradient; replaces the background colour"),
                 IO.Float.Input("safe_margin", default=5.0, min=0.0, max=45.0, step=0.5,
                                tooltip="Safe area inset, % of the shorter side (layout nodes can use it)"),
+                # Last on purpose: saved workflows store widget values by position.
+                IO.Boolean.Input("transparent", default=False, optional=True,
+                                 tooltip="No background: overlays, logos, PNG/WebP/MOV with alpha. "
+                                         "Overrides the background colour and fill"),
             ],
             outputs=[SceneT.Output(display_name="scene")],
         )
 
     @classmethod
-    def execute(cls, preset, landscape_flip, width, height, background, safe_margin, background_fill=None):
+    def execute(cls, preset, landscape_flip, width, height, background, safe_margin, background_fill=None,
+                transparent=False):
         w, h = CANVAS_PRESETS.get(preset) or (width, height)
         if landscape_flip:
             w, h = h, w
         m = min(w, h) * safe_margin / 100.0
-        bg = background_fill if background_fill is not None else color(background)
+        if transparent or background.strip().lower() in ("transparent", "none", ""):
+            bg = TRANSPARENT
+        else:
+            bg = background_fill if background_fill is not None else color(background)
         return IO.NodeOutput(sc.Scene(w, h, bg, margin=(m, m, m, m)))
 
 
