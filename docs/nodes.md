@@ -384,10 +384,10 @@ Outputs: `scene` (scene, list)
 | `align` | choice | `center` |  |
 | `valign` | choice | `middle` |  |
 | `area` | choice | `safe area` | Where to place: the safe area, the whole canvas, or the custom box below |
-| `x` | float | `0.0` |  |
-| `y` | float | `0.0` |  |
-| `box_width` | float | `0.0` | 0 = to the canvas edge |
-| `box_height` | float | `0.0` | 0 = to the canvas edge |
+| `x` | float | `0.0` | Custom area only: the box's left edge, in canvas pixels |
+| `y` | float | `0.0` | Custom area only: the box's top edge, in canvas pixels |
+| `box_width` | float | `0.0` | Custom area only: the box's width; 0 = to the canvas edge |
+| `box_height` | float | `0.0` | Custom area only: the box's height; 0 = to the canvas edge |
 | `scene` | scene (optional) |  |  |
 | `part_1` | scene (optional) |  |  |
 | `part_2` | scene (optional) |  |  |
@@ -429,10 +429,10 @@ Outputs: `scene` (scene)
 | `align` | choice | `right` |  |
 | `valign` | choice | `bottom` |  |
 | `area` | choice | `safe area` | Where to place: the safe area, the whole canvas, or the custom box below |
-| `x` | float | `0.0` |  |
-| `y` | float | `0.0` |  |
-| `box_width` | float | `0.0` | 0 = to the canvas edge |
-| `box_height` | float | `0.0` | 0 = to the canvas edge |
+| `x` | float | `0.0` | Custom area only: the box's left edge, in canvas pixels |
+| `y` | float | `0.0` | Custom area only: the box's top edge, in canvas pixels |
+| `box_width` | float | `0.0` | Custom area only: the box's width; 0 = to the canvas edge |
+| `box_height` | float | `0.0` | Custom area only: the box's height; 0 = to the canvas edge |
 | `scene` | scene (optional) |  |  |
 
 Outputs: `scene` (scene)
@@ -448,10 +448,10 @@ Outputs: `scene` (scene)
 | `align` | choice | `center` |  |
 | `valign` | choice | `middle` |  |
 | `area` | choice | `safe area` | Where to place: the safe area, the whole canvas, or the custom box below |
-| `x` | float | `0.0` |  |
-| `y` | float | `0.0` |  |
-| `box_width` | float | `0.0` | 0 = to the canvas edge |
-| `box_height` | float | `0.0` | 0 = to the canvas edge |
+| `x` | float | `0.0` | Custom area only: the box's left edge, in canvas pixels |
+| `y` | float | `0.0` | Custom area only: the box's top edge, in canvas pixels |
+| `box_width` | float | `0.0` | Custom area only: the box's width; 0 = to the canvas edge |
+| `box_height` | float | `0.0` | Custom area only: the box's height; 0 = to the canvas edge |
 | `scene` | scene (optional) |  | Add the stack to this scene |
 | `part_1` | scene (optional) |  |  |
 | `part_2` | scene (optional) |  |  |

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Stack, Place, Grid: `x`, `y`, `box_width`, `box_height` are greyed out unless
+  `area` is `custom`**, the only setting that uses them (with safe area or canvas they
+  were silently ignored). Tooltips now say so. Display only: values are still saved
+  and nothing renders differently. `web/area_fields.js`; checked on frontends 1.51.9
+  and 1.55.
 - **Grid: `placement`.** `within cell` is the grid as before. `on grid line` centres
   each part on the cell line that align/valign names: left/top on the cell's first
   line, right/bottom on its last, center/middle on its centre. Parts then sit on the

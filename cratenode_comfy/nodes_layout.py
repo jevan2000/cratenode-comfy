@@ -18,10 +18,14 @@ def _area_inputs(default_area="safe area"):
     return [
         IO.Combo.Input("area", options=lay.AREAS, default=default_area,
                        tooltip="Where to place: the safe area, the whole canvas, or the custom box below"),
-        IO.Float.Input("x", default=0.0, min=-20000, max=20000, advanced=True),
-        IO.Float.Input("y", default=0.0, min=-20000, max=20000, advanced=True),
-        IO.Float.Input("box_width", default=0.0, min=0.0, max=40000, advanced=True, tooltip="0 = to the canvas edge"),
-        IO.Float.Input("box_height", default=0.0, min=0.0, max=40000, advanced=True, tooltip="0 = to the canvas edge"),
+        IO.Float.Input("x", default=0.0, min=-20000, max=20000, advanced=True,
+                       tooltip="Custom area only: the box's left edge, in canvas pixels"),
+        IO.Float.Input("y", default=0.0, min=-20000, max=20000, advanced=True,
+                       tooltip="Custom area only: the box's top edge, in canvas pixels"),
+        IO.Float.Input("box_width", default=0.0, min=0.0, max=40000, advanced=True,
+                       tooltip="Custom area only: the box's width; 0 = to the canvas edge"),
+        IO.Float.Input("box_height", default=0.0, min=0.0, max=40000, advanced=True,
+                       tooltip="Custom area only: the box's height; 0 = to the canvas edge"),
     ]
 
 
