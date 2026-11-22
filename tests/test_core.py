@@ -167,6 +167,22 @@ class Layout(unittest.TestCase):
         self.assertEqual(b[0], (40, 15, 60, 35))
         self.assertEqual(b[3], (160, 65, 180, 85))
 
+    def test_grid_on_grid_lines(self):
+        # 2 x 1 cells of 100 x 100: parts are centred on the line align/valign names
+        parts = [self.part(20, 20) for _ in range(2)]
+        box = (0, 0, 200, 100)
+        on = lambda a, v: [sc.content_bounds((x,), REG)[:2] for x in layout.grid(
+            parts, box, columns=2, gap_x=0, gap_y=0, align=a, valign=v, reg=REG, placement="on grid line")]
+        self.assertEqual(on("left", "top"), [(-10, -10), (90, -10)])  # on the crossings
+        self.assertEqual(on("right", "bottom"), [(90, 90), (190, 90)])
+        self.assertEqual(on("center", "middle"), [(40, 40), (140, 40)])  # same as within the cell
+        within = [sc.content_bounds((x,), REG)[:2] for x in layout.grid(
+            parts, box, columns=2, gap_x=0, gap_y=0, align="left", valign="top", reg=REG)]
+        self.assertEqual(within, [(0, 0), (100, 0)])
+        item = layout.grid_item(parts, box, 2, 0, 0, "left", "top", placement="on grid line")
+        self.assertEqual(sc.content_bounds(layout.arrange(item, REG)[:1], REG)[:2], (-10, -10))
+        self.assertEqual(layout.grid_item(parts, box).placement, "")  # the default stays out of templates
+
     def test_grid_horizontal_fills_columns(self):
         # 2 rows: parts go down the first column, then the second, then a third
         parts = [self.part(20, 20) for _ in range(5)]

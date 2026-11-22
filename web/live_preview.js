@@ -31,7 +31,7 @@ const live = new Set(); // nodes with a preview
 // server's order (see keepFileOrder), so old and new workflows load the same values.
 const SHOW_AFTER = {
   CNShape: { fill_opacity: "color", stroke_style: "stroke_width" },
-  CNGrid: { direction: "columns" },
+  CNGrid: { direction: "columns", placement: "valign" },
 };
 
 // Labels that follow another setting: Grid's count is per row (columns) when it fills

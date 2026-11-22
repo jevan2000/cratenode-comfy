@@ -104,17 +104,23 @@ class CNGrid(IO.ComfyNode):
                                               "down (columns = parts per row). horizontal: parts fill each "
                                               "column top to bottom and the grid grows to the right (the "
                                               "count is parts per column, shown as 'rows')."),
+                       IO.Combo.Input("placement", options=lay.PLACEMENTS, default="within cell", optional=True,
+                                      tooltip="within cell: each part sits inside its cell at align/valign. "
+                                              "on grid line: each part is centred on the cell line that "
+                                              "align/valign names (left/top = the cell's first line, right/"
+                                              "bottom = its last, center/middle = its centre), so parts sit "
+                                              "on the grid lines and their crossings."),
                    ],
             outputs=[SceneT.Output(display_name="scene")],
         )
 
     @classmethod
     def execute(cls, columns, gap_x, gap_y, align, valign, area, x, y, box_width, box_height, scene=None,
-                direction="vertical", **parts):
+                direction="vertical", placement="within cell", **parts):
         ps = [parts.get(f"part_{i}") for i in range(1, N_GRID + 1)]
         base = _base(scene, ps)
         item = lay.grid_item([p for p in ps if p is not None], _box(base, area, x, y, box_width, box_height),
-                             columns, gap_x, gap_y, align, valign, direction)
+                             columns, gap_x, gap_y, align, valign, direction, placement)
         return IO.NodeOutput(base.add(item) if item.parts else base)
 
 

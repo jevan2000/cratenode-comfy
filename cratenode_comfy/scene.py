@@ -297,6 +297,7 @@ class LayoutItem:
     flow: Flow = Flow()
     name: str = ""
     anim: tuple = ()  # motion.Track, ...
+    placement: str = ""  # grids: "" = within the cell, "on grid line" = centred on the cell's line
 
 
 @dataclass(frozen=True)

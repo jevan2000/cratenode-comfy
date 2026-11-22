@@ -399,6 +399,7 @@ Outputs: `scene` (scene, list)
 | `part_8` | scene (optional) |  |  |
 | `part_9` | scene (optional) |  |  |
 | `direction` | choice (optional) | `vertical` | vertical: parts fill each row left to right and the grid grows down (columns = parts per row). horizontal: parts fill each column top to bottom and the grid grows to the right (the count is parts per column, shown as 'rows'). |
+| `placement` | choice (optional) | `within cell` | within cell: each part sits inside its cell at align/valign. on grid line: each part is centred on the cell line that align/valign names (left/top = the cell's first line, right/bottom = its last, center/middle = its centre), so parts sit on the grid lines and their crossings. |
 
 Outputs: `scene` (scene)
 

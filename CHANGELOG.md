@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Grid: `placement`.** `within cell` is the grid as before. `on grid line` centres
+  each part on the cell line that align/valign names: left/top on the cell's first
+  line, right/bottom on its last, center/middle on its centre. Parts then sit on the
+  lines and their crossings.
+  - It is optional and last in the file (shown under valign), so saved workflows and
+    templates keep their layout.
+  - The Grid live preview now draws its guides under the parts.
 - **Grid: `direction`** (vertical / horizontal). Vertical is the grid as before: rows
   filled left to right, growing down. Horizontal fills columns top to bottom and grows
   to the right, with the count meaning parts per column (the field is labelled "rows"

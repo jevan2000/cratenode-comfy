@@ -24,6 +24,20 @@ def _offset(pos: str, space: float, size: float) -> float:
     return 0.0
 
 
+# Grid placement: inside the cell at align/valign, or centred on the cell's line that
+# align/valign names (left/top = its first line, right/bottom = its second, center/middle
+# = its centre line), so parts straddle the grid lines and their crossings.
+PLACEMENTS = ["within cell", "on grid line"]
+
+
+def _line_offset(pos: str, space: float, size: float) -> float:
+    if pos in ("center", "middle"):
+        return (space - size) / 2
+    if pos in ("right", "bottom"):
+        return space - size / 2
+    return -size / 2
+
+
 def area_box(scene: Scene, area: str, x: float, y: float, w: float, h: float):
     """(x, y, w, h) for an area choice; custom sizes of 0 run to the canvas edge."""
     if area == "canvas":
@@ -78,16 +92,18 @@ def stack_item(parts: list[Scene], box, direction="vertical", gap=24.0, align="c
 
 
 def grid_item(parts: list[Scene], box, columns=3, gap_x=24.0, gap_y=24.0, align="center",
-              valign="middle", direction="vertical") -> LayoutItem:
+              valign="middle", direction="vertical", placement="within cell") -> LayoutItem:
     return LayoutItem("grid", tuple(p.items for p in parts if p.items), tuple(box), direction, gap=gap_x,
-                      gap_y=gap_y, columns=columns, align=align, valign=valign)
+                      gap_y=gap_y, columns=columns, align=align, valign=valign,
+                      placement="" if placement == "within cell" else placement)
 
 
 def arrange(it: LayoutItem, reg: FontRegistry | None = None) -> tuple:
     """The GroupItems a LayoutItem resolves to right now."""
     parts = [Scene(1, 1, items=p) for p in it.parts]
     if it.kind == "grid":
-        return tuple(grid(parts, it.box, it.columns, it.gap, it.gap_y, it.align, it.valign, reg, it.direction))
+        return tuple(grid(parts, it.box, it.columns, it.gap, it.gap_y, it.align, it.valign, reg, it.direction,
+                          it.placement or "within cell"))
     return tuple(stack(parts, it.box, it.direction, it.gap, it.align, it.valign, reg))
 
 
@@ -116,17 +132,19 @@ def grid_cells(n: int, box, count=3, gap_x=24.0, gap_y=24.0, direction="vertical
 
 
 def grid(parts: list[Scene], box, columns=3, gap_x=24.0, gap_y=24.0, align="center", valign="middle",
-         reg: FontRegistry | None = None, direction="vertical") -> list[GroupItem]:
+         reg: FontRegistry | None = None, direction="vertical", placement="within cell") -> list[GroupItem]:
     """Parts in equal cells (see ``grid_cells`` for the fill order); each part sits in
-    its cell at align/valign. Cells divide the box."""
+    its cell at align/valign, or centred on that cell line ("on grid line"). Cells
+    divide the box."""
     reg = reg or registry()
     groups = _parts(parts, reg)
     if not groups:
         return []
     cells, _, _ = grid_cells(len(groups), box, columns, gap_x, gap_y, direction)
+    off = _line_offset if placement == "on grid line" else _offset
     out = []
     for (items, b), (cx, cy, cw, ch) in zip(groups, cells):
         w, h = b[2] - b[0], b[3] - b[1]
-        tx, ty = cx + _offset(align, cw, w), cy + _offset(valign, ch, h)
+        tx, ty = cx + off(align, cw, w), cy + off(valign, ch, h)
         out.append(GroupItem(items=items, dx=tx - b[0], dy=ty - b[1]))
     return out

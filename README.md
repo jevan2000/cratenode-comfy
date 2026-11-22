@@ -84,7 +84,10 @@ its look at any width. Empty means the plain centred stroke.
 
 **Grid** fills `vertical` (each row left to right, growing down; the count is
 columns) or `horizontal` (each column top to bottom, growing right; the count is
-shown as rows). It shows its layout on a 1920 x 1080 stand-in canvas: numbered tiles of
+shown as rows). `placement` puts each part `within cell` (at align/valign inside its
+cell) or `on grid line`: centred on the cell line that align/valign names (left/top
+= the cell's first line, right/bottom = its last, center/middle = its centre), so
+parts sit on the lines and their crossings. It shows its layout on a 1920 x 1080 stand-in canvas: numbered tiles of
 different sizes (one per connected part, or six when none are connected yet), the
 cells as grey dashed boxes and the area in cyan, so `columns`, gaps, `align`,
 `valign` and the area choice can be seen as you change them.

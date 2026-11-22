@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import json
 import logging
+
+import numpy as np
 import threading
 from collections import OrderedDict
 
@@ -111,11 +113,13 @@ def _grid_preview(cls, kw: dict, widgets: dict):
     """The grid with stand-in parts on a 1920 x 1080 canvas, its area (cyan) and cells (grey)."""
     n = _linked_parts(widgets, nodes_layout.N_GRID) or 6
     w, h, margin = LAYOUT_CANVAS
-    base = sc.Scene(w, h, (0.12, 0.13, 0.16, 1.0), margin=margin)
+    base = sc.Scene(w, h, margin=margin)  # transparent, so the guides can go under the parts
     parts = {f"part_{i + 1}": p for i, p in enumerate(sample_parts(n))}
     out = cls.execute(scene=base, **kw, **parts)
     scale = pv.fit_scale(w, h, MAX_W, MAX_H)
-    img = pv.preview(out.args[0], scale)
+    rgba = sc.render(out.args[0], scale)
+    img = np.empty(rgba.shape[:2] + (3,), np.float32)
+    img[:] = (0.12, 0.13, 0.16)
     bx, by, bw, bh = lay.area_box(base, kw.get("area", "safe area"), kw.get("x", 0.0), kw.get("y", 0.0),
                                   kw.get("box_width", 0.0), kw.get("box_height", 0.0))
     cells, cols, rows = lay.grid_cells(n, (bx, by, bw, bh), kw.get("columns", 3), float(kw.get("gap_x", 24.0)),
@@ -124,9 +128,12 @@ def _grid_preview(cls, kw: dict, widgets: dict):
         pv._dashed_rect(img, x0 * scale, y0 * scale, (x0 + cw) * scale, (y0 + ch) * scale, (0.45, 0.48, 0.55),
                         1, dash=3)
     pv._dashed_rect(img, bx * scale, by * scale, (bx + bw) * scale, (by + bh) * scale, pv.SAFE, 1)
+    a = rgba[:, :, 3:4]
+    img = rgba[:, :, :3] * a + img * (1 - a)  # the parts over the guides
     shown = "connected" if _linked_parts(widgets, nodes_layout.N_GRID) else "sample"
     fill = "filling down" if kw.get("direction") == "horizontal" else "filling across"
-    return img, f"{cols} x {rows} cells, {fill}, {n} {shown} parts (stand-ins)"
+    on = ", on grid lines" if kw.get("placement") == "on grid line" else ""
+    return img, f"{cols} x {rows} cells, {fill}{on}, {n} {shown} parts (stand-ins)"
 
 
 def _note(out) -> str:
