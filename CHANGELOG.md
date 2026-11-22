@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- **Shape: stroke styles and a stroke editor.** New optional `stroke_style` input,
+  last in the file and shown under `stroke_width`. Saved workflows keep their values,
+  and an empty style draws as before.
+  - **Styles:** alignment (centre, inside, outside), dash patterns with an offset,
+    round, flat or square ends, round, sharp or bevel corners, a second (double) line
+    inside or outside with its own width and gap, and drawing the stroke behind the
+    fill. All lengths are in stroke widths.
+  - **Editor:** clicking the field opens a pop-out with 14 presets drawn as samples,
+    the width, and every setting. The node's live preview follows, and Escape undoes.
+  - **Rendering:** strokes are built as vector outlines (skia path ops), so they stay
+    vector in PDFs.
+  - **Fix:** layers and crops now allow for how far a stroke reaches past the shape,
+    so a thick stroke on a shape with a shadow or opacity is no longer cut off at
+    the box.
+  - New `cratenode_comfy/stroke.py`, `web/stroke_editor.js` and `tests/test_stroke.py`.
 - **Grid has a live preview:** numbered stand-in tiles of different sizes (one per
   connected part, six if none), the cells and the area, on a 1920 x 1080 stand-in
   canvas, following columns, gaps, align/valign and area as they change.

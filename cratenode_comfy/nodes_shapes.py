@@ -5,6 +5,7 @@ from __future__ import annotations
 from comfy_api.latest import IO
 
 from . import scene as sc
+from . import stroke as strokemod
 from .nodes_common import ROOT, FillT, SceneT, flow, flow_inputs, new_part, slot
 from .nodes_common import color as to_color
 
@@ -38,13 +39,19 @@ class CNShape(IO.ComfyNode):
                 IO.Float.Input("fill_opacity", default=1.0, min=0.0, max=1.0, step=0.01, optional=True,
                                tooltip="Opacity of the fill (colour or gradient), not the outline. "
                                        "0 = no fill: with a stroke, an outline-only shape"),
+                IO.String.Input("stroke_style", default="", optional=True,
+                                tooltip="How the stroke is drawn; click the field for the stroke editor. Text "
+                                        "form: align=center|inside|outside; dash=3,2 (on,off in stroke widths); "
+                                        "offset=0; cap=round|butt|square; join=round|miter|bevel; "
+                                        "double=gap,width[,inside|outside] (pixels); behind=1 (under the fill). "
+                                        "Empty = a plain centred stroke."),
             ],
             outputs=[SceneT.Output(display_name="scene")],
         )
 
     @classmethod
     def execute(cls, shape, x, y, width, height, color, stroke_color, stroke_width, corner_radius, sides,
-                inner_ratio, rotation, scene=None, fill=None, fill_opacity=1.0, **kw):
+                inner_ratio, rotation, scene=None, fill=None, fill_opacity=1.0, stroke_style="", **kw):
         scene = new_part(scene)
         base = fill if fill is not None else (to_color(color) if color.strip() else None)
         stroke = to_color(stroke_color) if stroke_color.strip() else None
@@ -53,7 +60,8 @@ class CNShape(IO.ComfyNode):
             stroke_width = stroke_width or 4.0
         f = sc.fade_fill(base, fill_opacity)
         item = sc.ShapeItem(shape, x, y, width, height, f, stroke, stroke_width, corner_radius, sides,
-                            inner_ratio, rotation, flow=flow(kw), name=slot(kw))
+                            inner_ratio, rotation, flow=flow(kw), name=slot(kw),
+                            stroke_style=strokemod.parse(stroke_style))
         return IO.NodeOutput(scene.add(item))
 
 

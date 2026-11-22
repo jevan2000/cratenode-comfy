@@ -30,7 +30,7 @@ const live = new Set(); // nodes with a preview
 // here they are only *shown* next to the setting they belong with. Files keep the
 // server's order (see keepFileOrder), so old and new workflows load the same values.
 const SHOW_AFTER = {
-  CNShape: { fill_opacity: "color" },
+  CNShape: { fill_opacity: "color", stroke_style: "stroke_width" },
 };
 
 const saved = (w) => w.serialize !== false && w.options?.serialize !== false;

@@ -19,7 +19,9 @@ import numpy as np
 import skia
 
 from . import motion
+from . import stroke as strokemod
 from . import text as textmod
+from .stroke import StrokeStyle
 from .fonts import FontRegistry, registry
 from .render import fit_rects, image_from_rgba, snapshot_u8, surface, to_rgba
 
@@ -128,6 +130,20 @@ def _grow(width: float, source: skia.ImageFilter | None) -> skia.ImageFilter:
               0, 0, 0, k, -k * t]
     blurred = skia.ImageFilters.Blur(sigma, sigma, skia.TileMode.kDecal, source)
     return skia.ImageFilters.ColorFilter(skia.ColorFilters.Matrix(matrix), blurred)
+
+
+def stroke_reach(item) -> float:
+    """How far shape strokes inside ``item`` reach past its bounds (half a centred
+    stroke, a whole outside one, a second line, miter corners)."""
+    if isinstance(item, ShapeItem):
+        if item.stroke is None or item.stroke_width <= 0:
+            return 0.0
+        return strokemod.reach(item.stroke_style, item.stroke_width)
+    if isinstance(item, GroupItem):
+        return max((stroke_reach(i) for i in item.items), default=0.0)
+    if isinstance(item, LayoutItem):
+        return max((stroke_reach(i) for part in item.parts for i in part), default=0.0)
+    return 0.0
 
 
 def effect_reach(effects: tuple) -> float:
@@ -246,6 +262,7 @@ class ShapeItem:
     flow: Flow = Flow()
     name: str = ""
     anim: tuple = ()  # motion.Track, ...
+    stroke_style: StrokeStyle | None = None  # alignment, dashes, double line; None = plain
 
 
 @dataclass(frozen=True)
@@ -556,13 +573,22 @@ def _draw_content(canvas: skia.Canvas, p: Placed, reg: FontRegistry, t: float | 
         canvas.drawImageRect(it.skimage(t), p.src, p.dst, skia.SamplingOptions(skia.FilterMode.kLinear), None)
     elif isinstance(it, ShapeItem):
         path = _shape_path(it, p.bounds)
-        if it.fill is not None and it.kind != "line":
+        has_fill = it.fill is not None and it.kind != "line"
+        has_stroke = it.stroke is not None and it.stroke_width > 0
+        behind = has_stroke and it.stroke_style is not None and it.stroke_style.behind
+        if has_fill and not behind:
             canvas.drawPath(path, fill_paint(it.fill, p.bounds))
-        if it.stroke is not None and it.stroke_width > 0:
+        if has_stroke and it.stroke_style is None:  # the plain stroke, drawn as before
             sp = skia.Paint(AntiAlias=True, Style=skia.Paint.kStroke_Style, StrokeWidth=it.stroke_width,
                             StrokeCap=skia.Paint.kRound_Cap, StrokeJoin=skia.Paint.kRound_Join)
             sp.setColor4f(skia.Color4f(*it.stroke))
             canvas.drawPath(path, sp)
+        elif has_stroke:
+            sp = skia.Paint(AntiAlias=True)
+            sp.setColor4f(skia.Color4f(*it.stroke))
+            canvas.drawPath(strokemod.outline(path, it.stroke_width, it.stroke_style, it.kind != "line"), sp)
+        if has_fill and behind:
+            canvas.drawPath(path, fill_paint(it.fill, p.bounds))
     else:
         _draw_list(canvas, p.children, reg, t, cache)
 
@@ -580,7 +606,7 @@ def _layer_image(p: Placed, reg: FontRegistry, cache: dict) -> tuple[skia.Image,
     if hit is not None:
         return hit
     s = cache["scale"]
-    r = effect_reach(p.item.style.effects) + 2
+    r = effect_reach(p.item.style.effects) + stroke_reach(p.item) + 2
     x0, y0, x1, y1 = p.bounds
     L, T = math.floor((x0 - r) * s), math.floor((y0 - r) * s)
     R, B = math.ceil((x1 + r) * s), math.ceil((y1 + r) * s)
@@ -620,7 +646,7 @@ def _draw_one(canvas: skia.Canvas, p: Placed, reg: FontRegistry, blend_override=
             canvas.scale(a["scale"], a["scale"])
         canvas.translate(-cx, -cy)
         if a["wipe"] < 1.0:
-            reach = effect_reach(effects) + 2
+            reach = effect_reach(effects) + stroke_reach(p.item) + 2
             canvas.clipRect(skia.Rect.MakeLTRB(x0 - reach, y0 - reach, x0 + (x1 - x0) * a["wipe"], y1 + reach),
                             skia.ClipOp.kIntersect, True)
     split = (cache is not None and cache.get("pdf") and any(isinstance(e, _UNDER) for e in effects)
@@ -628,7 +654,7 @@ def _draw_one(canvas: skia.Canvas, p: Placed, reg: FontRegistry, blend_override=
     if split:
         # PDF: a filtered layer becomes an image, so draw only the shadow / glow / outline
         # through the filter and the item itself on top, as vectors (text stays text).
-        r = effect_reach(effects) + 2
+        r = effect_reach(effects) + stroke_reach(p.item) + 2
         rect = skia.Rect.MakeLTRB(x0 - r, y0 - r, x1 + r, y1 + r)
         group = opacity < 1.0 or blend != skia.BlendMode.kSrcOver
         if group:
@@ -659,7 +685,7 @@ def _draw_one(canvas: skia.Canvas, p: Placed, reg: FontRegistry, blend_override=
             paint.setImageFilter(filt)
         # Only as big as the item plus what its effects reach (not the whole canvas). The
         # clip matters: without it skia runs the filter over the whole canvas on restore.
-        r = effect_reach(effects) + 2
+        r = effect_reach(effects) + stroke_reach(p.item) + 2
         rect = skia.Rect.MakeLTRB(x0 - r, y0 - r, x1 + r, y1 + r)
         canvas.save()
         canvas.clipRect(rect, skia.ClipOp.kIntersect, True)

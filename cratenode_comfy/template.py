@@ -36,7 +36,7 @@ from .render import parse_color
 VERSION = 1
 _CLASSES = {c.__name__: c for c in (
     sc.Scene, sc.TextItem, sc.ImageItem, sc.ShapeItem, sc.GroupItem, sc.LayoutItem, sc.Style, sc.Flow,
-    sc.Gradient, sc.Shadow, sc.Glow, sc.Outline, sc.Blur, textmod.TextSpec, motion.Track)}
+    sc.Gradient, sc.Shadow, sc.Glow, sc.Outline, sc.Blur, textmod.TextSpec, motion.Track, sc.StrokeStyle)}
 
 
 # ---- scene <-> JSON ----

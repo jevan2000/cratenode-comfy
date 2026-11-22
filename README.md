@@ -65,6 +65,23 @@ like the output. Effect nodes show their effect on a sample "Aa". Values arrivin
 through a link aren't known until the workflow runs, so the preview uses the
 widget's own value.
 
+**Stroke editor:** click Shape's `stroke_style` field (it shows a small sample of the
+style) for a pop-out with:
+- **presets:** solid, dashed, long and short dash, dotted, dash dot, double,
+  thick + thin, thin + thick, outer ring, inside and outside border, sharp corners,
+  and behind the fill;
+- the stroke **width**;
+- **alignment:** centre, inside (the stroke stays within the shape) or outside;
+- **dashes**, with your own on,off pattern and an offset;
+- **ends:** round, flat or square; **corners:** round, sharp or bevel;
+- a **second line** with its own width and gap, inside or outside;
+- **behind the fill**.
+
+The node's live preview follows as you click. Escape undoes, Done keeps. The style is
+saved as short text, e.g. `align=inside; dash=3,2; double=0.6,2,inside`, so it can
+also be typed or sent through the API. Lengths are in stroke widths, so a style keeps
+its look at any width. Empty means the plain centred stroke.
+
 **Grid** shows its layout on a 1920 x 1080 stand-in canvas: numbered tiles of
 different sizes (one per connected part, or six when none are connected yet), the
 cells as grey dashed boxes and the area in cyan, so `columns`, gaps, `align`,

@@ -776,6 +776,7 @@ Outputs: `proof` (image), `out_of_gamut` (mask), `report` (string)
 | `fill` | fill (optional) |  | Gradient fill; replaces the colour |
 | `slot` | string (optional) | `""` | A name for this item in a template (Fill Template replaces its text, image or colour by this name) |
 | `fill_opacity` | float (optional) | `1.0` | Opacity of the fill (colour or gradient), not the outline. 0 = no fill: with a stroke, an outline-only shape |
+| `stroke_style` | string (optional) | `""` | How the stroke is drawn; click the field for the stroke editor. Text form: align=center\|inside\|outside; dash=3,2 (on,off in stroke widths); offset=0; cap=round\|butt\|square; join=round\|miter\|bevel; double=gap,width[,inside\|outside] (pixels); behind=1 (under the fill). Empty = a plain centred stroke. |
 
 Outputs: `scene` (scene)
 
