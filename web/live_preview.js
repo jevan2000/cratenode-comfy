@@ -31,7 +31,22 @@ const live = new Set(); // nodes with a preview
 // server's order (see keepFileOrder), so old and new workflows load the same values.
 const SHOW_AFTER = {
   CNShape: { fill_opacity: "color", stroke_style: "stroke_width" },
+  CNGrid: { direction: "columns" },
 };
+
+// Labels that follow another setting: Grid's count is per row (columns) when it fills
+// across, per column (rows) when it fills down. Only the label changes, not the name.
+function relabel(node) {
+  if (node.comfyClass !== "CNGrid" && node.type !== "CNGrid") return;
+  const dir = node.widgets?.find((w) => w.name === "direction");
+  const count = node.widgets?.find((w) => w.name === "columns");
+  if (!dir || !count) return;
+  const label = dir.value === "horizontal" ? "rows" : "columns";
+  if ((count.label || count.name) !== label) {
+    count.label = label;
+    node.setDirtyCanvas?.(true, true);
+  }
+}
 
 const saved = (w) => w.serialize !== false && w.options?.serialize !== false;
 
@@ -183,6 +198,7 @@ function attach(node, type) {
     const key = JSON.stringify(values);
     if (key === state.last) return;
     state.last = key;
+    relabel(node);
     clearTimeout(state.timer);
     state.timer = setTimeout(() => refresh(values), DEBOUNCE_MS);
   };

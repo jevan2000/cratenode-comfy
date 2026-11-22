@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Grid: `direction`** (vertical / horizontal). Vertical is the grid as before: rows
+  filled left to right, growing down. Horizontal fills columns top to bottom and grows
+  to the right, with the count meaning parts per column (the field is labelled "rows"
+  then). It is optional and last in the file, so saved workflows and templates keep
+  their layout; it is shown under the count, and the live preview follows.
 - **Shape: stroke styles and a stroke editor.** New optional `stroke_style` input,
   last in the file and shown under `stroke_width`. Saved workflows keep their values,
   and an empty style draws as before.

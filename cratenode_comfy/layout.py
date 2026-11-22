@@ -78,16 +78,16 @@ def stack_item(parts: list[Scene], box, direction="vertical", gap=24.0, align="c
 
 
 def grid_item(parts: list[Scene], box, columns=3, gap_x=24.0, gap_y=24.0, align="center",
-              valign="middle") -> LayoutItem:
-    return LayoutItem("grid", tuple(p.items for p in parts if p.items), tuple(box), gap=gap_x, gap_y=gap_y,
-                      columns=columns, align=align, valign=valign)
+              valign="middle", direction="vertical") -> LayoutItem:
+    return LayoutItem("grid", tuple(p.items for p in parts if p.items), tuple(box), direction, gap=gap_x,
+                      gap_y=gap_y, columns=columns, align=align, valign=valign)
 
 
 def arrange(it: LayoutItem, reg: FontRegistry | None = None) -> tuple:
     """The GroupItems a LayoutItem resolves to right now."""
     parts = [Scene(1, 1, items=p) for p in it.parts]
     if it.kind == "grid":
-        return tuple(grid(parts, it.box, it.columns, it.gap, it.gap_y, it.align, it.valign, reg))
+        return tuple(grid(parts, it.box, it.columns, it.gap, it.gap_y, it.align, it.valign, reg, it.direction))
     return tuple(stack(parts, it.box, it.direction, it.gap, it.align, it.valign, reg))
 
 
@@ -95,23 +95,37 @@ def place(part: Scene, box, align="center", valign="middle", reg: FontRegistry |
     return stack([part], box, "vertical", 0.0, align, valign, reg)
 
 
+def grid_cells(n: int, box, count=3, gap_x=24.0, gap_y=24.0, direction="vertical"):
+    """(cells, columns, rows) for ``n`` parts. Each cell is (x, y, w, h), in fill order.
+
+    vertical: ``count`` columns; parts fill a row left to right, then the next row
+    down (the grid grows downwards). horizontal: ``count`` rows; parts fill a column
+    top to bottom, then the next column to the right (the grid grows sideways).
+    Cells divide the box; the list covers every cell, including empty ones at the end."""
+    k = max(1, int(count))
+    lines = max(1, (n + k - 1) // k)
+    cols, rows = (lines, k) if direction == "horizontal" else (k, lines)
+    bx, by, bw, bh = box
+    cw = (bw - gap_x * (cols - 1)) / cols
+    ch = (bh - gap_y * (rows - 1)) / rows
+    cells = []
+    for i in range(cols * rows):
+        c, r = divmod(i, rows) if direction == "horizontal" else divmod(i, cols)[::-1]
+        cells.append((bx + c * (cw + gap_x), by + r * (ch + gap_y), cw, ch))
+    return cells, cols, rows
+
+
 def grid(parts: list[Scene], box, columns=3, gap_x=24.0, gap_y=24.0, align="center", valign="middle",
-         reg: FontRegistry | None = None) -> list[GroupItem]:
-    """Parts in equal cells, left to right then top to bottom; each part sits in its
-    cell at align/valign. Cells divide the box."""
+         reg: FontRegistry | None = None, direction="vertical") -> list[GroupItem]:
+    """Parts in equal cells (see ``grid_cells`` for the fill order); each part sits in
+    its cell at align/valign. Cells divide the box."""
     reg = reg or registry()
     groups = _parts(parts, reg)
     if not groups:
         return []
-    cols = max(1, int(columns))
-    rows = (len(groups) + cols - 1) // cols
-    bx, by, bw, bh = box
-    cw = (bw - gap_x * (cols - 1)) / cols
-    ch = (bh - gap_y * (rows - 1)) / rows
+    cells, _, _ = grid_cells(len(groups), box, columns, gap_x, gap_y, direction)
     out = []
-    for i, (items, b) in enumerate(groups):
-        r, c = divmod(i, cols)
-        cx, cy = bx + c * (cw + gap_x), by + r * (ch + gap_y)
+    for (items, b), (cx, cy, cw, ch) in zip(groups, cells):
         w, h = b[2] - b[0], b[3] - b[1]
         tx, ty = cx + _offset(align, cw, w), cy + _offset(valign, ch, h)
         out.append(GroupItem(items=items, dx=tx - b[0], dy=ty - b[1]))

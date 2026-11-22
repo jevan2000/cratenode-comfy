@@ -82,7 +82,9 @@ saved as short text, e.g. `align=inside; dash=3,2; double=0.6,2,inside`, so it c
 also be typed or sent through the API. Lengths are in stroke widths, so a style keeps
 its look at any width. Empty means the plain centred stroke.
 
-**Grid** shows its layout on a 1920 x 1080 stand-in canvas: numbered tiles of
+**Grid** fills `vertical` (each row left to right, growing down; the count is
+columns) or `horizontal` (each column top to bottom, growing right; the count is
+shown as rows). It shows its layout on a 1920 x 1080 stand-in canvas: numbered tiles of
 different sizes (one per connected part, or six when none are connected yet), the
 cells as grey dashed boxes and the area in cyan, so `columns`, gaps, `align`,
 `valign` and the area choice can be seen as you change them.

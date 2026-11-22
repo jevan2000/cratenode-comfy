@@ -398,6 +398,7 @@ Outputs: `scene` (scene, list)
 | `part_7` | scene (optional) |  |  |
 | `part_8` | scene (optional) |  |  |
 | `part_9` | scene (optional) |  |  |
+| `direction` | choice (optional) | `vertical` | vertical: parts fill each row left to right and the grid grows down (columns = parts per row). horizontal: parts fill each column top to bottom and the grid grows to the right (the count is parts per column, shown as 'rows'). |
 
 Outputs: `scene` (scene)
 

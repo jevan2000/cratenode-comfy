@@ -97,16 +97,24 @@ class CNGrid(IO.ComfyNode):
                        IO.Float.Input("gap_y", default=24.0, min=0.0, max=2000),
                        IO.Combo.Input("align", options=lay.H_POS, default="center"),
                        IO.Combo.Input("valign", options=lay.V_POS, default="middle"),
-                   ] + _area_inputs(),
+                   ] + _area_inputs() + [
+                       # Last on purpose: saved workflows store widget values by position.
+                       IO.Combo.Input("direction", options=lay.DIRECTIONS, default="vertical", optional=True,
+                                      tooltip="vertical: parts fill each row left to right and the grid grows "
+                                              "down (columns = parts per row). horizontal: parts fill each "
+                                              "column top to bottom and the grid grows to the right (the "
+                                              "count is parts per column, shown as 'rows')."),
+                   ],
             outputs=[SceneT.Output(display_name="scene")],
         )
 
     @classmethod
-    def execute(cls, columns, gap_x, gap_y, align, valign, area, x, y, box_width, box_height, scene=None, **parts):
+    def execute(cls, columns, gap_x, gap_y, align, valign, area, x, y, box_width, box_height, scene=None,
+                direction="vertical", **parts):
         ps = [parts.get(f"part_{i}") for i in range(1, N_GRID + 1)]
         base = _base(scene, ps)
         item = lay.grid_item([p for p in ps if p is not None], _box(base, area, x, y, box_width, box_height),
-                             columns, gap_x, gap_y, align, valign)
+                             columns, gap_x, gap_y, align, valign, direction)
         return IO.NodeOutput(base.add(item) if item.parts else base)
 
 

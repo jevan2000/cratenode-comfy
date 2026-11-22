@@ -118,18 +118,15 @@ def _grid_preview(cls, kw: dict, widgets: dict):
     img = pv.preview(out.args[0], scale)
     bx, by, bw, bh = lay.area_box(base, kw.get("area", "safe area"), kw.get("x", 0.0), kw.get("y", 0.0),
                                   kw.get("box_width", 0.0), kw.get("box_height", 0.0))
-    cols = max(1, int(kw.get("columns", 3)))
-    rows = (n + cols - 1) // cols
-    gx, gy = float(kw.get("gap_x", 24.0)), float(kw.get("gap_y", 24.0))
-    cw, ch = (bw - gx * (cols - 1)) / cols, (bh - gy * (rows - 1)) / rows
-    for i in range(rows * cols):
-        r, c = divmod(i, cols)
-        x0, y0 = bx + c * (cw + gx), by + r * (ch + gy)
+    cells, cols, rows = lay.grid_cells(n, (bx, by, bw, bh), kw.get("columns", 3), float(kw.get("gap_x", 24.0)),
+                                       float(kw.get("gap_y", 24.0)), kw.get("direction", "vertical"))
+    for x0, y0, cw, ch in cells:
         pv._dashed_rect(img, x0 * scale, y0 * scale, (x0 + cw) * scale, (y0 + ch) * scale, (0.45, 0.48, 0.55),
                         1, dash=3)
     pv._dashed_rect(img, bx * scale, by * scale, (bx + bw) * scale, (by + bh) * scale, pv.SAFE, 1)
     shown = "connected" if _linked_parts(widgets, nodes_layout.N_GRID) else "sample"
-    return img, f"{cols} x {rows} cells, {n} {shown} parts (stand-ins)"
+    fill = "filling down" if kw.get("direction") == "horizontal" else "filling across"
+    return img, f"{cols} x {rows} cells, {fill}, {n} {shown} parts (stand-ins)"
 
 
 def _note(out) -> str:

@@ -167,6 +167,21 @@ class Layout(unittest.TestCase):
         self.assertEqual(b[0], (40, 15, 60, 35))
         self.assertEqual(b[3], (160, 65, 180, 85))
 
+    def test_grid_horizontal_fills_columns(self):
+        # 2 rows: parts go down the first column, then the second, then a third
+        parts = [self.part(20, 20) for _ in range(5)]
+        g = layout.grid(parts, (0, 0, 300, 200), columns=2, gap_x=0, gap_y=0, align="left", valign="top", reg=REG,
+                        direction="horizontal")
+        tops = [sc.content_bounds((x,), REG)[:2] for x in g]
+        self.assertEqual(tops, [(0, 0), (0, 100), (100, 0), (100, 100), (200, 0)])
+        cells, cols, rows = layout.grid_cells(5, (0, 0, 300, 200), 2, 0, 0, "horizontal")
+        self.assertEqual((cols, rows, len(cells)), (3, 2, 6))
+        # the same through a scene (drawn at render time), and vertical stays as before
+        item = layout.grid_item(parts, (0, 0, 300, 200), 2, 0, 0, "left", "top", "horizontal")
+        self.assertEqual(sc.content_bounds(layout.arrange(item, REG)[1:2], REG)[:2], (0, 100))
+        item = layout.grid_item(parts, (0, 0, 300, 200), 2, 0, 0, "left", "top")
+        self.assertEqual(sc.content_bounds(layout.arrange(item, REG)[1:2], REG)[:2], (150, 0))
+
     def test_text_stack_reflows(self):
         title = lambda t: sc.Scene(800, 600).add(sc.TextItem(tspec(t, size=60, width=500)))
         sub = sc.Scene(800, 600).add(sc.TextItem(tspec("sub", size=20)))
