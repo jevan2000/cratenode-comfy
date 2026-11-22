@@ -171,12 +171,24 @@ class CNFluidGradient(IO.ComfyNode):
                                                          "flowing gradient"),
                 PaletteT.Input("palette", optional=True,
                                tooltip="Use these colours (in order) instead of color_1..6, or resolve colour names"),
+                # Last on purpose: saved workflows store widget values by position.
+                IO.Combo.Input("preset", options=[fluid.CUSTOM] + list(fluid.PRESETS), default=fluid.CUSTOM,
+                               optional=True,
+                               tooltip="A ready-made look. Picking one fills in the style, colours and settings "
+                                       "above; change any of them and this goes back to 'custom'. A connected "
+                                       "palette still supplies the colours."),
             ],
             outputs=[FillT.Output(display_name="fill")],
         )
 
     @classmethod
-    def execute(cls, style, seed, palette=None, **kw):
+    def execute(cls, style, seed, palette=None, preset=fluid.CUSTOM, **kw):
+        if preset and preset != fluid.CUSTOM:  # the preset's look (the browser shows the same values)
+            if preset not in fluid.PRESETS:
+                raise ValueError(f"unknown fluid gradient preset {preset!r}")
+            values = fluid.preset_values(preset)
+            style, seed = values.pop("style"), values.pop("seed")
+            kw = {**kw, **values}
         if palette is not None and getattr(palette, "colors", ()):
             cols = [c for _, c in palette.colors][:8]
         else:

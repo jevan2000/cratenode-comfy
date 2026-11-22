@@ -92,6 +92,12 @@ blur. Plug it into Canvas `background_fill`, Shape `fill` or Text Box `fill`.
   - `waves`: flowing stripes.
   - `motion blur`: a streaked flow.
   - `glass`: liquid glass with highlights and refraction.
+- **Presets:** `preset` (at the top of the node) picks a ready-made look. There are 18:
+  Twirl, Controlled, Strange, Liquid, Generator, Abstract, Color, Motion Blur, Abstract
+  Glass, Aurora, Sunset Silk, Lava, Neon Marble, Holographic, Ocean, Midnight, Candy
+  and Mono Silk. Picking one fills in the style, colours and settings so you can
+  tweak them; changing any of them sets the preset back to `custom`. Through the API,
+  a preset name applies that look. A connected palette still supplies the colours.
 - **Colours:** up to six (`color_1` to `color_6`, each with the colour picker), or a
   connected palette.
 - **Controls, added to the style's own amounts:**

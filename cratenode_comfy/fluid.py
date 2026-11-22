@@ -13,6 +13,7 @@ grain is added at full size. The same settings and seed always give the same pic
 
 from __future__ import annotations
 
+import dataclasses
 import math
 from dataclasses import dataclass
 from functools import lru_cache
@@ -34,6 +35,71 @@ _BASE = {
     "motion blur": dict(warp=0.6, twirl=0.0, blur=0.18, glass=0.0),
     "glass": dict(warp=0.9, twirl=0.0, blur=0.0, glass=0.85),
 }
+
+# Ready-made looks. Each sets the style, colours and any controls it names; the rest
+# take their defaults. Picking one in the node fills its settings in, ready to tweak.
+CUSTOM = "custom"
+PRESETS = {
+    "Twirl": dict(style="glass", colors=["#c9c3ff", "#7a6cff", "#ff9ad5", "#ffffff", "#5b8cff"], seed=4,
+                  twirl=320, twirl_radius=0.75, glass=0.15, scale=1.2),
+    "Controlled": dict(style="mesh", colors=["#1a1033", "#ff5a5f", "#ffb347", "#6c5ce7", "#1a1033"], seed=11,
+                       softness=0.65, warp=0.7, blobs=1),
+    "Strange": dict(style="liquid", colors=["#0d1b4c", "#1e90ff", "#ff4fa3", "#ff8c42", "#ffffff"], seed=5,
+                    twirl=220, twirl_radius=0.9, warp=1.3),
+    "Liquid": dict(style="liquid", colors=["#2d0b5a", "#7b2ff7", "#ff2e63", "#f9a03f"], seed=7, stretch=1.4,
+                   scale=1.2),
+    "Generator": dict(style="mesh", colors=["#f6e7c1", "#e8b4d6", "#3a2a6b", "#f2c94c"], seed=3, blobs=2,
+                      softness=0.6, warp=0.9),
+    "Abstract": dict(style="liquid", colors=["#ff9a9e", "#fad0c4", "#a18cd1", "#fbc2eb", "#8fd3f4"], seed=2,
+                     softness=1.4, warp=0.8, scale=1.4),
+    "Color": dict(style="waves", colors=["#0b0f3a", "#1e3cff", "#ff6a00", "#ffb000"], seed=1, warp=1.3,
+                  rotation=-20, blur=0.06),
+    "Motion Blur": dict(style="motion blur", colors=["#6a5acd", "#ff7eb3", "#feff9c", "#7afcff"], seed=6,
+                        blur_angle=20, blur=0.1),
+    "Abstract Glass": dict(style="glass", colors=["#0a1a6b", "#1f6bff", "#6fe3ff", "#ffffff", "#7b2ff7"], seed=9,
+                           scale=1.3),
+    "Aurora": dict(style="waves", colors=["#03071e", "#00f5d4", "#7b2ff7", "#00bbf9"], seed=8, stretch=2.0,
+                   rotation=-10, blur=0.12, vignette=0.4),
+    "Sunset Silk": dict(style="liquid", colors=["#2b1055", "#a83279", "#ff5f6d", "#ffc371"], seed=12,
+                        stretch=2.0, softness=1.3),
+    "Lava": dict(style="strange", colors=["#1a0000", "#ff2a00", "#ffb000", "#3d0000"], seed=13, contrast=1.15,
+                 scale=1.3),
+    "Neon Marble": dict(style="strange", colors=["#0b0033", "#ff00e5", "#00f0ff", "#1400ff"], seed=14),
+    "Holographic": dict(style="glass", colors=["#ffd1f7", "#c2fffd", "#d8c2ff", "#fff7c2", "#a0e9ff"], seed=15,
+                        saturation=1.3, scale=1.4),
+    "Ocean": dict(style="liquid", colors=["#001233", "#0353a4", "#00b4d8", "#90e0ef", "#caf0f8"], seed=16,
+                  stretch=1.6),
+    "Midnight": dict(style="mesh", colors=["#0b0b1f", "#2c1a5a", "#7b2ff7", "#0f3460", "#0b0b1f"], seed=17,
+                     vignette=0.5, grain=0.05, blobs=2, softness=0.7),
+    "Candy": dict(style="mesh", colors=["#ff9ff3", "#feca57", "#48dbfb", "#ff6b6b", "#1dd1a1"], seed=18, blobs=2,
+                  softness=0.55, warp=0.9),
+    "Mono Silk": dict(style="liquid", colors=["#0e0e0e", "#4a4a4a", "#b5b5b5", "#ffffff"], seed=19, stretch=1.5,
+                      softness=1.4),
+}
+MAX_COLORS = 6
+
+
+def preset_values(name: str) -> dict:
+    """A preset as the node's own inputs: style, seed, color_1..6 and every control."""
+    p = dict(PRESETS[name])
+    cols = list(p.pop("colors"))[:MAX_COLORS]
+    out = {f.name: f.default for f in dataclasses.fields(FluidGradient)
+           if f.name not in ("kind", "stops", "angle")}
+    out.update({f"color_{i + 1}": (cols[i] if i < len(cols) else "") for i in range(MAX_COLORS)})
+    out.update(p)
+    return out
+
+
+def preset_gradient(name: str) -> "FluidGradient":
+    """The FluidGradient a preset makes (for previews and tests)."""
+    from .render import parse_color
+
+    v = preset_values(name)
+    texts = [v.pop(f"color_{i}") for i in range(1, MAX_COLORS + 1)]
+    cols = [parse_color(c) for c in texts if c]
+    stops = tuple((i / (len(cols) - 1), c) for i, c in enumerate(cols))
+    return FluidGradient(stops=stops, **v)
+
 
 WORK = 560  # long side of the working grid (the field is smooth; it is scaled up after)
 MAX_OUT = 2048  # long side of the rendered fill

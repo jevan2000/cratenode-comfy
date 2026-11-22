@@ -329,6 +329,7 @@ Outputs: `scene` (scene)
 | `vignette` | float | `0.0` | Darker edges |
 | `evolve` | float | `0.0` | Moves through the pattern; animate or step it for a flowing gradient |
 | `palette` | palette (optional) |  | Use these colours (in order) instead of color_1..6, or resolve colour names |
+| `preset` | choice (optional) | `custom` | A ready-made look. Picking one fills in the style, colours and settings above; change any of them and this goes back to 'custom'. A connected palette still supplies the colours. |
 
 Outputs: `fill` (fill)
 

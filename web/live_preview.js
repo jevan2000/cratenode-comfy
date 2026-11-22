@@ -32,6 +32,7 @@ const live = new Set(); // nodes with a preview
 const SHOW_AFTER = {
   CNShape: { fill_opacity: "color", stroke_style: "stroke_width" },
   CNGrid: { direction: "columns", placement: "valign" },
+  CNFluidGradient: { preset: null }, // null = at the top
 };
 
 // Labels that follow another setting: Grid's count is per row (columns) when it fills
@@ -56,9 +57,10 @@ function moveForDisplay(node, type) {
   node.cnFileOrder = node.widgets.filter(saved).map((w) => w.name);
   for (const [name, after] of Object.entries(moves)) {
     const from = node.widgets.findIndex((w) => w.name === name);
-    if (from < 0 || !node.widgets.some((w) => w.name === after)) continue;
+    if (from < 0 || (after !== null && !node.widgets.some((w) => w.name === after))) continue;
     const [w] = node.widgets.splice(from, 1);
-    node.widgets.splice(node.widgets.findIndex((x) => x.name === after) + 1, 0, w);
+    const at = after === null ? 0 : node.widgets.findIndex((x) => x.name === after) + 1;
+    node.widgets.splice(at, 0, w);
   }
   keepFileOrder(node);
 }

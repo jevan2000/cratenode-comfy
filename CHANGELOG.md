@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- **Fluid Gradient presets:** 18 ready-made looks (Twirl, Controlled, Strange, Liquid,
+  Generator, Abstract, Color, Motion Blur, Abstract Glass, Aurora, Sunset Silk, Lava,
+  Neon Marble, Holographic, Ocean, Midnight, Candy, Mono Silk).
+  - **In the browser:** the new `preset` input is shown at the top. Picking a preset
+    fills in the style, colours and settings to tweak from; editing any of them sets
+    it back to `custom`.
+  - **On the server and through the API:** a preset name applies that look, and a
+    connected palette still supplies the colours.
+  - **Saved workflows:** the input is optional and last in the file, so they load
+    unchanged.
+  - New `/cratenode/fluid_presets` endpoint and `web/fluid_presets.js`. The display-only
+    reordering in `live_preview.js` can now put a setting first.
 - **Fluid Gradient** node (Fill): flowing abstract gradient fills for canvases,
   shapes and text.
   - **Styles:** mesh blobs, liquid marbling, twirl, strange, waves, motion blur and

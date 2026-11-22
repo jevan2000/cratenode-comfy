@@ -227,6 +227,12 @@ def add_routes() -> None:
     async def _previewable(request):
         return web.json_response(previewable())
 
+    @routes.get("/cratenode/fluid_presets")
+    async def _fluid_presets(request):
+        from . import fluid
+
+        return web.json_response({name: fluid.preset_values(name) for name in fluid.PRESETS})
+
     @routes.post("/cratenode/preview")
     async def _preview(request):
         import asyncio

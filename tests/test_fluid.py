@@ -52,6 +52,27 @@ class Styles(unittest.TestCase):
         self.assertLess(float(img[..., 1].max()), 0.05, "no green appears from red and blue")
 
 
+class Presets(unittest.TestCase):
+    def test_every_preset_is_complete_and_renders(self):
+        fields = {f for f in fluid.FluidGradient.__dataclass_fields__} - {"kind", "stops", "angle"}
+        colours = {f"color_{i}" for i in range(1, fluid.MAX_COLORS + 1)}
+        for name in fluid.PRESETS:
+            v = fluid.preset_values(name)
+            self.assertEqual(set(v), fields | colours, name)  # every setting of the node, nothing else
+            self.assertIn(v["style"], fluid.STYLES, name)
+            self.assertGreaterEqual(sum(1 for c in colours if v[c]), 2, name)
+            img = fluid.render(fluid.preset_gradient(name), 64, 36)
+            self.assertGreater(float(img[..., :3].std()), 0.02, f"{name} is not flat")
+
+    def test_presets_differ(self):
+        seen = {}
+        for name in fluid.PRESETS:
+            img = fluid.render(fluid.preset_gradient(name), 48, 27)[..., :3]
+            for other, o in seen.items():
+                self.assertGreater(float(np.abs(img - o).mean()), 0.03, f"{name} looks like {other}")
+            seen[name] = img
+
+
 class AsAFill(unittest.TestCase):
     def test_fills_a_canvas_and_a_shape(self):
         g = grad(style="liquid")
