@@ -1,6 +1,6 @@
 # Node reference
 
-All 52 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
+All 53 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
 Types: *scene* is a design (`CN_SCENE`), *fill* a gradient, *data row* one CSV/JSON row, *palette* a named colour palette.
 
 - [Canvas](#canvas)
@@ -117,6 +117,23 @@ Outputs: `palette` (palette), `swatches` (image), `report` (string)
 | `against` | string | `#000000` | For best contrast: the background (#hex or a palette name) |
 
 Outputs: `color` (string), `report` (string)
+
+### Random Colour
+
+`CNRandomColor`. A random colour on every run (the seed changes after each run), kept within a colour family, a style and a brightness range, and optionally readable on a background. With count above 1 it makes a palette of different colours that follow the same rules.
+
+| Input | Type | Default | Notes |
+|---|---|---|---|
+| `seed` | int | `0` | The same seed gives the same colour; set 'control after generate' to fixed to keep one |
+| `family` | choice | `any` | Which hues: a colour family, warm / cool, browns and earth tones, or neutral greys |
+| `style` | choice | `any` | How saturated and light: vivid, pastel, muted, dark, light, neon or jewel tones |
+| `min_brightness` | float | `0.0` | Perceived brightness, 0 = black, 100 = white (CIE L*) |
+| `max_brightness` | float | `100.0` |  |
+| `count` | int | `1` | How many colours (the palette output); 'color' is the first |
+| `against` | string | `""` | Optional background colour for the contrast check; empty = none |
+| `min_contrast` | float | `0.0` | Minimum WCAG contrast against the background (4.5 = AA text, 3 = large text); 0 = no check |
+
+Outputs: `color` (string), `palette` (palette), `swatches` (image), `report` (string)
 
 ### Recolor Scene
 

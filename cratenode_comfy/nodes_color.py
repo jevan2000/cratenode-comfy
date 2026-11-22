@@ -10,6 +10,7 @@ from comfy_api.latest import IO, UI
 
 from . import color as col
 from . import devices, render
+from . import randcolor as rc
 from . import scene as sc
 from .fonts import registry
 from .nodes_common import MASK_MEANINGS, ROOT, PaletteT, SceneT, data_path, mask_to_alpha
@@ -199,4 +200,46 @@ class CNRecolor(IO.ComfyNode):
         return IO.NodeOutput(out, f"{n} colour{'s' if n != 1 else ''} changed")
 
 
-NODES = [CNPalette, CNPaletteFromImage, CNBrandKit, CNPickColor, CNContrast, CNRecolor]
+class CNRandomColor(IO.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return IO.Schema(
+            node_id="CNRandomColor", display_name="Random Colour", category=CAT,
+            description="A random colour on every run (the seed changes after each run), kept within a colour "
+                        "family, a style and a brightness range, and optionally readable on a background. "
+                        "With count above 1 it makes a palette of different colours that follow the same rules.",
+            inputs=[
+                IO.Int.Input("seed", default=0, min=0, max=2**31 - 1, control_after_generate=True,
+                             tooltip="The same seed gives the same colour; set 'control after generate' to "
+                                     "fixed to keep one"),
+                IO.Combo.Input("family", options=list(rc.FAMILIES), default="any",
+                               tooltip="Which hues: a colour family, warm / cool, browns and earth tones, or "
+                                       "neutral greys"),
+                IO.Combo.Input("style", options=list(rc.STYLES), default="any",
+                               tooltip="How saturated and light: vivid, pastel, muted, dark, light, neon or "
+                                       "jewel tones"),
+                IO.Float.Input("min_brightness", default=0.0, min=0.0, max=100.0, step=1.0,
+                               tooltip="Perceived brightness, 0 = black, 100 = white (CIE L*)"),
+                IO.Float.Input("max_brightness", default=100.0, min=0.0, max=100.0, step=1.0),
+                IO.Int.Input("count", default=1, min=1, max=12,
+                             tooltip="How many colours (the palette output); 'color' is the first"),
+                IO.String.Input("against", default="",
+                                tooltip="Optional background colour for the contrast check; empty = none"),
+                IO.Float.Input("min_contrast", default=0.0, min=0.0, max=21.0, step=0.5,
+                               tooltip="Minimum WCAG contrast against the background (4.5 = AA text, 3 = large "
+                                       "text); 0 = no check"),
+            ],
+            outputs=[IO.String.Output(display_name="color"), PaletteT.Output(display_name="palette"),
+                     IO.Image.Output(display_name="swatches"), IO.String.Output(display_name="report")],
+        )
+
+    @classmethod
+    def execute(cls, seed, family, style, min_brightness, max_brightness, count, against, min_contrast):
+        bg = col.resolve_color(against) if against.strip() else None
+        colors, notes = rc.generate(seed, count, family, style, min_brightness, max_brightness, bg, min_contrast)
+        pal = col.Palette(tuple((f"color_{i}", c) for i, c in enumerate(colors, 1)), "random")
+        lines = [rc.describe(c, bg) for c in colors] + ["could not meet: " + n for n in notes]
+        return IO.NodeOutput(col.to_hex(colors[0]), pal, _swatches(pal), "\n".join(lines))
+
+
+NODES = [CNPalette, CNPaletteFromImage, CNBrandKit, CNPickColor, CNContrast, CNRecolor, CNRandomColor]

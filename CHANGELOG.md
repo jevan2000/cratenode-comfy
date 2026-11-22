@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- **Random Colour** node (Colour group): a random colour on every run, from a seed
+  that moves on after each run (set it to fixed to keep one). It is limited by:
+  - **family:** red, orange, yellow, green, teal, blue, purple, pink, warm, cool,
+    brown, earth, neutral or any;
+  - **style:** vivid, pastel, muted, dark, light, neon, jewel or any;
+  - **brightness:** a perceived-brightness range (CIE L*, so yellow and blue are
+    judged fairly);
+  - **contrast:** optionally a minimum WCAG contrast against a background colour.
+
+  `count` makes a palette of colours kept apart. Outputs are `color` (hex), `palette`,
+  `swatches` and a `report` that also says when limits couldn't all be met (the
+  closest colour is used instead of failing). It has a live preview of the colours the
+  current seed gives. New `cratenode_comfy/randcolor.py` and `tests/test_randcolor.py`.
 - **Fluid Gradient presets:** 18 ready-made looks (Twirl, Controlled, Strange, Liquid,
   Generator, Abstract, Color, Motion Blur, Abstract Glass, Aurora, Sunset Silk, Lava,
   Neon Marble, Holographic, Ocean, Midnight, Candy, Mono Silk).

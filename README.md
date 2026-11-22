@@ -2,7 +2,7 @@
 
 A design suite for ComfyUI: typography, layout, shapes, effects, templates,
 data-driven batches, colour and brand kits, motion and video, smart layout helpers
-and CMYK print output. 51 custom nodes that sit next to your image-generation
+and CMYK print output. 53 custom nodes that sit next to your image-generation
 nodes, so one graph can generate a background, set the type, and export a
 thumbnail, a video or a print-ready PDF.
 
@@ -173,6 +173,7 @@ Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 | | **Pick Color** | One colour as `#hex` for any colour input: by name, the most readable against a background, lightest, darkest |
 | | **Contrast Check** | WCAG contrast ratio and grade (AA / AAA) |
 | | **Recolor Scene** | Swap colours throughout a design (`primary -> accent`) |
+| | **Random Colour** | A new colour every run (or a palette of up to 12), within a family (red … pink, warm, cool, brown, earth, neutral), a style (vivid, pastel, muted, dark, light, neon, jewel), a perceived-brightness range, and optionally a minimum contrast against a background; the same seed repeats a colour |
 | Motion | **Timeline** | A design's length and frame rate |
 | | **Animate In**, **Animate Out** | Presets: fade, fade up/down, slides, pop, zoom, wipe, blur in; stagger plays the parts of a Stack / Grid in turn |
 | | **Animate** | Keyframes (`0: 0, 2: 360`) with easing for x, y, scale, rotation, opacity, blur or wipe |

@@ -38,6 +38,7 @@ _KINDS = {
     "CNDropShadow": "effect", "CNOuterGlow": "effect", "CNOutline": "effect", "CNBlur": "effect",
     "CNOpacityBlend": "effect", "CNClipToPrevious": "effect",
     "CNGrid": "grid",
+    "CNRandomColor": "random",
 }
 
 
@@ -176,7 +177,10 @@ def render(node_type: str, widgets: dict) -> tuple[bytes, str]:
     elif kind == "fill":
         # a fluid gradient is a picture: show it 16:9; plain gradients fit a strip
         img = pv.preview(sc.Scene(MAX_W, 180 if node_type == "CNFluidGradient" else 90, result), 1.0)
-    elif kind == "palette":
+    elif kind in ("palette", "random"):
+        if kind == "random":  # the colours this seed gives (the next run, once the seed moves on)
+            result = out.args[1]
+            note = out.args[3].splitlines()[0] if len(result.colors) == 1 else f"{len(result.colors)} colours"
         s = col.swatch_scene(result, cell=96)
         img = pv.preview(s, min(1.0, pv.fit_scale(s.width, s.height, MAX_W, MAX_H)))
     else:  # contrast: the text colour on the background, with the grade
