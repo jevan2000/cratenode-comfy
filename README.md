@@ -35,7 +35,7 @@ tests run on Linux.
 ## Quick start
 
 Open **Templates** in ComfyUI (Workflow → Browse Templates) and pick
-**cratenode-comfy**: the sixteen example workflows below open ready to run, and
+**cratenode-comfy**: the seventeen example workflows below open ready to run, and
 together use every node. Their
 Load Image / Load Video nodes use the placeholder files in `api_examples/assets/`;
 copy those into ComfyUI's `input` folder (the install script does) or pick your own.
@@ -82,6 +82,33 @@ saved as short text, e.g. `align=inside; dash=3,2; double=0.6,2,inside`, so it c
 also be typed or sent through the API. Lengths are in stroke widths, so a style keeps
 its look at any width. Empty means the plain centred stroke.
 
+**Fluid Gradient** makes flowing abstract fills: liquid marbling, twirls, glass, motion
+blur. Plug it into Canvas `background_fill`, Shape `fill` or Text Box `fill`.
+- **Styles:**
+  - `mesh`: soft colour blobs.
+  - `liquid`: silky marble.
+  - `twirl`: a swirl.
+  - `strange`: tight marbling.
+  - `waves`: flowing stripes.
+  - `motion blur`: a streaked flow.
+  - `glass`: liquid glass with highlights and refraction.
+- **Colours:** up to six (`color_1` to `color_6`, each with the colour picker), or a
+  connected palette.
+- **Controls, added to the style's own amounts:**
+  - `seed`, `scale`, `warp`, `detail`, `softness` and `bands` (repeats);
+  - `blobs` (mesh points per colour);
+  - `twirl` with its centre and radius;
+  - `rotation` and `stretch`;
+  - motion `blur` and its angle;
+  - `glass`;
+  - `grain`, `brightness`, `contrast`, `saturation`, `hue_shift` and `vignette`;
+  - `evolve`, which moves through the pattern; animate or step it for flowing motion.
+
+The same settings and seed always give the same picture. It is worked out relative
+to the box it fills, so it looks the same at any size. It behaves like any gradient:
+Recolor swaps its colours, fill opacity fades it, and templates save it. A 1920 x 1080
+fill takes about 0.3 s.
+
 **Grid** fills `vertical` (each row left to right, growing down; the count is
 columns) or `horizontal` (each column top to bottom, growing right; the count is
 shown as rows). `placement` puts each part `within cell` (at align/valign inside its
@@ -112,7 +139,7 @@ Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 |---|---|---|
 | Canvas | **Canvas** | Size from a preset (YouTube, Instagram, Story, Letter @300dpi, ...) or custom; background colour, gradient or `transparent` (for overlays and logos); safe-area margin |
 | | **Safe Area** | Set the safe-area margins in pixels |
-| Fill | **Linear Gradient**, **Radial Gradient** | Up to 4 colour stops, for canvases, shapes and text |
+| Fill | **Linear Gradient**, **Radial Gradient**, **Fluid Gradient** | Up to 4 colour stops, for canvases, shapes and text; Fluid Gradient makes flowing abstract fills (see below) |
 | Type | **Text Box** | Fonts from your folders, wrapping, align, vertical anchor (bottom grows upward), auto-fit, `*bold*` words, case, letter spacing, gradient text |
 | Shapes | **Shape** | Rectangle (rounded), ellipse, line, polygon, star; fill or gradient with its own opacity (0 + a stroke = outline only), stroke, rotation |
 | Image | **Add Image** | Fit, fill (crop) or stretch an image into a box |
@@ -274,6 +301,7 @@ python tools/run_workflow.py api_examples/thumbnail.api.json --server http://127
 - **layers_blend**: a typed-in palette, wider safe-area margins, circles in multiply, a blurred star, and a type layer put on top with Layers.
 - **keyframes**: keyframe animation (a video sliding in picture-in-picture, a spinning and pulsing star, a wiped-in title), rendered as a frame batch and saved as MP4 from that batch.
 - **scene_to_image**: the thumbnail converted for other pipelines: flattened, 1024 wide and rounded to 64 (SDXL-ready) into Save Image, and the type alone with its transparency as IMAGE + MASK.
+- **fluid_gradient**: a 1920 x 1080 title card. The background is a liquid Fluid Gradient, with a glass-twirl orb (a Fluid Gradient filling an ellipse) and a big title with drop shadows.
 - **image_round_trip**: a batch of (stand-in) generations each put under the same type design (one export per image), and a round trip: the design out through Scene to Image to a pipeline (a blur stands in for img2img / ControlNet / an upscaler) and back under the original, still-sharp type with Image to Scene.
 - **showcase**: gradient canvas, a photo clipped inside outlined text, a glowing star, gradient text, a grid of shapes, a 2x render.
 

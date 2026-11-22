@@ -37,6 +37,7 @@ SOURCES = {
     "keyframes": ["keyframes.api/14_*.mp4@2.0"],
     "scene_to_image": ["scene_to_image.api/12_*.png", "scene_to_image.api/18_*.png"],
     "image_round_trip": ["image_round_trip.api/15_*.png", "image_round_trip.api/18_*.jpg"],
+    "fluid_gradient": ["fluid_gradient.api/10_*.png"],
 }
 
 

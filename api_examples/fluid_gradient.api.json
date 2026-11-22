@@ -1,0 +1,246 @@
+{
+  "1": {
+    "class_type": "CNFluidGradient",
+    "inputs": {
+      "style": "liquid",
+      "color_1": "#1b0f3a",
+      "color_2": "#4b1cff",
+      "color_3": "#ff2fa0",
+      "color_4": "#ff7a1a",
+      "color_5": "#13d3ff",
+      "color_6": "",
+      "seed": 7,
+      "scale": 1.2,
+      "warp": 1.0,
+      "detail": 3,
+      "softness": 1.0,
+      "bands": 0.0,
+      "blobs": 2,
+      "twirl": 0.0,
+      "twirl_x": 0.5,
+      "twirl_y": 0.5,
+      "twirl_radius": 0.6,
+      "rotation": 0.0,
+      "stretch": 1.4,
+      "blur": 0.0,
+      "blur_angle": 0.0,
+      "glass": 0.0,
+      "grain": 0.03,
+      "brightness": 0.0,
+      "contrast": 1.05,
+      "saturation": 1.1,
+      "hue_shift": 0.0,
+      "vignette": 0.35,
+      "evolve": 0.0
+    },
+    "_meta": {
+      "title": "Fluid Gradient: liquid background"
+    }
+  },
+  "2": {
+    "class_type": "CNCanvas",
+    "inputs": {
+      "preset": "YouTube thumbnail / HD 1920x1080",
+      "landscape_flip": false,
+      "width": 1920,
+      "height": 1080,
+      "background": "#000000",
+      "safe_margin": 5.0,
+      "background_fill": [
+        "1",
+        0
+      ]
+    }
+  },
+  "3": {
+    "class_type": "CNFluidGradient",
+    "inputs": {
+      "style": "glass",
+      "color_1": "#ffd166",
+      "color_2": "#ff2fa0",
+      "color_3": "#7a2cff",
+      "color_4": "#13d3ff",
+      "color_5": "",
+      "color_6": "",
+      "seed": 3,
+      "scale": 1.0,
+      "warp": 0.8,
+      "detail": 3,
+      "softness": 1.0,
+      "bands": 0.0,
+      "blobs": 2,
+      "twirl": 360.0,
+      "twirl_x": 0.5,
+      "twirl_y": 0.5,
+      "twirl_radius": 0.7,
+      "rotation": 0.0,
+      "stretch": 1.0,
+      "blur": 0.0,
+      "blur_angle": 0.0,
+      "glass": 0.3,
+      "grain": 0.02,
+      "brightness": 0.05,
+      "contrast": 1.0,
+      "saturation": 1.1,
+      "hue_shift": 0.0,
+      "vignette": 0.0,
+      "evolve": 0.0
+    },
+    "_meta": {
+      "title": "Fluid Gradient: glass twirl"
+    }
+  },
+  "4": {
+    "class_type": "CNShape",
+    "inputs": {
+      "shape": "ellipse",
+      "x": 610.0,
+      "y": 190.0,
+      "width": 700.0,
+      "height": 700.0,
+      "color": "#ffffff",
+      "stroke_color": "",
+      "stroke_width": 0.0,
+      "corner_radius": 0.0,
+      "sides": 5,
+      "inner_ratio": 0.5,
+      "rotation": 0.0,
+      "below_previous": false,
+      "gap": 24.0,
+      "scene": [
+        "2",
+        0
+      ],
+      "fill": [
+        "3",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Glass orb"
+    }
+  },
+  "5": {
+    "class_type": "CNDropShadow",
+    "inputs": {
+      "target": "last item",
+      "dx": 0.0,
+      "dy": 30.0,
+      "blur": 80.0,
+      "color": "#0b0620",
+      "opacity": 0.55,
+      "scene": [
+        "4",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "Liquid",
+      "font": "Montserrat",
+      "font_override": "",
+      "weight": 900,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 300.0,
+      "color": "#ffffff",
+      "align": "center",
+      "valign": "middle",
+      "case": "as typed",
+      "x": 0.0,
+      "y": 0.0,
+      "box_width": 1920.0,
+      "box_height": 1080.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.0,
+      "letter_spacing": -0.02,
+      "below_previous": false,
+      "gap": 24.0,
+      "scene": [
+        "5",
+        0
+      ]
+    }
+  },
+  "7": {
+    "class_type": "CNDropShadow",
+    "inputs": {
+      "target": "last item",
+      "dx": 0.0,
+      "dy": 10.0,
+      "blur": 40.0,
+      "color": "#000000",
+      "opacity": 0.35,
+      "scene": [
+        "6",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "CNTextBox",
+    "inputs": {
+      "text": "FLUID GRADIENT",
+      "font": "Inter",
+      "font_override": "",
+      "weight": 700,
+      "bold_weight": 900,
+      "italic": false,
+      "size": 30.0,
+      "color": "#ffffffcc",
+      "align": "left",
+      "valign": "top",
+      "case": "as typed",
+      "x": 96.0,
+      "y": 80.0,
+      "box_width": 900.0,
+      "box_height": 0.0,
+      "auto_fit": false,
+      "min_size": 12.0,
+      "line_height": 1.1,
+      "letter_spacing": 0.2,
+      "below_previous": false,
+      "gap": 24.0,
+      "scene": [
+        "7",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "CNPreviewScene",
+    "inputs": {
+      "scale": 0.5,
+      "guides": "none",
+      "background": "checkerboard",
+      "time": -1.0,
+      "scene": [
+        "8",
+        0
+      ]
+    }
+  },
+  "10": {
+    "class_type": "CNExport",
+    "inputs": {
+      "mask_meaning": "alpha (1 = opaque)",
+      "format": "png",
+      "quality": 92,
+      "webp_lossless": false,
+      "transparent": false,
+      "matte": "#ffffff",
+      "scale": 1.0,
+      "dpi": 0.0,
+      "max_kb": 0,
+      "embed_workflow": true,
+      "filename_prefix": "cratenode/fluid_gradient",
+      "scene": [
+        "9",
+        0
+      ]
+    }
+  }
+}

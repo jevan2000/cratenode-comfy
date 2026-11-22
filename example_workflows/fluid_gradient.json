@@ -1,0 +1,657 @@
+{
+ "last_node_id": 10,
+ "last_link_id": 9,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "CNFluidGradient",
+   "pos": [
+    0,
+    0.0
+   ],
+   "size": [
+    340,
+    788
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "links": [
+      1
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNFluidGradient"
+   },
+   "widgets_values": [
+    "liquid",
+    "#1b0f3a",
+    "#4b1cff",
+    "#ff2fa0",
+    "#ff7a1a",
+    "#13d3ff",
+    "",
+    7,
+    1.2,
+    1.0,
+    3,
+    1.0,
+    0.0,
+    2,
+    0.0,
+    0.5,
+    0.5,
+    0.6,
+    0.0,
+    1.4,
+    0.0,
+    0.0,
+    0.0,
+    0.03,
+    0.0,
+    1.05,
+    1.1,
+    0.0,
+    0.35,
+    0.0
+   ],
+   "title": "Fluid Gradient: liquid background"
+  },
+  {
+   "id": 2,
+   "type": "CNCanvas",
+   "pos": [
+    400,
+    0.0
+   ],
+   "size": [
+    340,
+    236
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "background_fill",
+     "type": "CN_FILL",
+     "link": 1
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      2
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNCanvas"
+   },
+   "widgets_values": [
+    "YouTube thumbnail / HD 1920x1080",
+    false,
+    1920,
+    1080,
+    "#000000",
+    5.0,
+    false
+   ]
+  },
+  {
+   "id": 3,
+   "type": "CNFluidGradient",
+   "pos": [
+    0,
+    828.0
+   ],
+   "size": [
+    340,
+    788
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "palette",
+     "type": "CN_PALETTE",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "links": [
+      3
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNFluidGradient"
+   },
+   "widgets_values": [
+    "glass",
+    "#ffd166",
+    "#ff2fa0",
+    "#7a2cff",
+    "#13d3ff",
+    "",
+    "",
+    3,
+    1.0,
+    0.8,
+    3,
+    1.0,
+    0.0,
+    2,
+    360.0,
+    0.5,
+    0.5,
+    0.7,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.3,
+    0.02,
+    0.05,
+    1.0,
+    1.1,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "title": "Fluid Gradient: glass twirl"
+  },
+  {
+   "id": 4,
+   "type": "CNShape",
+   "pos": [
+    800,
+    0.0
+   ],
+   "size": [
+    340,
+    498
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 2
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": 3
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      4
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNShape"
+   },
+   "widgets_values": [
+    "ellipse",
+    610.0,
+    190.0,
+    700.0,
+    700.0,
+    "#ffffff",
+    "",
+    0.0,
+    0.0,
+    5,
+    0.5,
+    0.0,
+    false,
+    24.0,
+    "",
+    1.0,
+    ""
+   ],
+   "title": "Glass orb"
+  },
+  {
+   "id": 5,
+   "type": "CNDropShadow",
+   "pos": [
+    1200,
+    0.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 4
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      5
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNDropShadow"
+   },
+   "widgets_values": [
+    "last item",
+    0.0,
+    30.0,
+    80.0,
+    "#0b0620",
+    0.55
+   ]
+  },
+  {
+   "id": 6,
+   "type": "CNTextBox",
+   "pos": [
+    1600,
+    0.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 5
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      6
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "Liquid",
+    "Montserrat",
+    "",
+    900,
+    900,
+    false,
+    300.0,
+    "#ffffff",
+    "center",
+    "middle",
+    "as typed",
+    0.0,
+    0.0,
+    1920.0,
+    1080.0,
+    false,
+    12.0,
+    1.0,
+    -0.02,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 7,
+   "type": "CNDropShadow",
+   "pos": [
+    2000,
+    0.0
+   ],
+   "size": [
+    340,
+    212
+   ],
+   "flags": {},
+   "order": 6,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 6
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      7
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNDropShadow"
+   },
+   "widgets_values": [
+    "last item",
+    0.0,
+    10.0,
+    40.0,
+    "#000000",
+    0.35
+   ]
+  },
+  {
+   "id": 8,
+   "type": "CNTextBox",
+   "pos": [
+    2400,
+    0.0
+   ],
+   "size": [
+    340,
+    618
+   ],
+   "flags": {},
+   "order": 7,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 7
+    },
+    {
+     "name": "fill",
+     "type": "CN_FILL",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      8
+     ],
+     "slot_index": 0
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNTextBox"
+   },
+   "widgets_values": [
+    "FLUID GRADIENT",
+    "Inter",
+    "",
+    700,
+    900,
+    false,
+    30.0,
+    "#ffffffcc",
+    "left",
+    "top",
+    "as typed",
+    96.0,
+    80.0,
+    900.0,
+    0.0,
+    false,
+    12.0,
+    1.1,
+    0.2,
+    false,
+    24.0,
+    ""
+   ]
+  },
+  {
+   "id": 9,
+   "type": "CNPreviewScene",
+   "pos": [
+    2800,
+    0.0
+   ],
+   "size": [
+    340,
+    186
+   ],
+   "flags": {},
+   "order": 8,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 8
+    }
+   ],
+   "outputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "links": [
+      9
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "info",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNPreviewScene"
+   },
+   "widgets_values": [
+    0.5,
+    "none",
+    "checkerboard",
+    -1.0
+   ]
+  },
+  {
+   "id": 10,
+   "type": "CNExport",
+   "pos": [
+    3200,
+    0.0
+   ],
+   "size": [
+    340,
+    658
+   ],
+   "flags": {},
+   "order": 9,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "scene",
+     "type": "CN_SCENE",
+     "link": 9
+    },
+    {
+     "name": "image",
+     "type": "IMAGE",
+     "link": null
+    },
+    {
+     "name": "alpha",
+     "type": "MASK",
+     "link": null
+    },
+    {
+     "name": "row",
+     "type": "CN_ROW",
+     "link": null
+    }
+   ],
+   "outputs": [
+    {
+     "name": "paths",
+     "type": "STRING",
+     "links": null
+    },
+    {
+     "name": "report",
+     "type": "STRING",
+     "links": null
+    }
+   ],
+   "properties": {
+    "Node name for S&R": "CNExport"
+   },
+   "widgets_values": [
+    "alpha (1 = opaque)",
+    "png",
+    92,
+    false,
+    false,
+    "#ffffff",
+    1.0,
+    0.0,
+    0,
+    true,
+    "cratenode/fluid_gradient"
+   ]
+  }
+ ],
+ "links": [
+  [
+   1,
+   1,
+   0,
+   2,
+   0,
+   "CN_FILL"
+  ],
+  [
+   2,
+   2,
+   0,
+   4,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   3,
+   3,
+   0,
+   4,
+   1,
+   "CN_FILL"
+  ],
+  [
+   4,
+   4,
+   0,
+   5,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   5,
+   5,
+   0,
+   6,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   6,
+   6,
+   0,
+   7,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   7,
+   7,
+   0,
+   8,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   8,
+   8,
+   0,
+   9,
+   0,
+   "CN_SCENE"
+  ],
+  [
+   9,
+   9,
+   0,
+   10,
+   0,
+   "CN_SCENE"
+  ]
+ ],
+ "groups": [],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.75,
+   "offset": [
+    40,
+    40
+   ]
+  }
+ },
+ "version": 0.4
+}

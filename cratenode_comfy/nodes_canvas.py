@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+import dataclasses
 from dataclasses import replace
 
 from comfy_api.latest import IO
 
-from . import convert, render
+from . import color as col
+from . import convert, fluid, render
 from . import scene as sc
-from .nodes_common import (CANVAS_PRESETS, MASK_MEANINGS, ROOT, FillT, SceneT, color, flow, flow_inputs,
+from .nodes_common import (CANVAS_PRESETS, MASK_MEANINGS, ROOT, FillT, PaletteT, SceneT, color, flow, flow_inputs,
                            mask_to_alpha, new_part, slot)
 
 
@@ -122,6 +124,72 @@ class CNRadialGradient(IO.ComfyNode):
         return IO.NodeOutput(sc.Gradient("radial", _stops(kw)))
 
 
+FLUID_COLORS = ["#ff5a1f", "#ff2fa0", "#7a2cff", "#1b3cff", "#13d3ff", ""]
+
+
+class CNFluidGradient(IO.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        f = lambda name, d, lo, hi, step, tip, adv=False: IO.Float.Input(  # noqa: E731
+            name, default=d, min=lo, max=hi, step=step, tooltip=tip, advanced=adv)
+        return IO.Schema(
+            node_id="CNFluidGradient", display_name="Fluid Gradient", category=f"{ROOT}/Fill",
+            description="A flowing, abstract gradient fill (mesh blobs, liquid, twirl, strange marbling, waves, "
+                        "motion blur, glass) for canvases, shapes and text. Same settings + seed = same picture; "
+                        "change the seed for a new one.",
+            inputs=[
+                IO.Combo.Input("style", options=fluid.STYLES, default="liquid",
+                               tooltip="mesh: soft colour blobs. liquid: silky flowing marble. twirl: a swirl. "
+                                       "strange: tight psychedelic marbling. waves: flowing stripes. "
+                                       "motion blur: streaked flow. glass: liquid glass with highlights"),
+            ] + [IO.String.Input(f"color_{i}", default=c, tooltip="#rrggbb[aa] or a palette name; empty = unused")
+                 for i, c in enumerate(FLUID_COLORS, 1)] + [
+                IO.Int.Input("seed", default=0, min=0, max=2**31 - 1, control_after_generate=False,
+                             tooltip="A different seed gives a different arrangement"),
+                f("scale", 1.0, 0.1, 10.0, 0.05, "Feature size: larger = bigger, calmer shapes"),
+                f("warp", 1.0, 0.0, 5.0, 0.05, "How much the shapes flow and bend (times the style's own amount)"),
+                IO.Int.Input("detail", default=3, min=1, max=8, tooltip="Noise layers: more = finer ripples"),
+                f("softness", 1.0, 0.05, 4.0, 0.05, "How softly colours blend; lower = crisper edges"),
+                f("bands", 0.0, 0.0, 20.0, 0.5, "Extra repeats of the colours: ripples and stripes"),
+                IO.Int.Input("blobs", default=2, min=1, max=6, tooltip="mesh / twirl: points per colour"),
+                f("twirl", 0.0, -1440.0, 1440.0, 5.0, "Degrees of swirl, added to the style's own"),
+                f("twirl_x", 0.5, -0.5, 1.5, 0.01, "Swirl centre across the fill (0 = left, 1 = right)"),
+                f("twirl_y", 0.5, -0.5, 1.5, 0.01, "Swirl centre down the fill (0 = top, 1 = bottom)"),
+                f("twirl_radius", 0.6, 0.05, 3.0, 0.01, "How far the swirl reaches, in fill heights"),
+                f("rotation", 0.0, -360.0, 360.0, 1.0, "Turns the whole pattern"),
+                f("stretch", 1.0, 0.1, 10.0, 0.05, "Above 1 stretches the shapes sideways, below 1 upright"),
+                f("blur", 0.0, 0.0, 2.0, 0.01, "Motion blur length in fill heights, added to the style's own"),
+                f("blur_angle", 0.0, -360.0, 360.0, 1.0, "Motion blur direction; 0 = left to right"),
+                f("glass", 0.0, 0.0, 2.0, 0.05, "Glassy highlights and refraction, added to the style's own"),
+                f("grain", 0.02, 0.0, 1.0, 0.01, "Film grain (also hides banding)"),
+                f("brightness", 0.0, -1.0, 1.0, 0.01, "Lighter or darker"),
+                f("contrast", 1.0, 0.0, 3.0, 0.01, "1 = as the colours are"),
+                f("saturation", 1.0, 0.0, 3.0, 0.01, "0 = grey, 1 = as the colours are"),
+                f("hue_shift", 0.0, -180.0, 180.0, 1.0, "Turns every colour around the colour wheel"),
+                f("vignette", 0.0, 0.0, 1.0, 0.01, "Darker edges"),
+                f("evolve", 0.0, -1000.0, 1000.0, 0.01, "Moves through the pattern; animate or step it for a "
+                                                         "flowing gradient"),
+                PaletteT.Input("palette", optional=True,
+                               tooltip="Use these colours (in order) instead of color_1..6, or resolve colour names"),
+            ],
+            outputs=[FillT.Output(display_name="fill")],
+        )
+
+    @classmethod
+    def execute(cls, style, seed, palette=None, **kw):
+        if palette is not None and getattr(palette, "colors", ()):
+            cols = [c for _, c in palette.colors][:8]
+        else:
+            cols = [col.resolve_color(c, palette) for i in range(1, 7) if (c := (kw.get(f"color_{i}") or "").strip())]
+        if len(cols) < 2:
+            raise ValueError("a fluid gradient needs at least two colours")
+        n = len(cols)
+        stops = tuple((i / (n - 1), tuple(float(v) for v in c)) for i, c in enumerate(cols))
+        names = {f.name for f in dataclasses.fields(fluid.FluidGradient)} - {"kind", "stops", "angle", "style", "seed"}
+        opts = {k: v for k, v in kw.items() if k in names}
+        return IO.NodeOutput(fluid.FluidGradient(stops=stops, style=style, seed=int(seed), **opts))
+
+
 class CNAddImage(IO.ComfyNode):
     @classmethod
     def define_schema(cls):
@@ -195,4 +263,4 @@ class CNImageToScene(IO.ComfyNode):
         return IO.NodeOutput(scenes)
 
 
-NODES = [CNCanvas, CNSafeArea, CNLinearGradient, CNRadialGradient, CNAddImage, CNImageToScene]
+NODES = [CNCanvas, CNSafeArea, CNLinearGradient, CNRadialGradient, CNFluidGradient, CNAddImage, CNImageToScene]

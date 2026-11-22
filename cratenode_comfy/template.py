@@ -28,7 +28,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from . import motion
+from . import fluid, motion
 from . import scene as sc
 from . import text as textmod
 from .render import parse_color
@@ -36,7 +36,8 @@ from .render import parse_color
 VERSION = 1
 _CLASSES = {c.__name__: c for c in (
     sc.Scene, sc.TextItem, sc.ImageItem, sc.ShapeItem, sc.GroupItem, sc.LayoutItem, sc.Style, sc.Flow,
-    sc.Gradient, sc.Shadow, sc.Glow, sc.Outline, sc.Blur, textmod.TextSpec, motion.Track, sc.StrokeStyle)}
+    sc.Gradient, sc.Shadow, sc.Glow, sc.Outline, sc.Blur, textmod.TextSpec, motion.Track, sc.StrokeStyle,
+    fluid.FluidGradient)}
 
 
 # ---- scene <-> JSON ----

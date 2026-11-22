@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- **Fluid Gradient** node (Fill): flowing abstract gradient fills for canvases,
+  shapes and text.
+  - **Styles:** mesh blobs, liquid marbling, twirl, strange, waves, motion blur and
+    glass.
+  - **Controls:** up to six colours (or a palette), a seed and more than 20 settings
+    (scale, warp, detail, softness, bands, blobs, twirl with centre and radius,
+    rotation, stretch, motion blur and angle, glass, grain, brightness, contrast,
+    saturation, hue shift, vignette, evolve).
+  - **Behaves like a gradient:** it is a `Gradient` subclass, so recolouring, fill
+    opacity, templates, text fills and backgrounds work with it unchanged.
+  - **Rendering:** numpy, deterministic per seed and relative to the box it fills.
+  - It has a live preview. New example **fluid_gradient**. `cratenode_comfy/fluid.py`,
+    `tests/test_fluid.py`.
 - **Stack, Place, Grid: `x`, `y`, `box_width`, `box_height` are greyed out unless
   `area` is `custom`**, the only setting that uses them (with safe area or canvas they
   were silently ignored). Tooltips now say so. Display only: values are still saved

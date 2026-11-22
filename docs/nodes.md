@@ -1,6 +1,6 @@
 # Node reference
 
-All 51 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
+All 52 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
 Types: *scene* is a design (`CN_SCENE`), *fill* a gradient, *data row* one CSV/JSON row, *palette* a named colour palette.
 
 - [Canvas](#canvas)
@@ -291,6 +291,46 @@ Outputs: `scene` (scene)
 Outputs: `scene` (scene)
 
 ## Fill
+
+### Fluid Gradient
+
+`CNFluidGradient`. A flowing, abstract gradient fill (mesh blobs, liquid, twirl, strange marbling, waves, motion blur, glass) for canvases, shapes and text. Same settings + seed = same picture; change the seed for a new one.
+
+| Input | Type | Default | Notes |
+|---|---|---|---|
+| `style` | choice | `liquid` | mesh: soft colour blobs. liquid: silky flowing marble. twirl: a swirl. strange: tight psychedelic marbling. waves: flowing stripes. motion blur: streaked flow. glass: liquid glass with highlights |
+| `color_1` | string | `#ff5a1f` | #rrggbb[aa] or a palette name; empty = unused |
+| `color_2` | string | `#ff2fa0` | #rrggbb[aa] or a palette name; empty = unused |
+| `color_3` | string | `#7a2cff` | #rrggbb[aa] or a palette name; empty = unused |
+| `color_4` | string | `#1b3cff` | #rrggbb[aa] or a palette name; empty = unused |
+| `color_5` | string | `#13d3ff` | #rrggbb[aa] or a palette name; empty = unused |
+| `color_6` | string | `""` | #rrggbb[aa] or a palette name; empty = unused |
+| `seed` | int | `0` | A different seed gives a different arrangement |
+| `scale` | float | `1.0` | Feature size: larger = bigger, calmer shapes |
+| `warp` | float | `1.0` | How much the shapes flow and bend (times the style's own amount) |
+| `detail` | int | `3` | Noise layers: more = finer ripples |
+| `softness` | float | `1.0` | How softly colours blend; lower = crisper edges |
+| `bands` | float | `0.0` | Extra repeats of the colours: ripples and stripes |
+| `blobs` | int | `2` | mesh / twirl: points per colour |
+| `twirl` | float | `0.0` | Degrees of swirl, added to the style's own |
+| `twirl_x` | float | `0.5` | Swirl centre across the fill (0 = left, 1 = right) |
+| `twirl_y` | float | `0.5` | Swirl centre down the fill (0 = top, 1 = bottom) |
+| `twirl_radius` | float | `0.6` | How far the swirl reaches, in fill heights |
+| `rotation` | float | `0.0` | Turns the whole pattern |
+| `stretch` | float | `1.0` | Above 1 stretches the shapes sideways, below 1 upright |
+| `blur` | float | `0.0` | Motion blur length in fill heights, added to the style's own |
+| `blur_angle` | float | `0.0` | Motion blur direction; 0 = left to right |
+| `glass` | float | `0.0` | Glassy highlights and refraction, added to the style's own |
+| `grain` | float | `0.02` | Film grain (also hides banding) |
+| `brightness` | float | `0.0` | Lighter or darker |
+| `contrast` | float | `1.0` | 1 = as the colours are |
+| `saturation` | float | `1.0` | 0 = grey, 1 = as the colours are |
+| `hue_shift` | float | `0.0` | Turns every colour around the colour wheel |
+| `vignette` | float | `0.0` | Darker edges |
+| `evolve` | float | `0.0` | Moves through the pattern; animate or step it for a flowing gradient |
+| `palette` | palette (optional) |  | Use these colours (in order) instead of color_1..6, or resolve colour names |
+
+Outputs: `fill` (fill)
 
 ### Linear Gradient
 

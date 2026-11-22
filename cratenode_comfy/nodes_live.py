@@ -33,7 +33,7 @@ MAX_W, MAX_H = 320, 200
 
 _KINDS = {
     "CNCanvas": "canvas", "CNTextBox": "part", "CNShape": "part",
-    "CNLinearGradient": "fill", "CNRadialGradient": "fill",
+    "CNLinearGradient": "fill", "CNRadialGradient": "fill", "CNFluidGradient": "fill",
     "CNPalette": "palette", "CNSafeArea": "safe", "CNContrast": "contrast",
     "CNDropShadow": "effect", "CNOuterGlow": "effect", "CNOutline": "effect", "CNBlur": "effect",
     "CNOpacityBlend": "effect", "CNClipToPrevious": "effect",
@@ -174,7 +174,8 @@ def render(node_type: str, widgets: dict) -> tuple[bytes, str]:
     elif kind == "part" or kind == "effect":
         img = pv.part_preview(result, MAX_W, MAX_H)
     elif kind == "fill":
-        img = pv.preview(sc.Scene(MAX_W, 90, result), 1.0)
+        # a fluid gradient is a picture: show it 16:9; plain gradients fit a strip
+        img = pv.preview(sc.Scene(MAX_W, 180 if node_type == "CNFluidGradient" else 90, result), 1.0)
     elif kind == "palette":
         s = col.swatch_scene(result, cell=96)
         img = pv.preview(s, min(1.0, pv.fit_scale(s.width, s.height, MAX_W, MAX_H)))
