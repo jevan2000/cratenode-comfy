@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Live previews use linked colours** where they can be known before running: a
+  primitive node's value (through reroutes too), or Random Colour's colour for its
+  current seed. For example, a Fluid Gradient fed by Random Colour now previews with
+  that colour and follows it as it changes. Other links keep the widget's value.
+- **Fix: a live preview could be drawn outside its node** (offset to the right, seen
+  on frontend 1.51.9 after runs). The preview now uses the node's real width and
+  never draws past the node.
 - **Random Colour** node (Colour group): a random colour on every run, from a seed
   that moves on after each run (set it to fixed to keep one). It is limited by:
   - **family:** red, orange, yellow, green, teal, blue, purple, pink, warm, cool,

@@ -91,13 +91,50 @@ function keepFileOrder(node) {
   };
 }
 
-function widgetValues(node) {
+// The node a link starts from, following reroutes.
+function linkSource(node, input) {
+  const graph = node.graph || app.graph;
+  let link = input?.link != null ? graph?.links?.[input.link] ?? graph?.links?.get?.(input.link) : null;
+  for (let hops = 0; link && hops < 20; hops++) {
+    const from = graph.getNodeById(link.origin_id);
+    if (!from) return null;
+    if ((from.type || from.comfyClass) !== "Reroute") return { node: from, slot: link.origin_slot };
+    const next = from.inputs?.[0]?.link;
+    link = next != null ? graph.links?.[next] ?? graph.links?.get?.(next) : null;
+  }
+  return null;
+}
+
+const simple = (v) => ["string", "number", "boolean"].includes(typeof v);
+
+// A value arriving through a link isn't known until the workflow runs, but often it can
+// be: a primitive node's value, or a CrateNode node the server can work out (Random
+// Colour). Those are used in the preview; anything else keeps the widget's own value.
+function linkedValues(node, out, depth = 0) {
+  for (const input of node.inputs || []) {
+    const name = input.widget?.name ?? input.name;
+    if (input.link == null || !(name in out)) continue;
+    const src = linkSource(node, input);
+    if (!src) continue;
+    const t = src.node.comfyClass || src.node.type || "";
+    if (/^Primitive/.test(t)) {
+      const v = src.node.widgets?.[0]?.value;
+      if (simple(v)) out[name] = v;
+    } else if (t.startsWith("CN") && depth < 2) {
+      out.__links = out.__links || {};
+      out.__links[name] = { type: t, slot: src.slot, widgets: widgetValues(src.node, depth + 1) };
+    }
+  }
+}
+
+function widgetValues(node, depth = 0) {
   const out = {};
   for (const w of node.widgets || []) {
     if (w.name === WIDGET || w.name === "control_after_generate") continue;
     const v = w.value;
-    if (["string", "number", "boolean"].includes(typeof v)) out[w.name] = v;
+    if (simple(v)) out[w.name] = v;
   }
+  linkedValues(node, out, depth);
   // Layout nodes: how many part inputs are connected, so the preview shows that many
   // stand-ins (what's connected isn't known until the workflow runs).
   const parts = (node.inputs || []).filter((i) => /^part_\d+$/.test(i.name));
@@ -123,10 +160,16 @@ function previewWidget(state) {
       return [width, HEIGHT];
     },
     draw(ctx, node, width, y) {
+      // The node's real width: some frontends pass a stale, larger width here (seen on
+      // 1.51.9 after a run), which drew the picture off to the right, outside the node.
+      width = Math.min(Number(width) || Infinity, node.size[0]);
       const boxW = width - PAD * 2;
       const boxH = HEIGHT - NOTE_H - PAD * 1.5;
       const img = state.img;
       ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, y, width, HEIGHT); // never draw outside the node
+      ctx.clip();
       if (img && img.complete && img.naturalWidth) {
         const k = Math.min(boxW / img.naturalWidth, boxH / img.naturalHeight, 1.5);
         const w = img.naturalWidth * k, h = img.naturalHeight * k;

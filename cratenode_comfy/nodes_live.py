@@ -146,12 +146,46 @@ def _note(out) -> str:
     return " ".join(map(str, text)) if text else ""
 
 
+# Nodes whose output the preview may work out when it arrives through a link: cheap,
+# made from widget values only (no scene or image inputs).
+RESOLVABLE = {"CNRandomColor"}
+
+
+def resolve_links(widgets: dict) -> dict:
+    """Widget values with linked ones replaced by what their source node gives now.
+
+    The browser sends ``__links``: {input name: {type, slot, widgets}} for inputs fed by
+    another CrateNode node. Sources outside RESOLVABLE, or giving anything but plain
+    text / numbers, keep the widget's own value."""
+    links = widgets.get("__links")
+    if not isinstance(links, dict):
+        return widgets
+    out = dict(widgets)
+    for name, spec in list(links.items())[:16]:
+        if not isinstance(spec, dict) or spec.get("type") not in RESOLVABLE:
+            continue
+        cls = _resolvable_class(spec["type"])
+        try:
+            res = cls.execute(**widget_kwargs(cls, dict(spec.get("widgets") or {})))
+            value = res.args[int(spec.get("slot", 0))]
+        except Exception:  # a half-typed value upstream: keep the widget's value
+            continue
+        if isinstance(value, (str, int, float, bool)):
+            out[name] = value
+    return out
+
+
+def _resolvable_class(node_type: str):
+    return {c.define_schema().node_id: c for c in nodes_color.NODES}.get(node_type)
+
+
 def render(node_type: str, widgets: dict) -> tuple[bytes, str]:
     """(PNG, note) for one node's current widget values."""
     cls = node_class(node_type)
     kind = _KINDS.get(node_type)
     if cls is None or kind is None:
         raise ValueError(f"no live preview for {node_type}")
+    widgets = resolve_links(widgets)
     kw = widget_kwargs(cls, widgets)
     QUIET.on = True
     try:

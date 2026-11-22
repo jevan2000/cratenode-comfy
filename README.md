@@ -62,8 +62,10 @@ Opacity & Blend, Clip to Previous) show a picture at the bottom of the node that
 follows their settings as you change them, before anything runs. The pack's own
 code draws it (through a small endpoint, `/cratenode/preview`), so it looks exactly
 like the output. Effect nodes show their effect on a sample "Aa". Values arriving
-through a link aren't known until the workflow runs, so the preview uses the
-widget's own value.
+through a link are used when they can be known before running: from a primitive
+node (through reroutes too) or from **Random Colour** (the colour its current seed
+gives). Other linked values aren't known until the workflow runs, so the preview uses
+the widget's own value.
 
 **Stroke editor:** click Shape's `stroke_style` field (it shows a small sample of the
 style) for a pop-out with:
