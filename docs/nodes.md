@@ -1,6 +1,6 @@
 # Node reference
 
-All 53 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
+All 54 nodes, generated from the node definitions by `tools/gen_node_docs.py`.
 Types: *scene* is a design (`CN_SCENE`), *fill* a gradient, *data row* one CSV/JSON row, *palette* a named colour palette.
 
 - [Canvas](#canvas)
@@ -87,6 +87,25 @@ Outputs: `ratio` (float), `grade` (string)
 | `name` | string | `""` |  |
 
 Outputs: `palette` (palette), `swatches` (image)
+
+### Palette Generator
+
+`CNPaletteGenerator`. Five colours that go together, each as its own output (wire them into Fluid Gradient, Shape, Text Box ...) and as a palette. Click Generate on the node for a new set without running; with new_each_run on, a new set is made in the browser just before each run, so the run uses the colours shown. Lock keeps the colours as they are.
+
+| Input | Type | Default | Notes |
+|---|---|---|---|
+| `color_1` | string | `#1d3557` | #rrggbb or #rrggbbaa; Generate fills these, or set them by hand |
+| `color_2` | string | `#457b9d` | #rrggbb or #rrggbbaa; Generate fills these, or set them by hand |
+| `color_3` | string | `#a8dadc` | #rrggbb or #rrggbbaa; Generate fills these, or set them by hand |
+| `color_4` | string | `#f1faee` | #rrggbb or #rrggbbaa; Generate fills these, or set them by hand |
+| `color_5` | string | `#e63946` | #rrggbb or #rrggbbaa; Generate fills these, or set them by hand |
+| `harmony` | choice | `random` | How the colours relate: random (any five that differ), analogous (neighbours on the colour wheel), complementary (opposites), split complementary, triadic, tetradic, monochromatic (one hue, light to dark), warm and cool |
+| `family` | choice | `any` | Which hues to start from (as on Random Colour) |
+| `style` | choice | `any` | How saturated and light: vivid, pastel, muted, dark, light, neon, jewel |
+| `new_each_run` | boolean | `true` | Make a new set just before each run (in the browser), unless locked |
+| `locked` | boolean | `false` | Keep these colours: no new set on runs or from the Generate button |
+
+Outputs: `palette` (palette), `color_1` (string), `color_2` (string), `color_3` (string), `color_4` (string), `color_5` (string), `swatches` (image)
 
 ### Palette from Image
 

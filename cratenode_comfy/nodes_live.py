@@ -39,6 +39,7 @@ _KINDS = {
     "CNOpacityBlend": "effect", "CNClipToPrevious": "effect",
     "CNGrid": "grid",
     "CNRandomColor": "random",
+    "CNPaletteGenerator": "palette",
 }
 
 
@@ -287,6 +288,27 @@ def add_routes() -> None:
             return web.json_response({"error": str(e)[:300]}, status=400)
         return web.Response(body=png, content_type="image/png", headers={"X-CN-Note": note.encode(
             "ascii", "replace").decode()[:300]})
+
+    @routes.post("/cratenode/palette")
+    async def _palette(request):
+        """Five new colours for Palette Generator's Generate button (and before runs)."""
+        import random as _random
+
+        from . import palettegen as pg
+
+        if (request.content_length or 0) > MAX_BODY:
+            return web.json_response({"error": "request too large"}, status=413)
+        try:
+            data = json.loads((await request.content.read(MAX_BODY + 1))[:MAX_BODY + 1] or b"{}")
+            if not isinstance(data, dict):
+                raise ValueError("expected a JSON object")
+            seed = data.get("seed")
+            seed = _random.SystemRandom().randrange(2**31) if seed is None else int(seed)
+            colors = pg.generate(seed, str(data.get("harmony", "random")), str(data.get("family", "any")),
+                                 str(data.get("style", "any")))
+        except Exception as e:  # an unknown harmony, family or style
+            return web.json_response({"error": str(e)[:300]}, status=400)
+        return web.json_response({"colors": pg.to_hex_list(colors), "seed": seed})
 
     _ROUTES_ADDED = True
     logging.info("CrateNode-Comfy: live previews for %d node types", len(previewable()))

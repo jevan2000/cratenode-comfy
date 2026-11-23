@@ -10,6 +10,7 @@ from comfy_api.latest import IO, UI
 
 from . import color as col
 from . import devices, render
+from . import palettegen as pg
 from . import randcolor as rc
 from . import scene as sc
 from .fonts import registry
@@ -242,4 +243,51 @@ class CNRandomColor(IO.ComfyNode):
         return IO.NodeOutput(col.to_hex(colors[0]), pal, _swatches(pal), "\n".join(lines))
 
 
-NODES = [CNPalette, CNPaletteFromImage, CNBrandKit, CNPickColor, CNContrast, CNRecolor, CNRandomColor]
+GEN_DEFAULTS = ("#1d3557", "#457b9d", "#a8dadc", "#f1faee", "#e63946")
+
+
+class CNPaletteGenerator(IO.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return IO.Schema(
+            node_id="CNPaletteGenerator", display_name="Palette Generator", category=CAT,
+            description="Five colours that go together, each as its own output (wire them into Fluid Gradient, "
+                        "Shape, Text Box ...) and as a palette. Click Generate on the node for a new set without "
+                        "running; with new_each_run on, a new set is made in the browser just before each run, "
+                        "so the run uses the colours shown. Lock keeps the colours as they are.",
+            inputs=[IO.String.Input(f"color_{i}", default=c, tooltip="#rrggbb or #rrggbbaa; Generate fills these, "
+                                                                     "or set them by hand")
+                    for i, c in enumerate(GEN_DEFAULTS, 1)] + [
+                IO.Combo.Input("harmony", options=list(pg.HARMONIES), default="random",
+                               tooltip="How the colours relate: random (any five that differ), analogous "
+                                       "(neighbours on the colour wheel), complementary (opposites), split "
+                                       "complementary, triadic, tetradic, monochromatic (one hue, light to dark), "
+                                       "warm and cool"),
+                IO.Combo.Input("family", options=list(rc.FAMILIES), default="any",
+                               tooltip="Which hues to start from (as on Random Colour)"),
+                IO.Combo.Input("style", options=list(rc.STYLES), default="any",
+                               tooltip="How saturated and light: vivid, pastel, muted, dark, light, neon, jewel"),
+                IO.Boolean.Input("new_each_run", default=True,
+                                 tooltip="Make a new set just before each run (in the browser), unless locked"),
+                IO.Boolean.Input("locked", default=False,
+                                 tooltip="Keep these colours: no new set on runs or from the Generate button"),
+            ],
+            outputs=[PaletteT.Output(display_name="palette")]
+                    + [IO.String.Output(display_name=f"color_{i}") for i in range(1, pg.COUNT + 1)]
+                    + [IO.Image.Output(display_name="swatches")],
+        )
+
+    @classmethod
+    def execute(cls, harmony, family, style, new_each_run, locked, **kw):
+        colors = []
+        for i in range(1, pg.COUNT + 1):
+            text = str(kw.get(f"color_{i}", "")).strip()
+            if not text:
+                raise ValueError(f"color_{i} is empty; click Generate or type a #hex colour")
+            colors.append(col.resolve_color(text))
+        pal = col.Palette(tuple((f"color_{i}", c) for i, c in enumerate(colors, 1)), "generated")
+        return IO.NodeOutput(pal, *(col.to_hex(c) for c in colors), _swatches(pal))
+
+
+NODES = [CNPalette, CNPaletteFromImage, CNBrandKit, CNPickColor, CNContrast, CNRecolor, CNRandomColor,
+         CNPaletteGenerator]

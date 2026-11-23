@@ -176,6 +176,7 @@ Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 | | **Contrast Check** | WCAG contrast ratio and grade (AA / AAA) |
 | | **Recolor Scene** | Swap colours throughout a design (`primary -> accent`) |
 | | **Random Colour** | A new colour every run (or a palette of up to 12), within a family (red … pink, warm, cool, brown, earth, neutral), a style (vivid, pastel, muted, dark, light, neon, jewel), a perceived-brightness range, and optionally a minimum contrast against a background; the same seed repeats a colour |
+| | **Palette Generator** | Five colours that go together. Each colour is its own output (wire them into Fluid Gradient, Shape, Text Box …), plus a palette and swatches. **Generate palette** on the node makes a new set without running. **new_each_run** makes a new set in the browser just before each run, so the run uses the colours shown. **locked** keeps the colours. Settings: harmony (random, analogous, complementary, split complementary, triadic, tetradic, monochromatic, warm and cool), plus Random Colour's families and styles. The colours are plain fields you can also edit, and they're saved with the workflow |
 | Motion | **Timeline** | A design's length and frame rate |
 | | **Animate In**, **Animate Out** | Presets: fade, fade up/down, slides, pop, zoom, wipe, blur in; stagger plays the parts of a Stack / Grid in turn |
 | | **Animate** | Keyframes (`0: 0, 2: 360`) with easing for x, y, scale, rotation, opacity, blur or wipe |

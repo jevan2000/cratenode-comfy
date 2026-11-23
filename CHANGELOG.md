@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- **Palette Generator** node: five colours as separate outputs (color_1..color_5),
+  plus a palette and swatches.
+  - **Making colours:** pick a harmony (random, analogous, complementary, split
+    complementary, triadic, tetradic, monochromatic, warm and cool), a colour family
+    and a style. A **Generate palette** button on the node makes a new set without
+    running (`/cratenode/palette`).
+  - **On each run:** with `new_each_run` on, a new set is made in the browser just
+    before each run, so the run uses exactly the colours shown and saved.
+  - **Lock:** `locked` keeps the colours. The button greys out, and runs don't change
+    them.
+  - New `palettegen.py`, `web/palette_generator.js` and `tests/test_palettegen.py`.
 - **Live previews use linked colours** where they can be known before running: a
   primitive node's value (through reroutes too), or Random Colour's colour for its
   current seed. For example, a Fluid Gradient fed by Random Colour now previews with
