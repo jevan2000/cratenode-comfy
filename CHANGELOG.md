@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Fix: Palette Generator settings moved down one place after reopening a workflow**
+  (so it came back locked). ComfyUI frontend 1.51.9 saved a blank slot for the
+  Generate button and skipped it when loading. The node now saves without the slot and
+  repairs workflows that were saved with it.
 - **Fluid Gradient: random looks.** A **🎲 Random look** button, and a `randomize`
   toggle (optional, last in the file, shown under `preset`) for a new look just
   before each run.

@@ -67,6 +67,34 @@ function addButton(node) {
     node.widgets.splice(after + 1, 0, b);
   }
   syncButton(node);
+  keepValuesInPlace(node);
+}
+
+// Saved widget values are positional. Some frontends (1.51.9) save a blank slot for the
+// button even though it isn't saved, then skip it when loading, so every setting after it
+// moved down one place (new_each_run's value landed in locked). Save without the slot, and
+// repair files that were saved with it.
+const saved = (w) => w.serialize !== false && w.options?.serialize !== false;
+function keepValuesInPlace(node) {
+  const names = () => node.widgets.filter(saved).map((w) => w.name);
+  const onSerialize = node.onSerialize;
+  node.onSerialize = function (o) {
+    const r = onSerialize?.apply(this, arguments);
+    const v = o?.widgets_values;
+    if (Array.isArray(v) && v.length > names().length) {
+      o.widgets_values = node.widgets.map((w, i) => [w, v[i]]).filter(([w]) => saved(w)).map(([, x]) => x);
+    }
+    return r;
+  };
+  const configure = node.configure;
+  node.configure = function (info) {
+    const v = info?.widgets_values;
+    // An old file with the button's slot: one value too many, a blank right after color_5.
+    if (Array.isArray(v) && v.length === names().length + 1 && v[COUNT] == null) {
+      info = { ...info, widgets_values: [...v.slice(0, COUNT), ...v.slice(COUNT + 1)] };
+    }
+    return configure.call(this, info);
+  };
 }
 
 // Every graph (including subgraphs) the run will include.
