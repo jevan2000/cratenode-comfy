@@ -32,7 +32,7 @@ const live = new Set(); // nodes with a preview
 const SHOW_AFTER = {
   CNShape: { fill_opacity: "color", stroke_style: "stroke_width" },
   CNGrid: { direction: "columns", placement: "valign" },
-  CNFluidGradient: { preset: null }, // null = at the top
+  CNFluidGradient: { preset: null, randomize: "preset" }, // null = at the top
 };
 
 // Labels that follow another setting: Grid's count is per row (columns) when it fills

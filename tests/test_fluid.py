@@ -73,6 +73,37 @@ class Presets(unittest.TestCase):
             seen[name] = img
 
 
+class RandomLooks(unittest.TestCase):
+    def test_random_looks_are_complete_repeatable_and_lively(self):
+        fields = {f for f in fluid.FluidGradient.__dataclass_fields__} - {"kind", "stops", "angle"}
+        colours = {f"color_{i}" for i in range(1, fluid.MAX_COLORS + 1)}
+        styles = set()
+        for seed in range(40):
+            v = fluid.random_look(seed)
+            self.assertEqual(v, fluid.random_look(seed), "same seed, same look")
+            self.assertEqual(set(v), fields | colours, seed)
+            styles.add(v["style"])
+            # kept within the ranges that still look good
+            self.assertLessEqual(v["grain"], 0.05, seed)
+            self.assertEqual(v["brightness"], 0.0, seed)
+            self.assertEqual(v["hue_shift"], 0.0, seed)
+            self.assertTrue(0.8 <= v["scale"] <= 1.6, (seed, v["scale"]))
+            self.assertTrue(v["softness"] >= 0.5, (seed, v["softness"]))
+            self.assertGreaterEqual(sum(1 for c in colours if v[c]), 3, seed)
+            img = fluid.render(fluid.values_gradient(v), 48, 27)
+            self.assertGreater(float(img[..., :3].std()), 0.03, f"seed {seed} looks flat")
+        self.assertGreaterEqual(len(styles), 5, "random looks use most styles")
+        self.assertNotEqual(fluid.random_look(1), fluid.random_look(2))
+
+    def test_blended_styles_get_neighbouring_hues(self):
+        import random
+
+        rng = random.Random(3)
+        for _ in range(20):
+            cols = fluid.random_colors(rng, "mesh")
+            self.assertGreaterEqual(len(cols), 4)
+
+
 class AsAFill(unittest.TestCase):
     def test_fills_a_canvas_and_a_shape(self):
         g = grad(style="liquid")

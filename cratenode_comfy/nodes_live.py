@@ -272,6 +272,20 @@ def add_routes() -> None:
 
         return web.json_response({name: fluid.preset_values(name) for name in fluid.PRESETS})
 
+    @routes.get("/cratenode/fluid_random")
+    async def _fluid_random(request):
+        """A random Fluid Gradient look (the node's inputs), for its Random button and runs."""
+        import random as _random
+
+        from . import fluid
+
+        try:
+            seed = request.query.get("seed")
+            seed = _random.SystemRandom().randrange(2**31) if seed in (None, "") else int(seed)
+        except ValueError:
+            return web.json_response({"error": "seed must be a whole number"}, status=400)
+        return web.json_response({"values": fluid.random_look(seed), "seed": seed})
+
     @routes.post("/cratenode/preview")
     async def _preview(request):
         import asyncio

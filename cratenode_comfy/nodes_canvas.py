@@ -177,12 +177,19 @@ class CNFluidGradient(IO.ComfyNode):
                                tooltip="A ready-made look. Picking one fills in the style, colours and settings "
                                        "above; change any of them and this goes back to 'custom'. A connected "
                                        "palette still supplies the colours."),
+                IO.Boolean.Input("randomize", default=False, optional=True,
+                                 tooltip="A new random look just before each run (in the browser): style, "
+                                         "colours and settings, kept within ranges that still look good. "
+                                         "The node shows what was used; untick to keep it. Colours that come "
+                                         "from a connected palette or another node are left alone."),
             ],
             outputs=[FillT.Output(display_name="fill")],
         )
 
     @classmethod
-    def execute(cls, style, seed, palette=None, preset=fluid.CUSTOM, **kw):
+    def execute(cls, style, seed, palette=None, preset=fluid.CUSTOM, randomize=False, **kw):
+        # randomize works in the browser: it writes the new look into the node's own
+        # fields before the run, so the values here are exactly what the node shows
         if preset and preset != fluid.CUSTOM:  # the preset's look (the browser shows the same values)
             if preset not in fluid.PRESETS:
                 raise ValueError(f"unknown fluid gradient preset {preset!r}")

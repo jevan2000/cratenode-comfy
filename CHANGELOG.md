@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- **Fluid Gradient: random looks.** A **🎲 Random look** button, and a `randomize`
+  toggle (optional, last in the file, shown under `preset`) for a new look just
+  before each run.
+  - **Where the look comes from:** the server picks it (`fluid.random_look`, served at
+    `/cratenode/fluid_random`) and the browser writes it into the node's own fields
+    before the run. The queued prompt therefore carries what the node shows, and
+    unticking keeps the look.
+  - **Kept good-looking:**
+    - about a third start from a preset;
+    - colours come from Palette Generator harmonies, with blue, purple, pink and
+      orange bases favoured, and flat, grey, brown or clashing-green sets rejected;
+    - mesh and twirl only get neighbouring hues;
+    - each style's settings stay in ranges tuned on contact sheets.
+  - **Left alone:** linked fields, and the colours when a palette is connected.
 - **Palette Generator** node: five colours as separate outputs (color_1..color_5),
   plus a palette and swatches.
   - **Making colours:** pick a harmony (random, analogous, complementary, split

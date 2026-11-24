@@ -366,6 +366,7 @@ Outputs: `scene` (scene)
 | `evolve` | float | `0.0` | Moves through the pattern; animate or step it for a flowing gradient |
 | `palette` | palette (optional) |  | Use these colours (in order) instead of color_1..6, or resolve colour names |
 | `preset` | choice (optional) | `custom` | A ready-made look. Picking one fills in the style, colours and settings above; change any of them and this goes back to 'custom'. A connected palette still supplies the colours. |
+| `randomize` | boolean (optional) | `false` | A new random look just before each run (in the browser): style, colours and settings, kept within ranges that still look good. The node shows what was used; untick to keep it. Colours that come from a connected palette or another node are left alone. |
 
 Outputs: `fill` (fill)
 

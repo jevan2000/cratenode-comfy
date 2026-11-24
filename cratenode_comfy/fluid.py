@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import dataclasses
 import math
+import random
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -79,26 +80,158 @@ PRESETS = {
 MAX_COLORS = 6
 
 
+def _defaults() -> dict:
+    return {f.name: f.default for f in dataclasses.fields(FluidGradient) if f.name not in ("kind", "stops", "angle")}
+
+
+def _with_colors(out: dict, cols) -> dict:
+    cols = list(cols)[:MAX_COLORS]
+    out.update({f"color_{i + 1}": (cols[i] if i < len(cols) else "") for i in range(MAX_COLORS)})
+    return out
+
+
 def preset_values(name: str) -> dict:
     """A preset as the node's own inputs: style, seed, color_1..6 and every control."""
     p = dict(PRESETS[name])
-    cols = list(p.pop("colors"))[:MAX_COLORS]
-    out = {f.name: f.default for f in dataclasses.fields(FluidGradient)
-           if f.name not in ("kind", "stops", "angle")}
-    out.update({f"color_{i + 1}": (cols[i] if i < len(cols) else "") for i in range(MAX_COLORS)})
+    out = _with_colors(_defaults(), p.pop("colors"))
     out.update(p)
     return out
 
 
-def preset_gradient(name: str) -> "FluidGradient":
-    """The FluidGradient a preset makes (for previews and tests)."""
+# Random looks: a style and colours that go together, with every other setting kept in a
+# range that still looks good for that style (wide ranges on everything at once turn
+# into noise or mud). Brightness, hue shift and heavy grain are left alone.
+_STYLE_WEIGHTS = {"liquid": 3.0, "glass": 2.0, "mesh": 2.0, "twirl": 1.5, "strange": 1.0, "waves": 1.2,
+                  "motion blur": 1.2}
+_HARMONY_WEIGHTS = {"analogous": 2.0, "complementary": 1.5, "split complementary": 1.5, "warm and cool": 1.5,
+                    "triadic": 1.0, "tetradic": 0.7, "monochromatic": 0.6}
+_COLOR_STYLE_WEIGHTS = {"vivid": 2.5, "jewel": 1.5, "pastel": 1.5, "any": 1.2, "neon": 1.0, "dark": 0.5}
+# the base hue: these gradients sing in blues, purples, pinks and oranges; greens and
+# yellows are allowed but rarer
+_FAMILY_WEIGHTS = {"blue": 2.0, "purple": 2.0, "pink": 2.0, "cool": 1.5, "warm": 1.2, "orange": 1.2,
+                   "red": 1.0, "teal": 1.0, "any": 0.8, "green": 0.4, "yellow": 0.3}
+_RAMP_STYLES = {"liquid", "strange", "waves", "glass", "motion blur"}  # colours run dark to light
+# mesh and twirl blend colours across space, so opposite hues average to grey-brown:
+# give them neighbouring hues and full colour
+_BLEND_HARMONY_WEIGHTS = {"analogous": 3.0, "split complementary": 1.0, "monochromatic": 1.0, "warm and cool": 0.5}
+_BLEND_COLOR_STYLE_WEIGHTS = {"vivid": 2.5, "jewel": 1.5, "pastel": 1.5, "neon": 1.0}
+
+
+def _pick(rng, weights: dict):
+    return rng.choices(list(weights), weights=list(weights.values()))[0]
+
+
+def _luma(hex_color: str) -> float:
     from .render import parse_color
 
-    v = preset_values(name)
+    r, g, b, _ = parse_color(hex_color)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _lively(cols: list[str], family: str) -> bool:
+    """Enough light-to-dark range and colour to make a gradient (not flat or grey), and
+    no muddy mixes: at most one green/olive unless green was asked for, and no browns
+    (a dark orange blended through these gradients reads as mud)."""
+    import colorsys
+
+    from .render import parse_color
+
+    lumas = [_luma(c) for c in cols]
+    hls = [colorsys.rgb_to_hls(*parse_color(c)[:3]) for c in cols]
+    if max(lumas) - min(lumas) < 0.3 or sum(s for _, _, s in hls) / len(hls) < 0.35:
+        return False
+    greens = sum(1 for h, _, s in hls if 55 <= h * 360 <= 150 and s > 0.35)
+    browns = sum(1 for h, l, s in hls if (15 <= h * 360 <= 60 and l < 0.38 and s > 0.25)
+                 or ((h * 360 < 15 or h * 360 > 345) and l < 0.32 and s < 0.7))  # dull dark reds too
+    return browns == 0 and (greens <= 1 or family in ("green", "teal"))
+
+
+def random_colors(rng, style: str) -> list[str]:
+    """3-5 colours from a colour harmony (the Palette Generator's rules), kept lively."""
+    from . import palettegen as pg
+
+    blend = style in ("mesh", "twirl")
+    n = rng.choice([4, 4, 5, 5]) if blend else rng.choice([3, 4, 4, 5, 5])
+    harmonies = _BLEND_HARMONY_WEIGHTS if blend else _HARMONY_WEIGHTS
+    styles = _BLEND_COLOR_STYLE_WEIGHTS if blend else _COLOR_STYLE_WEIGHTS
+    cols = []
+    for _ in range(24):
+        family = _pick(rng, _FAMILY_WEIGHTS)
+        cols = pg.to_hex_list(pg.generate(rng.randrange(2**31), _pick(rng, harmonies), family,
+                                          _pick(rng, styles)))[:n]
+        if _lively(cols, family):
+            break
+    if style in _RAMP_STYLES:
+        cols.sort(key=_luma)
+    return cols
+
+
+def random_look(seed: int) -> dict:
+    """A random look for one seed, as the node's own inputs (like ``preset_values``)."""
+    rng = random.Random(int(seed))
+    if rng.random() < 0.35:  # start from a tuned preset, with a new pattern (and maybe new colours)
+        out = preset_values(rng.choice(list(PRESETS)))
+        out["seed"] = rng.randrange(2**31)
+        out["evolve"] = round(rng.uniform(0, 100), 2)
+        if rng.random() < 0.5:
+            _with_colors(out, random_colors(rng, out["style"]))
+        return out
+
+    style = _pick(rng, _STYLE_WEIGHTS)
+    out = _with_colors(_defaults(), random_colors(rng, style))
+    lo_stretch, hi_stretch = math.log(0.8), math.log(2.0)
+    out.update(
+        style=style,
+        seed=rng.randrange(2**31),
+        evolve=round(rng.uniform(0, 100), 2),
+        scale=round(rng.uniform(0.9, 1.6), 2),
+        warp=round(rng.uniform(0.7, 1.3), 2),
+        detail=4 if rng.random() < 0.2 else 3,
+        stretch=round(math.exp(rng.uniform(lo_stretch, hi_stretch)), 2),
+        rotation=round(rng.uniform(-180, 180)) if rng.random() < 0.5 else 0.0,
+        grain=round(rng.uniform(0.02, 0.04), 3),
+        saturation=round(rng.uniform(1.0, 1.15), 2),
+        contrast=round(rng.uniform(1.0, 1.1), 2),
+        vignette=round(rng.uniform(0.2, 0.5), 2) if rng.random() < 0.3 else 0.0,
+    )
+    if style == "mesh":
+        out.update(softness=round(rng.uniform(0.55, 0.9), 2), blobs=rng.randint(1, 3),
+                   warp=round(rng.uniform(0.6, 1.2), 2))
+    elif style == "twirl":
+        out.update(softness=round(rng.uniform(0.6, 1.0), 2), twirl=round(rng.uniform(-200, 200)),
+                   twirl_x=round(rng.uniform(0.35, 0.65), 2), twirl_y=round(rng.uniform(0.35, 0.65), 2),
+                   twirl_radius=round(rng.uniform(0.5, 0.9), 2))
+    elif style == "liquid":
+        out.update(softness=round(rng.uniform(1.0, 1.6), 2), bands=1.0 if rng.random() < 0.15 else 0.0)
+    elif style == "strange":
+        out.update(scale=round(rng.uniform(1.1, 1.6), 2), warp=round(rng.uniform(0.8, 1.1), 2),
+                   softness=round(rng.uniform(1.0, 1.3), 2))
+    elif style == "waves":
+        out.update(bands=float(rng.randint(0, 2)), warp=round(rng.uniform(0.8, 1.5), 2),
+                   blur=round(rng.uniform(0.0, 0.08), 2))
+    elif style == "motion blur":
+        out.update(blur=round(rng.uniform(0.05, 0.2), 2), blur_angle=round(rng.uniform(-180, 180)))
+    elif style == "glass":
+        out.update(glass=round(rng.uniform(0.0, 0.3), 2), scale=round(rng.uniform(1.1, 1.6), 2))
+        if rng.random() < 0.3:
+            out.update(twirl=round(rng.uniform(150, 400)), twirl_radius=round(rng.uniform(0.6, 0.9), 2))
+    return out
+
+
+def values_gradient(v: dict) -> "FluidGradient":
+    """The FluidGradient for a dict of node inputs (from a preset or a random look)."""
+    from .render import parse_color
+
+    v = dict(v)
     texts = [v.pop(f"color_{i}") for i in range(1, MAX_COLORS + 1)]
     cols = [parse_color(c) for c in texts if c]
     stops = tuple((i / (len(cols) - 1), c) for i, c in enumerate(cols))
     return FluidGradient(stops=stops, **v)
+
+
+def preset_gradient(name: str) -> "FluidGradient":
+    """The FluidGradient a preset makes (for previews and tests)."""
+    return values_gradient(preset_values(name))
 
 
 WORK = 560  # long side of the working grid (the field is smooth; it is scaled up after)

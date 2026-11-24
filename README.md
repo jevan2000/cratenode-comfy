@@ -100,6 +100,20 @@ blur. Plug it into Canvas `background_fill`, Shape `fill` or Text Box `fill`.
   and Mono Silk. Picking one fills in the style, colours and settings so you can
   tweak them; changing any of them sets the preset back to `custom`. Through the API,
   a preset name applies that look. A connected palette still supplies the colours.
+- **Random looks:** **🎲 Random look** (under `preset`) rolls a new style, colours and
+  settings. Tick `randomize` for a new look just before every run; the node shows the
+  values used, so untick it to keep one you like. The rolls stay within what looks
+  good:
+  - about a third start from a preset with a new pattern;
+  - colours come from colour harmonies, biased to blues, purples, pinks and oranges,
+    with flat, grey, muddy-brown and clashing-green palettes thrown out;
+  - mesh and twirl get neighbouring hues, so blends don't go grey;
+  - each style's settings stay in a safe range, and brightness and hue shift are left
+    alone.
+
+  Fields fed by another node, and the colours when a palette is connected, are never
+  changed. Like Palette Generator's `new_each_run`, this happens in the browser:
+  through the API the node uses the values it is given.
 - **Colours:** up to six (`color_1` to `color_6`, each with the colour picker), or a
   connected palette.
 - **Controls, added to the style's own amounts:**
