@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Fix: a batch count above 1 gave only one result** with Palette Generator
+  (`new_each_run`) or Fluid Gradient (`randomize`).
+  - **Cause:** the new colours or look were made once per click of Run, but ComfyUI
+    builds every prompt of a batch inside that one click. All the prompts were the
+    same, and ComfyUI reused the first result for the rest.
+  - **Fix:** a batch of N is now queued as N single prompts, with a new set or look
+    made before each. Normal seeds still step once per prompt.
+  - New shared `web/before_run.js`. Checked with a batch of 3: three different
+    prompts, three results.
 - **Fix: Palette Generator settings moved down one place after reopening a workflow**
   (so it came back locked). ComfyUI frontend 1.51.9 saved a blank slot for the
   Generate button and skipped it when loading. The node now saves without the slot and

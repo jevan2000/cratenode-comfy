@@ -4,6 +4,8 @@
 // workflow saves them and a run uses exactly what the node shows. The server makes the
 // colours (/cratenode/palette), with the same rules as the node's documentation.
 
+import { onBeforeRun } from "./before_run.js";
+
 const { app } = window.comfyAPI.app;
 const { api } = window.comfyAPI.api;
 
@@ -121,14 +123,8 @@ async function beforeRun() {
 app.registerExtension({
   name: "CrateNode.PaletteGenerator",
   setup() {
-    const queue = app.queuePrompt;
-    if (typeof queue !== "function" || queue.cnPalette) return;
-    const wrapped = async function () {
-      try { await beforeRun(); } catch (e) { console.warn("CrateNode palette:", e); }
-      return queue.apply(this, arguments);
-    };
-    wrapped.cnPalette = true;
-    app.queuePrompt = wrapped;
+    // once per queued prompt, so a batch of N gets N different sets (before_run.js)
+    onBeforeRun(beforeRun);
   },
   async beforeRegisterNodeDef(nodeType, nodeData) {
     if (nodeData?.name !== TYPE) return;

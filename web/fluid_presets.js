@@ -3,10 +3,12 @@
 // from there; changing any of those settings sets the preset back to "custom".
 //
 // Random looks: a "Random look" button, and with randomize ticked a new look just before
-// each run (wrapping app.queuePrompt, like Palette Generator), so the queued prompt
+// each queued prompt (before_run.js, shared with Palette Generator), so the queued prompt
 // carries exactly what the node shows. The server picks the look (/cratenode/fluid_random)
 // within ranges that keep it good. Fields fed by a link are left alone, and so are the
 // colours when a palette is connected.
+
+import { onBeforeRun } from "./before_run.js";
 
 const { app } = window.comfyAPI.app;
 const { api } = window.comfyAPI.api;
@@ -134,14 +136,8 @@ function hook(node) {
 app.registerExtension({
   name: "CrateNode.FluidPresets",
   setup() {
-    const queue = app.queuePrompt;
-    if (typeof queue !== "function" || queue.cnFluid) return;
-    const wrapped = async function () {
-      try { await beforeRun(); } catch (e) { console.warn("CrateNode fluid:", e); }
-      return queue.apply(this, arguments);
-    };
-    wrapped.cnFluid = true;
-    app.queuePrompt = wrapped;
+    // once per queued prompt, so a batch of N gets N different looks (before_run.js)
+    onBeforeRun(beforeRun);
   },
   async beforeRegisterNodeDef(nodeType, nodeData) {
     if (nodeData?.name !== NODE) return;
