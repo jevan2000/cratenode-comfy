@@ -26,6 +26,9 @@ class CrateNodeComfy(ComfyExtension):
             nodes_live.add_routes()  # live previews on the nodes (web/live_preview.js)
         except Exception as e:  # previews are a convenience; never block loading the nodes
             logging.warning("CrateNode-Comfy: live previews unavailable: %s", e)
+        from . import rerun
+
+        rerun.register()  # new palettes / looks on server-queued runs (CrateUtils-Comfy triggers)
         return (nodes_canvas.NODES + nodes_type.NODES + nodes_shapes.NODES + nodes_layout.NODES
                 + nodes_effects.NODES + nodes_output.NODES + nodes_data.NODES
                 + nodes_color.NODES + nodes_motion.NODES + nodes_smart.NODES + nodes_print.NODES)

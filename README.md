@@ -112,8 +112,10 @@ blur. Plug it into Canvas `background_fill`, Shape `fill` or Text Box `fill`.
     alone.
 
   Fields fed by another node, and the colours when a palette is connected, are never
-  changed. Like Palette Generator's `new_each_run`, this happens in the browser:
-  through the API the node uses the values it is given.
+  changed. Like Palette Generator's `new_each_run`, this happens in the browser, and
+  also on runs that [CrateUtils-Comfy](https://github.com/jevan2000/crateutils-comfy)
+  triggers queue on the server. A prompt you queue yourself through the API uses the
+  values it is given.
 - **Colours:** up to six (`color_1` to `color_6`, each with the colour picker), or a
   connected palette.
 - **Controls, added to the style's own amounts:**

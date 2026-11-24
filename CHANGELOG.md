@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Fix: CrateUtils-Comfy triggered runs repeated the same palette and look.** Triggers
+  queue the saved workflow on the server, so the browser never made a new set (Palette
+  Generator `new_each_run`) or look (Fluid Gradient `randomize`) for them.
+  - New `cratenode_comfy/rerun.py`: `refresh_prompt` does the same work on an API
+    prompt, following each node's settings (`locked`, linked inputs, colours from a
+    linked palette). It is offered to other packs through a shared registry
+    (`sys.modules["crate_before_queue"].hooks`), so neither pack imports the other.
+  - Checked in the sandbox: a Webhook trigger fired 3 times (`new_seeds` off) gave
+    3 different palettes and looks, all 3 runs successful.
 - **Fix: a batch count above 1 gave only one result** with Palette Generator
   (`new_each_run`) or Fluid Gradient (`randomize`).
   - **Cause:** the new colours or look were made once per click of Run, but ComfyUI
