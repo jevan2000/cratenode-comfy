@@ -14,6 +14,8 @@
   - The empty `colors` box is now a compact mirror of the swatches: its placeholder
     shows the live hexes, so the manual way in is still visible without dominating the
     node, and the live preview grows and shrinks with the node.
+  - The box stays compact after resizing: its layout height is pinned to three rows,
+    not only its visible textarea height.
 
 - **Fix: CrateUtils-Comfy triggered runs repeated the same palette and look.** Triggers
   queue the saved workflow on the server, so the browser never made a new set (Palette

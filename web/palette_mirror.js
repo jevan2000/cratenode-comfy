@@ -24,35 +24,18 @@ function compact(node) {
   if (!w) return;
   w.options ??= {};
   w.options.rows = ROWS;
-  // The multiline field is a DOM textarea: its height comes from its own style, not from
-  // options.rows (and it has no computeSize), so set it directly every time it appears.
+  // The multiline field is a DOM textarea. Its visible height comes from its own style, and
+  // the node gives it a flexible layout height through computeLayoutSize(), which lets it
+  // grow to fill the node (and grow back to 15 rows after a resize). Pin both to ROWS.
   if (w.inputEl) {
     w.inputEl.rows = ROWS;
     w.inputEl.style.height = "auto";
     w.inputEl.style.maxHeight = `${Math.round((window.LiteGraph?.NODE_WIDGET_HEIGHT || 20) * ROWS)}px`;
-    if (!w.cnCompact && node.size) {
-      // The node lays out its widgets before the DOM textarea exists. Re-apply the same size
-      // once, now that the textarea is short, so the fields below move up under it.
-      w.cnCompact = true;
-      w.cnSetting = true;
-      try {
-        // setSize() with the same size does not re-lay out; nudge it by one pixel and back.
-        const [width, height] = node.size;
-        node.setSize([width, height + 1]);
-        node.setSize([width, height]);
-      } catch { /* display only */ }
-      w.cnSetting = false;
-    }
   }
   if (w.cnSized) return;
-  if (typeof w.computeSize === "function") {
-    const size = w.computeSize.bind(w);
-    const max = () => Math.round((window.LiteGraph?.NODE_WIDGET_HEIGHT || 20) * ROWS);
-    w.computeSize = function (width) {
-      const out = size(width);
-      if (!Array.isArray(out)) return out;
-      return [out[0], Math.min(out[1] ?? max(), max())];
-    };
+  if (typeof w.computeLayoutSize === "function") {
+    const height = Math.round((window.LiteGraph?.NODE_WIDGET_HEIGHT || 20) * ROWS);
+    w.computeLayoutSize = function () { return { minHeight: height, maxHeight: height }; };
     w.cnSized = true;
   }
 }
@@ -74,20 +57,6 @@ function syncMirror(node) {
 function wire(node) {
   compact(node);
   syncMirror(node);
-  // Resizing re-lays the node out; the textarea's DOM height is not part of that layout, so
-  // put the compact height back. Ignore the setSize() calls this code makes itself.
-  const onResize = node.onResize;
-  node.onResize = function () {
-    const r = onResize?.apply(this, arguments);
-    try {
-      const w = widget(node, MIRROR);
-      if (w && !w.cnSetting) {
-        w.cnCompact = false;
-        compact(node);
-      }
-    } catch { /* never break a resize */ }
-    return r;
-  };
   // Every swatch edit updates the mirror, so the hint always matches what a run would use.
   for (const w of swatchWidgets(node)) {
     if (w.cnMirrored) continue;
