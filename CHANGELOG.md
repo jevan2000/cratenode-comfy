@@ -2,11 +2,17 @@
 
 ## Unreleased
 
-- **Live previews scale with any node size.** The preview area was the node's leftover height
-  but stopped at 420 px (with a 90 px floor), and the picture stopped growing at 2.5x, so a
-  large node kept a relatively small preview. It now fills whatever height the node has, from
-  tiny to very large, and the picture scales to the available area. The server still renders
-  the quick preview at its small working size, so a very large node shows it softly.
+- **Live previews scale with any node size, without the slow shrink.** The preview area was
+  the node's leftover height but stopped at 420 px (with a 90 px floor), and the picture
+  stopped growing at 2.5x, so a large node kept a relatively small preview.
+  - The preview is now a **flexible widget** (`computeLayoutSize`), like a multiline text box.
+    The node divides its free height between the preview and any text box, and the preview
+    draws the share the layout gave it.
+  - Before, the preview reported its drawn height through `computeSize()` while a text box
+    took the rest of the free height; the layout then fed the smaller height back, so the two
+    crept downwards a little every frame. That feedback is gone.
+  - It scales with the node at any size, and the picture fills the available area. The server
+    still renders the quick preview at its small working size, so a very large node is soft.
 
 - **Palette: five editable swatches, and one output per colour.** The node used to be
   text-only (`primary: #1f6feb` lines). It now has `color_1` ... `color_5` fields with

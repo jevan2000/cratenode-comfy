@@ -7,7 +7,8 @@ const { app } = window.comfyAPI.app;
 const { api } = window.comfyAPI.api;
 
 const WIDGET = "cn_live_preview";
-const HEIGHT = 170; // only the fallback before the node is laid out; the node size wins
+const HEIGHT = 170; // only the fallback before the node is laid out; the layout gives the height
+const MIN_H = 90; // smallest preview the layout may give; any text box shares the rest
 const DEBOUNCE_MS = 250;
 const POLL_MS = 350;
 
@@ -150,33 +151,25 @@ const PAD = 8;
 // frontend versions (seen on 1.51.9 after moving or resizing a node), a canvas drawing
 // can't.
 function previewWidget(state) {
-  // Fill whatever height the node has left, however the user sized it, so the preview
-  // always scales with the node instead of stopping at a fixed slab or a maximum height.
-  const previewHeight = (node) => {
-    if (!node?.size) return HEIGHT;
-    // The preview starts where the widgets above it end. Summing their computeSize() is not
-    // enough: the multiline colors box is a DOM widget without one, and the old sum made the
-    // preview overlap the node's bottom edge. last_y is the layout's own answer.
-    const top = Number.isFinite(widget.last_y) ? widget.last_y : (node.size[1] - HEIGHT);
-    return Math.max(0, Math.round((node.size[1] || 0) - top));
-  };
-
   const widget = {
     name: WIDGET,
     type: "cn_preview",
     value: "",
     serialize: false, // not part of saved workflows or prompts
     options: { serialize: false },
-    computeSize(width) {
-      // No node reference here on every frontend, so report the default; draw() re-reads.
-      return [width, state.h ?? HEIGHT];
+    // A flexible widget, like a multiline text box: the node divides its free height between
+    // the preview and any other flexible widgets. Returning a height from computeSize() fed
+    // the drawn height back into the next layout while a text box took the rest, so the two
+    // chased each other downwards a little every frame. computeLayoutSize() has no feedback:
+    // the layout decides the height once and draw() uses the share it was given.
+    computeLayoutSize() {
+      return { minHeight: MIN_H, maxHeight: 1e6 };
     },
     draw(ctx, node, width, y) {
       // The node's real width: some frontends pass a stale, larger width here (seen on
       // 1.51.9 after a run), which drew the picture off to the right, outside the node.
       width = Math.min(Number(width) || Infinity, node.size[0]);
-      const h = previewHeight(node);
-      state.h = h;
+      const h = Math.max(0, widget.computedHeight ?? HEIGHT);
       const boxW = width - PAD * 2;
       const boxH = h - NOTE_H - PAD * 1.5;
       const img = state.img;
@@ -277,18 +270,6 @@ function attach(node, type) {
   const size = node.computeSize?.();
   if (size) node.setSize([Math.max(node.size[0], size[0]), Math.max(node.size[1], size[1])]);
 
-  // Re-layout when the user drags the node bigger/smaller: computeSize reads state.h, so
-  // reset it first or the node would keep reporting whatever height it last drew at and the
-  // preview would stay locked to its old size.
-  const onResize = node.onResize;
-  node.onResize = function () {
-    const r = onResize?.apply(this, arguments);
-    try {
-      state.h = undefined;
-      node.setDirtyCanvas?.(true, true);
-    } catch { /* never break a resize */ }
-    return r;
-  };
 
   state.check();
 }
