@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- **Palette: five editable swatches, and one output per colour.** The node used to be
+  text-only (`primary: #1f6feb` lines). It now has `color_1` ... `color_5` fields with
+  the colour picker and five matching outputs, so each colour can be wired separately
+  into a Shape, Text Box, Fluid Gradient and so on, like Palette Generator.
+  - The `colors` text box still wins when it has content, so saved workflows and named
+    palettes (`name: #hex`, `Pick Color` by name, `Recolor Scene` mappings) keep
+    working.
+  - The new fields are optional and come after the existing widgets, so prompts saved
+    before this change still validate and load with their values in place.
+  - The empty `colors` box is now a compact mirror of the swatches: its placeholder
+    shows the live hexes, so the manual way in is still visible without dominating the
+    node, and the live preview grows and shrinks with the node.
+
 - **Fix: CrateUtils-Comfy triggered runs repeated the same palette and look.** Triggers
   queue the saved workflow on the server, so the browser never made a new set (Palette
   Generator `new_each_run`) or look (Fluid Gradient `randomize`) for them.

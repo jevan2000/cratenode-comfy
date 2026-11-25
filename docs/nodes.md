@@ -79,14 +79,19 @@ Outputs: `ratio` (float), `grade` (string)
 
 ### Palette
 
-`CNPalette`. A named colour palette: 'name: #hex' lines, or plain #hex values (named color_1, ...).
+`CNPalette`. A colour palette you can edit swatch by swatch. Each of the five colours has its own output (wire them into Shape, Text Box, Fluid Gradient ...) and its own editable swatch: click a swatch to change it with sliders, a hex box, the swatch grid or the eyedropper. The 'colors' text box still takes 'name: #hex' lines when you want named colours; leave it empty to use the swatches.
 
 | Input | Type | Default | Notes |
 |---|---|---|---|
-| `colors` | string | `primary: #1f6feb / secondary: #0b1d3a / …` |  |
+| `colors` | string | `""` | Optional 'name: #hex' lines (or bare #hex values) for named colours. Empty = use the color_1 ... color_5 swatches below. When filled, it wins and the swatches are ignored. |
 | `name` | string | `""` |  |
+| `color_1` | string (optional) | `#1f6feb` | #rrggbb or #rrggbbaa; click the swatch to edit it |
+| `color_2` | string (optional) | `#0b1d3a` | #rrggbb or #rrggbbaa; click the swatch to edit it |
+| `color_3` | string (optional) | `#f2b134` | #rrggbb or #rrggbbaa; click the swatch to edit it |
+| `color_4` | string (optional) | `#f5f7fa` | #rrggbb or #rrggbbaa; click the swatch to edit it |
+| `color_5` | string (optional) | `#111418` | #rrggbb or #rrggbbaa; click the swatch to edit it |
 
-Outputs: `palette` (palette), `swatches` (image)
+Outputs: `palette` (palette), `swatches` (image), `color_1` (string), `color_2` (string), `color_3` (string), `color_4` (string), `color_5` (string)
 
 ### Palette Generator
 

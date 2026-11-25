@@ -29,24 +29,58 @@ def _brands():
     return col.find_brands(registry().config.brand_folders())
 
 
+PALETTE_DEFAULTS = ("#1f6feb", "#0b1d3a", "#f2b134", "#f5f7fa", "#111418")
+PALETTE_MAX = 5
+
+
 class CNPalette(IO.ComfyNode):
     @classmethod
     def define_schema(cls):
         return IO.Schema(
             node_id="CNPalette", display_name="Palette", category=CAT,
-            description="A named colour palette: 'name: #hex' lines, or plain #hex values (named color_1, ...).",
-            inputs=[IO.String.Input("colors", multiline=True,
-                                    default="primary: #1f6feb\nsecondary: #0b1d3a\naccent: #f2b134\nlight: #f5f7fa\ndark: #111418"),
-                    IO.String.Input("name", default="")],
-            outputs=[PaletteT.Output(display_name="palette"), IO.Image.Output(display_name="swatches")],
+            description="A colour palette you can edit swatch by swatch. Each of the five colours has its own "
+                        "output (wire them into Shape, Text Box, Fluid Gradient ...) and its own editable swatch: "
+                        "click a swatch to change it with sliders, a hex box, the swatch grid or the eyedropper. "
+                        "The 'colors' text box still takes 'name: #hex' lines when you want named colours; leave "
+                        "it empty to use the swatches.",
+            inputs=[IO.String.Input("colors", multiline=True, default="",
+                                    tooltip="Optional 'name: #hex' lines (or bare #hex values) for named colours. "
+                                            "Empty = use the color_1 ... color_5 swatches below. When filled, it wins "
+                                            "and the swatches are ignored."),
+                    IO.String.Input("name", default="")] + [
+                # Appended after the existing widgets on purpose: saved workflows store widget values by
+                # position, so a new widget must come after every existing one or old values shift into it.
+                # Optional because Prompts saved before these existed do not carry them; making them
+                # required would fail validation for those workflows.
+                IO.String.Input(f"color_{i}", default=c, optional=True,
+                                tooltip="#rrggbb or #rrggbbaa; click the swatch to edit it")
+                for i, c in enumerate(PALETTE_DEFAULTS, 1)
+            ],
+            outputs=[PaletteT.Output(display_name="palette"), IO.Image.Output(display_name="swatches")]
+                    + [IO.String.Output(display_name=f"color_{i}") for i in range(1, PALETTE_MAX + 1)],
         )
 
     @classmethod
-    def execute(cls, colors, name):
-        pal = col.parse_palette(colors, name)
-        if not pal.colors:
-            raise ValueError("the palette has no colours")
-        return IO.NodeOutput(pal, _swatches(pal))
+    def execute(cls, colors, name, **kw):
+        # The text box wins when it has content, so named palettes and old workflows keep working.
+        if (colors or "").strip():
+            pal = col.parse_palette(colors, name)
+            if not pal.colors:
+                raise ValueError("the palette has no colours")
+            hexes = pal.hexes()
+        else:
+            hexes = []
+            for i in range(1, PALETTE_MAX + 1):
+                # A prompt saved before the swatches existed has no color_N, so use the widget default.
+                text = str(kw.get(f"color_{i}", PALETTE_DEFAULTS[i - 1])).strip()
+                if not text:
+                    raise ValueError(f"color_{i} is empty; click the swatch to pick a colour")
+                hexes.append(col.to_hex(col.resolve_color(text)))
+            pal = col.Palette(tuple((f"color_{i}", col.resolve_color(h)) for i, h in enumerate(hexes, 1)),
+                              name)
+        # One port per colour, in palette order; the spare ports repeat the last colour so nothing is empty.
+        out = [hexes[min(i, len(hexes) - 1)] for i in range(PALETTE_MAX)]
+        return IO.NodeOutput(pal, _swatches(pal), *out)
 
 
 class CNPaletteFromImage(IO.ComfyNode):

@@ -185,7 +185,7 @@ Full inputs and outputs: [docs/nodes.md](docs/nodes.md).
 | | **Save as Template** | Write a design to a template JSON (images embedded) |
 | | **Data Rows** | Rows from a CSV/JSON file or pasted text; everything after it runs once per row |
 | | **Row Value** | One column of a row as text, for any text input |
-| Colour | **Palette** | Named colours (`primary: #1f6feb` lines) with a swatch preview |
+| Colour | **Palette** | Five editable swatches, each with its own output (wire them into Shape, Text Box, Fluid Gradient ...), plus a palette and swatches. The `colors` box still takes named `primary: #1f6feb` lines and wins when filled |
 | | **Palette from Image** | An image's main colours and their shares (k-means in Lab, similar colours merged) |
 | | **Brand Kit** | A brand JSON: palette, heading/body fonts and weights, logo |
 | | **Pick Color** | One colour as `#hex` for any colour input: by name, the most readable against a background, lightest, darkest |

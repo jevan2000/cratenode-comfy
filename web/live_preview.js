@@ -7,7 +7,9 @@ const { app } = window.comfyAPI.app;
 const { api } = window.comfyAPI.api;
 
 const WIDGET = "cn_live_preview";
-const HEIGHT = 170; // preview area, px
+const HEIGHT = 170; // default preview area, px - a floor, not a fixed size
+const MIN_H = 90; // below this a palette stops being readable
+const MAX_H = 420; // so a very tall node doesn't spend everything on its swatches
 const DEBOUNCE_MS = 250;
 const POLL_MS = 350;
 
@@ -150,34 +152,50 @@ const PAD = 8;
 // frontend versions (seen on 1.51.9 after moving or resizing a node), a canvas drawing
 // can't.
 function previewWidget(state) {
-  return {
+  // Grow the preview to fill the node's leftover height, so resizing the node resizes the
+  // picture instead of leaving a fixed 170px slab floating in a much taller node.
+  const previewHeight = (node) => {
+    if (!node?.size) return HEIGHT;
+    // The preview starts where the widgets above it end. Summing their computeSize() is not
+    // enough: the multiline colors box is a DOM widget without one, and the old sum made the
+    // preview overlap the node's bottom edge. last_y is the layout's own answer.
+    const top = Number.isFinite(widget.last_y) ? widget.last_y : (node.size[1] - HEIGHT);
+    const free = (node.size[1] || 0) - top;
+    return Math.max(MIN_H, Math.min(MAX_H, Math.round(free) || HEIGHT));
+  };
+
+  const widget = {
     name: WIDGET,
     type: "cn_preview",
     value: "",
     serialize: false, // not part of saved workflows or prompts
     options: { serialize: false },
     computeSize(width) {
-      return [width, HEIGHT];
+      // No node reference here on every frontend, so report the default; draw() re-reads.
+      return [width, state.h ?? HEIGHT];
     },
     draw(ctx, node, width, y) {
       // The node's real width: some frontends pass a stale, larger width here (seen on
       // 1.51.9 after a run), which drew the picture off to the right, outside the node.
       width = Math.min(Number(width) || Infinity, node.size[0]);
+      const h = previewHeight(node);
+      state.h = h;
       const boxW = width - PAD * 2;
-      const boxH = HEIGHT - NOTE_H - PAD * 1.5;
+      const boxH = h - NOTE_H - PAD * 1.5;
       const img = state.img;
       ctx.save();
       ctx.beginPath();
-      ctx.rect(0, y, width, HEIGHT); // never draw outside the node
+      ctx.rect(0, y, width, h); // never draw outside the node
       ctx.clip();
       if (img && img.complete && img.naturalWidth) {
-        const k = Math.min(boxW / img.naturalWidth, boxH / img.naturalHeight, 1.5);
-        const w = img.naturalWidth * k, h = img.naturalHeight * k;
-        const x = PAD + (boxW - w) / 2, top = y + PAD / 2 + (boxH - h) / 2;
-        ctx.drawImage(img, x, top, w, h);
+        // Cap the upscale so a small palette doesn't turn into mush in a big node.
+        const k = Math.min(boxW / img.naturalWidth, boxH / img.naturalHeight, 2.5);
+        const w = img.naturalWidth * k, hh = img.naturalHeight * k;
+        const x = PAD + (boxW - w) / 2, top = y + PAD / 2 + (boxH - hh) / 2;
+        ctx.drawImage(img, x, top, w, hh);
         ctx.strokeStyle = "rgba(255,255,255,0.10)";
         ctx.lineWidth = 1;
-        ctx.strokeRect(x - 0.5, top - 0.5, w + 1, h + 1);
+        ctx.strokeRect(x - 0.5, top - 0.5, w + 1, hh + 1);
       }
       ctx.fillStyle = state.noteColor;
       ctx.font = "11px sans-serif";
@@ -186,10 +204,11 @@ function previewWidget(state) {
       let text = state.note;
       while (text.length > 4 && ctx.measureText(text).width > boxW) text = text.slice(0, -2);
       if (text !== state.note) text = text.slice(0, -1) + "…";
-      ctx.fillText(text, width / 2, y + HEIGHT - NOTE_H / 2 - 2);
+      ctx.fillText(text, width / 2, y + h - NOTE_H / 2 - 2);
       ctx.restore();
     },
   };
+  return widget;
 }
 
 function attach(node, type) {
@@ -259,6 +278,20 @@ function attach(node, type) {
   // make room for the preview under the widgets
   const size = node.computeSize?.();
   if (size) node.setSize([Math.max(node.size[0], size[0]), Math.max(node.size[1], size[1])]);
+
+  // Re-layout when the user drags the node bigger/smaller: computeSize reads state.h, so
+  // reset it first or the node would keep reporting whatever height it last drew at and the
+  // preview would stay locked to its old size.
+  const onResize = node.onResize;
+  node.onResize = function () {
+    const r = onResize?.apply(this, arguments);
+    try {
+      state.h = undefined;
+      node.setDirtyCanvas?.(true, true);
+    } catch { /* never break a resize */ }
+    return r;
+  };
+
   state.check();
 }
 
