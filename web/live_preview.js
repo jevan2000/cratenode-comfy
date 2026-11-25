@@ -7,9 +7,7 @@ const { app } = window.comfyAPI.app;
 const { api } = window.comfyAPI.api;
 
 const WIDGET = "cn_live_preview";
-const HEIGHT = 170; // default preview area, px - a floor, not a fixed size
-const MIN_H = 90; // below this a palette stops being readable
-const MAX_H = 420; // so a very tall node doesn't spend everything on its swatches
+const HEIGHT = 170; // only the fallback before the node is laid out; the node size wins
 const DEBOUNCE_MS = 250;
 const POLL_MS = 350;
 
@@ -152,16 +150,15 @@ const PAD = 8;
 // frontend versions (seen on 1.51.9 after moving or resizing a node), a canvas drawing
 // can't.
 function previewWidget(state) {
-  // Grow the preview to fill the node's leftover height, so resizing the node resizes the
-  // picture instead of leaving a fixed 170px slab floating in a much taller node.
+  // Fill whatever height the node has left, however the user sized it, so the preview
+  // always scales with the node instead of stopping at a fixed slab or a maximum height.
   const previewHeight = (node) => {
     if (!node?.size) return HEIGHT;
     // The preview starts where the widgets above it end. Summing their computeSize() is not
     // enough: the multiline colors box is a DOM widget without one, and the old sum made the
     // preview overlap the node's bottom edge. last_y is the layout's own answer.
     const top = Number.isFinite(widget.last_y) ? widget.last_y : (node.size[1] - HEIGHT);
-    const free = (node.size[1] || 0) - top;
-    return Math.max(MIN_H, Math.min(MAX_H, Math.round(free) || HEIGHT));
+    return Math.max(0, Math.round((node.size[1] || 0) - top));
   };
 
   const widget = {
@@ -187,9 +184,10 @@ function previewWidget(state) {
       ctx.beginPath();
       ctx.rect(0, y, width, h); // never draw outside the node
       ctx.clip();
-      if (img && img.complete && img.naturalWidth) {
-        // Cap the upscale so a small palette doesn't turn into mush in a big node.
-        const k = Math.min(boxW / img.naturalWidth, boxH / img.naturalHeight, 2.5);
+      if (img && img.complete && img.naturalWidth && boxW > 0 && boxH > 0) {
+        // Fill the available area at any node size; a small palette may scale up with a big
+        // node rather than sitting in the middle at a fixed size.
+        const k = Math.min(boxW / img.naturalWidth, boxH / img.naturalHeight);
         const w = img.naturalWidth * k, hh = img.naturalHeight * k;
         const x = PAD + (boxW - w) / 2, top = y + PAD / 2 + (boxH - hh) / 2;
         ctx.drawImage(img, x, top, w, hh);

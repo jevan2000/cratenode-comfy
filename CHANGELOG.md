@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Live previews scale with any node size.** The preview area was the node's leftover height
+  but stopped at 420 px (with a 90 px floor), and the picture stopped growing at 2.5x, so a
+  large node kept a relatively small preview. It now fills whatever height the node has, from
+  tiny to very large, and the picture scales to the available area. The server still renders
+  the quick preview at its small working size, so a very large node shows it softly.
+
 - **Palette: five editable swatches, and one output per colour.** The node used to be
   text-only (`primary: #1f6feb` lines). It now has `color_1` ... `color_5` fields with
   the colour picker and five matching outputs, so each colour can be wired separately
